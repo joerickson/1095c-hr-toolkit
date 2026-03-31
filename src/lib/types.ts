@@ -137,3 +137,171 @@ export interface WizardSession {
   part3_required: boolean | null;
   created_at: string;
 }
+
+// ============================================================
+// Eligibility Monitoring Module Types
+// ============================================================
+
+export type MeasurementPeriodStatus =
+  | "in_progress"
+  | "complete"
+  | "pending_offer"
+  | "offer_sent"
+  | "enrolled"
+  | "declined"
+  | "not_full_time";
+
+export type MeasurementPeriodType = "standard" | "initial";
+
+export interface MeasurementPeriod {
+  id: string;
+  employee_id: string;
+  period_type: MeasurementPeriodType;
+  measurement_start: string;
+  measurement_end: string;
+  admin_start: string | null;
+  admin_end: string | null;
+  stability_start: string | null;
+  stability_end: string | null;
+  status: MeasurementPeriodStatus;
+  total_hours_worked: number;
+  avg_hours_per_week: number | null;
+  avg_hours_per_month: number | null;
+  is_full_time_result: boolean | null;
+  offer_sent_date: string | null;
+  offer_response: "accepted" | "declined" | "no_response" | null;
+  offer_response_date: string | null;
+  plan_selected: "P1" | "P2" | "P3" | null;
+  coverage_start_date: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  updated_by: string | null;
+}
+
+export type HoursType = "regular" | "overtime" | "pto" | "sick" | "holiday" | "other";
+export type DataSource = "manual" | "csv_import" | "api";
+
+export interface PayPeriodHours {
+  id: string;
+  employee_id: string;
+  pay_period_start: string;
+  pay_period_end: string;
+  pay_period_number: number | null;
+  tax_year: number;
+  hours_worked: number;
+  hours_type: HoursType;
+  aca_countable_hours: number | null;
+  ytd_hours: number | null;
+  rolling_12month_hours: number | null;
+  rolling_avg_hours_per_week: number | null;
+  data_source: DataSource;
+  imported_at: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export type EligibilityEventType =
+  | "measurement_started"
+  | "measurement_completed"
+  | "full_time_determination"
+  | "part_time_determination"
+  | "waiting_period_started"
+  | "waiting_period_completed"
+  | "offer_generated"
+  | "offer_sent"
+  | "offer_accepted"
+  | "offer_declined"
+  | "offer_no_response"
+  | "coverage_started"
+  | "coverage_ended"
+  | "stability_period_started"
+  | "stability_period_ended"
+  | "hours_threshold_warning"
+  | "hours_threshold_crossed"
+  | "manual_override"
+  | "note_added";
+
+export interface EligibilityEvent {
+  id: string;
+  employee_id: string;
+  measurement_period_id: string | null;
+  event_type: EligibilityEventType;
+  event_date: string;
+  description: string | null;
+  triggered_by: "system" | "hr_user" | "import" | null;
+  created_by: string | null;
+  created_at: string;
+  snapshot: Record<string, unknown> | null;
+}
+
+export interface PayPeriodChecklistRecord {
+  id: string;
+  pay_period_start: string;
+  tax_year: number;
+  checklist_item_key: string;
+  is_complete: boolean;
+  completed_by: string | null;
+  completed_at: string | null;
+  notes: string | null;
+  auto_context: string | null;
+}
+
+export type OfferLetterStatus = "pending" | "sent" | "accepted" | "declined" | "expired";
+export type OfferLetterResponse = "accepted" | "declined" | "no_response";
+
+export interface OfferLetter {
+  id: string;
+  employee_id: string;
+  measurement_period_id: string | null;
+  offer_date: string;
+  offer_deadline: string;
+  coverage_start_date: string;
+  plans_offered: string[];
+  response: OfferLetterResponse | null;
+  response_date: string | null;
+  plan_selected: "P1" | "P2" | "P3" | null;
+  waiver_on_file: boolean;
+  waiver_date: string | null;
+  status: OfferLetterStatus;
+  notes: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export interface EligibilityDashboardRow {
+  employee_id: string;
+  full_name: string;
+  employee_type: EmployeeType;
+  hire_date: string | null;
+  hourly_rate: number | null;
+  employment_status: EmploymentStatus;
+  plan_enrolled: PlanEnrolled;
+  current_measurement_period_id: string | null;
+  period_type: MeasurementPeriodType | null;
+  measurement_start: string | null;
+  measurement_end: string | null;
+  admin_start: string | null;
+  admin_end: string | null;
+  stability_start: string | null;
+  stability_end: string | null;
+  measurement_status: MeasurementPeriodStatus | null;
+  total_hours_worked: number | null;
+  avg_hours_per_week: number | null;
+  avg_hours_per_month: number | null;
+  is_full_time_result: boolean | null;
+  days_remaining_in_measurement: number | null;
+  in_stability_period: boolean | null;
+  offer_letter_id: string | null;
+  offer_status: OfferLetterStatus | null;
+  offer_date: string | null;
+  offer_deadline: string | null;
+  offer_coverage_start_date: string | null;
+  offer_response: OfferLetterResponse | null;
+  warning_approaching_threshold: boolean | null;
+  warning_crossed_threshold: boolean | null;
+  warning_offer_not_sent: boolean | null;
+  warning_offer_expired: boolean | null;
+  in_admin_period: boolean | null;
+  days_until_coverage_must_start: number | null;
+}

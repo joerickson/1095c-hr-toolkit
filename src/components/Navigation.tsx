@@ -5,11 +5,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 
-const NAV_ITEMS = [
+const FILING_NAV_ITEMS = [
   { href: "/checklist", label: "Audit Checklist" },
   { href: "/wizard", label: "Code Wizard" },
   { href: "/tracker", label: "Employee Tracker" },
   { href: "/guide", label: "WinTeam Guide" },
+];
+
+const YEAR_ROUND_NAV_ITEMS = [
+  { href: "/payroll", label: "Pay Period" },
+  { href: "/payroll/offers", label: "Offer Letters" },
 ];
 
 interface NavigationProps {
@@ -27,6 +32,26 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
     await supabase.auth.signOut();
     router.push("/login");
   }
+
+  function isActive(href: string): boolean {
+    if (href === "/payroll") {
+      // Active for /payroll and /payroll/employees/... but NOT /payroll/offers
+      return pathname === "/payroll" || pathname.startsWith("/payroll/employees");
+    }
+    return pathname.startsWith(href);
+  }
+
+  const linkClass = (href: string) =>
+    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+      isActive(href)
+        ? "bg-navy-800 text-white"
+        : "text-navy-100 hover:bg-navy-600 hover:text-white"
+    }`;
+
+  const mobileLinkClass = (href: string) =>
+    `block px-3 py-2 rounded-md text-sm font-medium ${
+      isActive(href) ? "bg-navy-800 text-white" : "text-navy-100 hover:bg-navy-600"
+    }`;
 
   return (
     <nav className="bg-navy-700 text-white shadow-md print:hidden">
@@ -49,28 +74,19 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname.startsWith(item.href)
-                    ? "bg-navy-800 text-white"
-                    : "text-navy-100 hover:bg-navy-600 hover:text-white"
-                }`}
-              >
+            {FILING_NAV_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href} className={linkClass(item.href)}>
+                {item.label}
+              </Link>
+            ))}
+            <span className="text-navy-500 mx-1 select-none">|</span>
+            {YEAR_ROUND_NAV_ITEMS.map((item) => (
+              <Link key={item.href} href={item.href} className={linkClass(item.href)}>
                 {item.label}
               </Link>
             ))}
             {isAdmin && (
-              <Link
-                href="/settings"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname.startsWith("/settings")
-                    ? "bg-navy-800 text-white"
-                    : "text-navy-100 hover:bg-navy-600 hover:text-white"
-                }`}
-              >
+              <Link href="/settings" className={linkClass("/settings")}>
                 Settings
               </Link>
             )}
@@ -111,15 +127,27 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
       {mobileOpen && (
         <div className="md:hidden border-t border-navy-600">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {NAV_ITEMS.map((item) => (
+            <div className="px-3 py-1 text-navy-400 text-xs font-semibold uppercase tracking-wider">
+              Filing Tools
+            </div>
+            {FILING_NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname.startsWith(item.href)
-                    ? "bg-navy-800 text-white"
-                    : "text-navy-100 hover:bg-navy-600"
-                }`}
+                className={mobileLinkClass(item.href)}
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="px-3 pt-2 pb-1 text-navy-400 text-xs font-semibold uppercase tracking-wider border-t border-navy-600 mt-1">
+              Year-Round
+            </div>
+            {YEAR_ROUND_NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={mobileLinkClass(item.href)}
                 onClick={() => setMobileOpen(false)}
               >
                 {item.label}
@@ -128,11 +156,7 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
             {isAdmin && (
               <Link
                 href="/settings"
-                className={`block px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname.startsWith("/settings")
-                    ? "bg-navy-800 text-white"
-                    : "text-navy-100 hover:bg-navy-600"
-                }`}
+                className={mobileLinkClass("/settings")}
                 onClick={() => setMobileOpen(false)}
               >
                 Settings
