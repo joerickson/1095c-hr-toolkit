@@ -31,7 +31,7 @@ export default async function ChecklistPage() {
         initialCompleted={Array.from(completedKeys)}
         userId={user!.id}
         taxYear={settings?.tax_year ?? 2025}
-        companyName={settings?.company_name ?? "ABC Janitorial Services LLC"}
+        companyName={settings?.company_name ?? "RBM Services Inc."}
       />
     </AppLayout>
   );

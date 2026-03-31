@@ -12,7 +12,7 @@ interface Props {
 
 const DEFAULT: Partial<AppSettings> = {
   tax_year: 2025,
-  company_name: "ABC Janitorial Services LLC",
+  company_name: "RBM Services Inc.",
   company_ein: "87-1234567",
   contact_phone: "(801) 555-0100",
   plan_start_month: "01",

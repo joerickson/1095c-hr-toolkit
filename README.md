@@ -1,6 +1,6 @@
 # 1095-C HR Toolkit
 
-ACA 1095-C compliance toolkit for ABC Janitorial Services LLC (Tax Year 2025).
+ACA 1095-C compliance toolkit for RBM Services Inc. (Tax Year 2025).
 
 ## Features
 
@@ -62,7 +62,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Key Business Rules (ABC Janitorial Services LLC)
+## Key Business Rules (RBM Services Inc.)
 
 | Rule | Detail |
 |------|--------|

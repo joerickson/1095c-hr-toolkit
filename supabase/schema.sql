@@ -31,7 +31,7 @@ create policy "Users can update their own profile"
 create table app_settings (
   id uuid default uuid_generate_v4() primary key,
   tax_year integer default 2025,
-  company_name text default 'ABC Janitorial Services LLC',
+  company_name text default 'RBM Services Inc.',
   company_ein text default '87-1234567',
   contact_phone text default '(801) 555-0100',
   plan_start_month text default '01',

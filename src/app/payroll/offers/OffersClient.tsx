@@ -725,7 +725,7 @@ function PrintableOffer({
   return (
     <div className="text-sm space-y-4 text-gray-800 print:text-black">
       <div className="text-center border-b pb-4">
-        <p className="font-bold text-base">ABC Janitorial Services LLC</p>
+        <p className="font-bold text-base">RBM Services Inc.</p>
         <p className="text-gray-500">ACA Benefit Offer Letter</p>
       </div>
 
