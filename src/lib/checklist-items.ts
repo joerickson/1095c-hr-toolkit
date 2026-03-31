@@ -236,6 +236,6 @@ export const CHECKLIST_ITEMS: ChecklistItem[] = [
   },
 ];
 
-export const CHECKLIST_SECTIONS = [
-  ...new Set(CHECKLIST_ITEMS.map((item) => item.section)),
-];
+export const CHECKLIST_SECTIONS = Array.from(
+  new Set(CHECKLIST_ITEMS.map((item) => item.section))
+);
