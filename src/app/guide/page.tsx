@@ -1,4 +1,5 @@
 import AppLayout from "@/components/AppLayout";
+import PrintButton from "./PrintButton";
 
 export default function GuidePage() {
   return (
@@ -7,6 +8,7 @@ export default function GuidePage() {
     </AppLayout>
   );
 }
+
 
 function GuideContent() {
   return (
@@ -19,12 +21,7 @@ function GuideContent() {
             ABC Janitorial Services LLC · Tax Year 2025
           </p>
         </div>
-        <button
-          onClick={() => window.print()}
-          className="btn-secondary text-sm no-print"
-        >
-          Print Guide
-        </button>
+        <PrintButton />
       </div>
 
       {/* Critical Warning */}
