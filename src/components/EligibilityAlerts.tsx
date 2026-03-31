@@ -133,7 +133,7 @@ export default function EligibilityAlerts({ rows }: EligibilityAlertsProps) {
               <span className="text-sm truncate">{alert.message}</span>
             </Link>
             <button
-              onClick={() => setDismissed((prev) => new Set([...prev, alert.id]))}
+              onClick={() => setDismissed((prev) => new Set(Array.from(prev).concat(alert.id)))}
               className={`flex-shrink-0 text-xs opacity-60 hover:opacity-100 ml-2 ${style.text}`}
               aria-label="Dismiss alert"
             >
