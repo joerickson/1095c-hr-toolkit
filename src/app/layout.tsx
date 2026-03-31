@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "1095-C HR Toolkit — ABC Janitorial Services",
+  title: "1095-C HR Toolkit — RBM Services Inc.",
   description: "ACA 1095-C compliance toolkit for HR teams",
 };
 

@@ -17,7 +17,7 @@ function GuideContent() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">WinTeam 1095-C Setup Guide</h1>
           <p className="text-gray-500 text-sm mt-1">
-            ABC Janitorial Services LLC · Tax Year 2025
+            RBM Services Inc. · Tax Year 2025
           </p>
         </div>
         <PrintButton />
@@ -27,7 +27,7 @@ function GuideContent() {
       <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg mb-6">
         <div className="font-bold text-red-800 mb-1">Critical Setup Requirement</div>
         <p className="text-red-700 text-sm">
-          Because ABC Janitorial offers all three plans to every eligible employee, every
+          Because RBM Services Inc. offers all three plans to every eligible employee, every
           employee benefit <strong>PACKAGE</strong> in WinTeam must include all three plans — not just
           the one the employee enrolled in. WinTeam derives the Line 14 code from the package,
           so if only Plan 1 (MEC) is in the package, WinTeam will generate <strong>1F instead of 1E</strong>.
@@ -46,7 +46,7 @@ function GuideContent() {
           { field: "ACA Configuration", location: "SYS: Company Setup → ACA tab", value: "Must be Enabled", critical: true },
           { field: "Employer EIN", location: "SYS: Company Setup → General tab", value: "87-1234567", critical: true },
           { field: "1095-C Contact Phone", location: "SYS: Company Setup → ACA tab", value: "(801) 555-0100 — must route to Benefits Administrator", critical: false },
-          { field: "Company Name", location: "SYS: Company Setup → General tab", value: "ABC Janitorial Services LLC", critical: false },
+          { field: "Company Name", location: "SYS: Company Setup → General tab", value: "RBM Services Inc.", critical: false },
         ]} />
       </Section>
 
@@ -221,7 +221,7 @@ function GuideContent() {
             {
               num: "1",
               title: "Line 14 is ALWAYS 1E",
-              body: "Every eligible employee at ABC Janitorial gets 1E because all three plans are offered to everyone. Never generate 1F for this employer.",
+              body: "Every eligible employee at RBM Services Inc. gets 1E because all three plans are offered to everyone. Never generate 1F for this employer.",
             },
             {
               num: "2",

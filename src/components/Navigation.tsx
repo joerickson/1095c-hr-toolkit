@@ -66,7 +66,7 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
                 </div>
                 <div className="hidden sm:block">
                   <div className="font-semibold text-sm leading-tight">1095-C HR Toolkit</div>
-                  <div className="text-navy-200 text-xs">ABC Janitorial Services</div>
+                  <div className="text-navy-200 text-xs">RBM Services Inc.</div>
                 </div>
               </Link>
             </div>

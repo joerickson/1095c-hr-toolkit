@@ -35,7 +35,7 @@ export function calculateCodes(
   }
 
   // Active offer — determine Line 14 based on who coverage is offered to
-  // NOTE: For ABC Janitorial, all three plans are offered to EVERY eligible employee,
+  // NOTE: For RBM Services Inc., all three plans are offered to EVERY eligible employee,
   // so "who" should always be "all" → 1E. Other options exist for completeness.
   const who = answers.who;
   let line14 = "1E";

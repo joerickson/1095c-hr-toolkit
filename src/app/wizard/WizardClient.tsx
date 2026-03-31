@@ -15,7 +15,7 @@ interface Props {
 const DEFAULT_SETTINGS: AppSettings = {
   id: "",
   tax_year: 2025,
-  company_name: "ABC Janitorial Services LLC",
+  company_name: "RBM Services Inc.",
   company_ein: "87-1234567",
   contact_phone: "(801) 555-0100",
   plan_start_month: "01",
@@ -224,11 +224,11 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                 Select who the coverage offer included.
               </p>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-md mb-4 text-sm text-blue-800">
-                <strong>Note for ABC Janitorial:</strong> All three plans are offered to every eligible employee, spouse, and dependents — so this should always be the last option (→ Code 1E).
+                <strong>Note for RBM Services Inc.:</strong> All three plans are offered to every eligible employee, spouse, and dependents — so this should always be the last option (→ Code 1E).
               </div>
               <div className="space-y-3">
                 {[
-                  { value: "all", label: "Employee + Spouse + Dependents", desc: "All three categories → Code 1E (standard for ABC Janitorial)" },
+                  { value: "all", label: "Employee + Spouse + Dependents", desc: "All three categories → Code 1E (standard for RBM Services Inc.)" },
                   { value: "employee_only", label: "Employee only", desc: "Code 1B" },
                   { value: "employee_dependents", label: "Employee + Dependents (not spouse)", desc: "Code 1C" },
                   { value: "employee_spouse", label: "Employee + Spouse (not dependents)", desc: "Code 1D" },
@@ -415,7 +415,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                       <td className="px-4 py-2.5 text-gray-700">
                         {desc}
                         {code === "1E" && (
-                          <span className="ml-2 badge-info">Standard for ABC Janitorial</span>
+                          <span className="ml-2 badge-info">Standard for RBM Services Inc.</span>
                         )}
                       </td>
                     </tr>
@@ -444,7 +444,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                         <td className="px-4 py-2.5 text-gray-700">
                           {desc}
                           {isStandard && (
-                            <span className="ml-2 badge-info">Common for ABC Janitorial</span>
+                            <span className="ml-2 badge-info">Common for RBM Services Inc.</span>
                           )}
                         </td>
                       </tr>
@@ -456,7 +456,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
           </div>
 
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Key Rules for ABC Janitorial Services</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">Key Rules for RBM Services Inc.</h2>
             <div className="space-y-2 text-sm">
               {[
                 { icon: "1", text: "Line 14 is ALWAYS 1E for every eligible employee — all three plans are offered to everyone." },

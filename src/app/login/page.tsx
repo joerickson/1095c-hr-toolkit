@@ -37,7 +37,7 @@ export default function LoginPage() {
             <span className="text-navy-700 font-bold text-xl">1095</span>
           </div>
           <h1 className="text-2xl font-bold text-white">1095-C HR Toolkit</h1>
-          <p className="text-navy-200 mt-1">ABC Janitorial Services LLC</p>
+          <p className="text-navy-200 mt-1">RBM Services Inc.</p>
         </div>
 
         {/* Login card */}
