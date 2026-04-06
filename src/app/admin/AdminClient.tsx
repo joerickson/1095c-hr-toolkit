@@ -396,7 +396,7 @@ export default function AdminClient({
                             <div className="flex items-center gap-3 text-sm">
                               <span className="text-gray-700">
                                 {t("users.changeRoleConfirm", {
-                                  name: user.full_name || user.email,
+                                  name: user.full_name || user.email || "",
                                   role: pendingRoleChange.newRole === "admin" ? t("users.roles.admin") : t("users.roles.hr_user"),
                                 })}
                               </span>
