@@ -1002,7 +1002,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
       { step: 3, instruction: 'Change the Output Type to 1095-C Electronic File (NOT Preview).', warning: 'You are now generating the real filing file. Make sure all spot-checks from previous steps were completed with a clean preview before proceeding.' },
       { step: 4, instruction: 'Set the employee range to All.' },
       { step: 5, instruction: 'Click Generate or Run.' },
-      { step: 6, instruction: 'When WinTeam prompts you to save the file, save it to a secure folder. Name it clearly, for example: "1095C_2025_[CompanyName]_[Date].xml".' },
+      { step: 6, instruction: 'When WinTeam prompts you to save the file, save it to a secure folder. Name it clearly, for example: "1095C_[TaxYear]_[CompanyName]_[Date].xml".' },
       { step: 7, instruction: 'Verify the file was saved successfully and note the file location.' },
       { step: 8, instruction: 'Mark this item complete.' },
     ],

@@ -218,7 +218,7 @@ export default function SettingsClient({ settings, userId }: Props) {
                   )}
                   {method === "fpl" && (
                     <div className="text-xs text-gray-500 mt-0.5">
-                      Premium must be ≤ FPL threshold ($105.29/month for 2025)
+                      Premium must be ≤ FPL threshold (see FPL Monthly Threshold below)
                     </div>
                   )}
                 </div>
@@ -229,7 +229,7 @@ export default function SettingsClient({ settings, userId }: Props) {
 
         {/* Affordability thresholds */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-4">Affordability Thresholds (2025)</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">Affordability Thresholds ({form.tax_year})</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -245,7 +245,7 @@ export default function SettingsClient({ settings, userId }: Props) {
                 />
                 <span className="px-3 py-2 bg-gray-50 text-gray-500 text-sm border-l border-gray-300">decimal</span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">2025: 0.0902 (9.02%)</p>
+              <p className="text-xs text-gray-500 mt-1">e.g. 0.0902 (9.02%) — update each year</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -261,7 +261,7 @@ export default function SettingsClient({ settings, userId }: Props) {
                   className="flex-1 px-3 py-2 text-sm focus:outline-none"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">2025: $105.29/month</p>
+              <p className="text-xs text-gray-500 mt-1">e.g. $105.29/month — update each year</p>
             </div>
           </div>
         </div>

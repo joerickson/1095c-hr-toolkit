@@ -1,15 +1,24 @@
 import AppLayout from "@/components/AppLayout";
 import PrintButton from "./PrintButton";
+import { createClient } from "@/lib/supabase/server";
 
-export default function GuidePage() {
+export default async function GuidePage() {
+  const supabase = await createClient();
+  const { data: settings } = await supabase
+    .from("app_settings")
+    .select("tax_year, company_name")
+    .single();
+  const taxYear = settings?.tax_year ?? new Date().getFullYear();
+  const companyName = settings?.company_name ?? "RBM Services Inc.";
+
   return (
     <AppLayout>
-      <GuideContent />
+      <GuideContent taxYear={taxYear} companyName={companyName} />
     </AppLayout>
   );
 }
 
-function GuideContent() {
+function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: string }) {
   return (
     <div className="max-w-4xl">
       {/* Header */}
@@ -17,7 +26,7 @@ function GuideContent() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">WinTeam 1095-C Setup Guide</h1>
           <p className="text-gray-500 text-sm mt-1">
-            RBM Services Inc. · Tax Year 2025
+            {companyName} · Tax Year {taxYear}
           </p>
         </div>
         <PrintButton />

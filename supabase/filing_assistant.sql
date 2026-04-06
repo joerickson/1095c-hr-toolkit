@@ -12,7 +12,7 @@ alter table app_settings
 -- ============================================================
 create table if not exists filing_phases (
   id uuid default uuid_generate_v4() primary key,
-  tax_year integer not null default 2025,
+  tax_year integer not null default extract(year from current_date)::integer,
   phase_number integer not null check (phase_number in (1, 2, 3, 4)),
   phase_name text not null,
   status text default 'locked'
@@ -30,12 +30,21 @@ alter table filing_phases enable row level security;
 create policy "Authenticated users can manage filing phases"
   on filing_phases for all using (auth.role() = 'authenticated');
 
--- Seed phases for 2025 (upsert so safe to run multiple times)
-insert into filing_phases (tax_year, phase_number, phase_name, status) values
-  (2025, 1, 'Audit 2024 WinTeam Setup', 'in_progress'),
-  (2025, 2, 'Fix Issues and Roll Forward to 2025', 'locked'),
-  (2025, 3, '2025 Data Catch-Up', 'locked'),
-  (2025, 4, 'Generate, Verify, and File', 'locked')
+-- Seed initial phases for the current year (upsert so safe to run multiple times).
+-- The app auto-seeds phases for any selected year via FilingClient.seedPhases(),
+-- so this SQL seed is only needed for the very first run.
+insert into filing_phases (tax_year, phase_number, phase_name, status)
+select
+  extract(year from current_date)::integer,
+  phase_number,
+  case phase_number
+    when 1 then 'Audit ' || (extract(year from current_date)::integer - 1)::text || ' WinTeam Setup'
+    when 2 then 'Fix Issues and Roll Forward to ' || extract(year from current_date)::text
+    when 3 then extract(year from current_date)::text || ' Data Catch-Up'
+    when 4 then 'Generate, Verify, and File'
+  end,
+  case phase_number when 1 then 'in_progress' else 'locked' end
+from (values (1), (2), (3), (4)) as t(phase_number)
 on conflict (tax_year, phase_number) do nothing;
 
 -- ============================================================
@@ -43,7 +52,7 @@ on conflict (tax_year, phase_number) do nothing;
 -- ============================================================
 create table if not exists filing_checklist_progress (
   id uuid default uuid_generate_v4() primary key,
-  tax_year integer not null default 2025,
+  tax_year integer not null default extract(year from current_date)::integer,
   item_key text not null,
   is_complete boolean default false,
   completed_by uuid references profiles(id),
@@ -63,7 +72,7 @@ create policy "Authenticated users can manage filing progress"
 -- ============================================================
 create table if not exists filing_issues (
   id uuid default uuid_generate_v4() primary key,
-  tax_year integer not null default 2025,
+  tax_year integer not null default extract(year from current_date)::integer,
   phase_found integer not null,
   category text not null check (category in (
     'benefit_setup','eligibility_setup','company_setup',
@@ -97,7 +106,7 @@ create policy "Authenticated users can manage filing issues"
 create table if not exists employee_filing_status (
   id uuid default uuid_generate_v4() primary key,
   employee_id uuid references employees(id) on delete cascade,
-  tax_year integer not null default 2025,
+  tax_year integer not null default extract(year from current_date)::integer,
   benefit_package_assigned boolean default false,
   stability_start_date_set boolean default false,
   plan_enrolled text check (plan_enrolled in ('P1','P2','P3','declined',null)),
