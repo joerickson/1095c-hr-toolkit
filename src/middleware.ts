@@ -43,6 +43,12 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Allow unauthenticated access to set-password — users arrive here after
+  // the auth callback redirect and may not yet be recognized as authenticated
+  if (pathname.startsWith("/set-password")) {
+    return supabaseResponse;
+  }
+
   // All other routes require auth
   if (!user) {
     const url = request.nextUrl.clone();
