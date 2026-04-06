@@ -159,7 +159,7 @@ export default function AdminClient({
     setActionLoading(null);
     if (result.success) {
       setUsers((prev) => prev.filter((u) => u.id !== user.id));
-      showToast(t("users.userRemoved", { name: user.full_name || user.email }), "success");
+      showToast(t("users.userRemoved", { name: user.full_name || user.email || "" }), "success");
     } else {
       showToast(result.error || tErrors("generic"), "error");
     }
