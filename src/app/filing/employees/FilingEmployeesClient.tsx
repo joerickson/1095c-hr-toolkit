@@ -313,7 +313,7 @@ export default function FilingEmployeesClient({
                           disabled={markingReady === emp.id}
                           className="text-xs text-green-700 hover:text-green-900 font-medium disabled:opacity-50"
                         >
-                          {markingReady === emp.employee_id ? "..." : "Mark Ready"}
+                          {markingReady === emp.id ? "..." : "Mark Ready"}
                         </button>
                       ) : (
                         <span className="text-xs text-gray-400">
