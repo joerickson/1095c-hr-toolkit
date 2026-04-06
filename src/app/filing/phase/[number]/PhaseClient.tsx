@@ -4,6 +4,7 @@ import { useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import WalkthroughOverlay from "@/components/WalkthroughOverlay";
 import {
   getFilingChecklist,
   getGateItems,
@@ -117,6 +118,7 @@ export default function PhaseClient({
   });
 
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [walkthroughItem, setWalkthroughItem] = useState<FilingChecklistItem | null>(null);
   const [issueDrawerOpen, setIssueDrawerOpen] = useState(false);
   const [issueForm, setIssueForm] = useState<IssueForm>(DEFAULT_ISSUE);
   const [issueItemContext, setIssueItemContext] = useState<string>("");
@@ -403,6 +405,21 @@ export default function PhaseClient({
                             )}
                           </div>
 
+                          {/* Walk me through this button */}
+                          {item.walkthrough && (
+                            <div className="mb-2">
+                              <button
+                                onClick={() => setWalkthroughItem(item)}
+                                className="inline-flex items-center gap-1.5 text-xs text-navy-600 hover:text-navy-800 border border-navy-200 hover:border-navy-400 rounded px-2.5 py-1 bg-white hover:bg-navy-50 transition-colors"
+                              >
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Walk me through this →
+                              </button>
+                            </div>
+                          )}
+
                           {/* Detail toggle */}
                           <button
                             onClick={() => setExpanded((prev) => {
@@ -480,6 +497,19 @@ export default function PhaseClient({
           </button>
         </div>
       </div>
+
+      {/* Walkthrough Overlay */}
+      {walkthroughItem && walkthroughItem.walkthrough && (
+        <WalkthroughOverlay
+          item={walkthroughItem}
+          onClose={() => setWalkthroughItem(null)}
+          onMarkComplete={() => {
+            toggleItem(walkthroughItem.key);
+          }}
+          isComplete={completed.has(walkthroughItem.key)}
+          isPending={isPending}
+        />
+      )}
 
       {/* Issue Logger Drawer */}
       {issueDrawerOpen && (
