@@ -134,3 +134,103 @@ alter table employee_filing_status enable row level security;
 
 create policy "Authenticated users can manage employee filing status"
   on employee_filing_status for all using (auth.role() = 'authenticated');
+
+-- ============================================================
+-- Storage: walkthrough-screenshots bucket
+-- ============================================================
+
+-- Create storage bucket for walkthrough screenshots
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'walkthrough-screenshots',
+  'walkthrough-screenshots',
+  false,
+  5242880,  -- 5MB limit per file
+  array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+)
+on conflict (id) do nothing;
+
+-- RLS policies for the bucket
+do $$ begin
+  create policy "Authenticated users can upload screenshots"
+    on storage.objects for insert
+    with check (
+      bucket_id = 'walkthrough-screenshots' and
+      auth.role() = 'authenticated'
+    );
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create policy "Authenticated users can view screenshots"
+    on storage.objects for select
+    using (
+      bucket_id = 'walkthrough-screenshots' and
+      auth.role() = 'authenticated'
+    );
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create policy "Admins can delete screenshots"
+    on storage.objects for delete
+    using (
+      bucket_id = 'walkthrough-screenshots' and
+      exists (
+        select 1 from profiles
+        where id = auth.uid() and role = 'admin'
+      )
+    );
+exception when duplicate_object then null;
+end $$;
+
+-- ============================================================
+-- Table: checklist_screenshots
+-- ============================================================
+
+create table if not exists checklist_screenshots (
+  id uuid default uuid_generate_v4() primary key,
+  tax_year integer not null,
+  item_key text not null,
+  storage_path text not null,
+  -- path in the walkthrough-screenshots bucket
+  -- format: {tax_year}/{item_key}/{uuid}.{ext}
+  file_name text not null,
+  file_size integer,
+  mime_type text,
+  caption text,
+  -- optional caption the uploader adds e.g. "This is what it
+  -- looks like when correctly configured"
+  uploaded_by uuid references profiles(id),
+  uploaded_at timestamptz default now(),
+  display_order integer default 0
+  -- allows multiple screenshots per item, ordered
+);
+
+alter table checklist_screenshots enable row level security;
+
+do $$ begin
+  create policy "Authenticated users can view screenshots metadata"
+    on checklist_screenshots for select
+    using (auth.role() = 'authenticated');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create policy "Authenticated users can insert screenshot metadata"
+    on checklist_screenshots for insert
+    with check (auth.role() = 'authenticated');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create policy "Admins can delete screenshot metadata"
+    on checklist_screenshots for delete
+    using (
+      exists (
+        select 1 from profiles
+        where id = auth.uid() and role = 'admin'
+      )
+    );
+exception when duplicate_object then null;
+end $$;

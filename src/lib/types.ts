@@ -348,6 +348,22 @@ export interface FilingIssue {
   createdAt: string;
 }
 
+export interface ChecklistScreenshot {
+  id: string;
+  taxYear: number;
+  itemKey: string;
+  storagePath: string;
+  fileName: string;
+  fileSize: number | null;
+  mimeType: string | null;
+  caption: string | null;
+  uploadedBy: string | null;
+  uploadedAt: string;
+  displayOrder: number;
+  // Client-side only — signed URL fetched separately
+  signedUrl?: string;
+}
+
 export interface EmployeeFilingStatus {
   id: string;
   employeeId: string;
