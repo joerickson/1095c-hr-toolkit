@@ -95,6 +95,59 @@ export default function WalkthroughOverlay({
 
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+          {/* Access needed banner */}
+          {(() => {
+            const access = item.access_required;
+            const role = access.winteam_role;
+            if (role === 'winteam_admin') {
+              return (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base flex-shrink-0">🔒</span>
+                    <div>
+                      <p className="text-sm font-semibold text-red-800">This step requires WinTeam Administrator access</p>
+                      <p className="text-xs text-red-700 mt-1 leading-relaxed">
+                        Make sure your WinTeam Admin is available before starting. They will need to be at the computer or logged in remotely.
+                        {access.delegation_notes && <span> {access.delegation_notes}</span>}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            if (role === 'hr_manager') {
+              return (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base flex-shrink-0">👤</span>
+                    <div>
+                      <p className="text-sm font-semibold text-purple-800">This step requires HR Manager access in WinTeam</p>
+                      {access.delegation_notes && (
+                        <p className="text-xs text-purple-700 mt-1 leading-relaxed">{access.delegation_notes}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            if (role === 'standard_hr') {
+              return (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-2">
+                    <span className="text-base flex-shrink-0">👤</span>
+                    <div>
+                      <p className="text-sm font-semibold text-blue-800">Any HR staff member can do this step</p>
+                      {access.delegation_notes && (
+                        <p className="text-xs text-blue-700 mt-1 leading-relaxed">{access.delegation_notes}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
+
           {/* Overview */}
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
             <p className="text-sm text-blue-900 leading-relaxed">{walkthrough.overview}</p>

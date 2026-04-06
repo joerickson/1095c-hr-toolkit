@@ -9,6 +9,7 @@ import {
   getFilingChecklist,
   getGateItems,
   PHASE_METADATA,
+  ROLE_METADATA,
   type FilingChecklistItem,
 } from "@/lib/filing-checklist-items";
 
@@ -27,6 +28,7 @@ interface ProgressRow {
   is_complete: boolean;
   finding?: string | null;
   action_taken?: string | null;
+  assigned_to?: string | null;
 }
 
 interface Props {
@@ -117,6 +119,14 @@ export default function PhaseClient({
     return map;
   });
 
+  const [assignments, setAssignments] = useState<Record<string, string>>(() => {
+    const map: Record<string, string> = {};
+    initialProgress.forEach((p) => {
+      if (p.assigned_to) map[p.item_key] = p.assigned_to;
+    });
+    return map;
+  });
+
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [walkthroughItem, setWalkthroughItem] = useState<FilingChecklistItem | null>(null);
   const [issueDrawerOpen, setIssueDrawerOpen] = useState(false);
@@ -174,6 +184,24 @@ export default function PhaseClient({
         .from("filing_checklist_progress")
         .upsert(
           { tax_year: taxYear, item_key: key, finding, is_complete: completed.has(key) },
+          { onConflict: "tax_year,item_key" }
+        );
+    },
+    [supabase, taxYear, completed]
+  );
+
+  const saveAssignment = useCallback(
+    async (key: string, assignedTo: string) => {
+      await supabase
+        .from("filing_checklist_progress")
+        .upsert(
+          {
+            tax_year: taxYear,
+            item_key: key,
+            assigned_to: assignedTo || null,
+            assigned_at: assignedTo ? new Date().toISOString() : null,
+            is_complete: completed.has(key),
+          },
           { onConflict: "tax_year,item_key" }
         );
     },
@@ -403,6 +431,25 @@ export default function PhaseClient({
                                 {item.winteamPath}
                               </span>
                             )}
+                            {/* Access badge */}
+                            {(() => {
+                              const access = item.access_required;
+                              const roleMeta = ROLE_METADATA[access.winteam_role];
+                              const icon = access.winteam_role === 'winteam_admin' ? '🔒' : access.winteam_role === 'team_software_support' ? '📞' : '👤';
+                              return (
+                                <span
+                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${roleMeta.badgeClass}`}
+                                  title={`${roleMeta.label}${access.delegation_notes ? ` — ${access.delegation_notes}` : ''}`}
+                                >
+                                  {icon} {roleMeta.label}
+                                </span>
+                              );
+                            })()}
+                            {item.access_required.can_delegate && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                Delegatable
+                              </span>
+                            )}
                           </div>
 
                           {/* Walk me through this button */}
@@ -458,6 +505,24 @@ export default function PhaseClient({
                               Log Issue
                             </button>
                           </div>
+
+                          {/* Assign to */}
+                          <div className="flex gap-2 items-center mt-1.5">
+                            <label className="text-xs text-gray-500 whitespace-nowrap">Assign to:</label>
+                            <input
+                              type="text"
+                              placeholder="Team member name"
+                              value={assignments[item.key] ?? ""}
+                              onChange={(e) =>
+                                setAssignments((prev) => ({ ...prev, [item.key]: e.target.value }))
+                              }
+                              onBlur={(e) => saveAssignment(item.key, e.target.value)}
+                              className="flex-1 text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-navy-500 bg-white"
+                            />
+                          </div>
+                          {assignments[item.key] && (
+                            <p className="text-xs text-gray-400 mt-0.5">Assigned to: {assignments[item.key]}</p>
+                          )}
                         </div>
                       </div>
                     </div>
