@@ -1,3 +1,21 @@
+import { WALKTHROUGHS } from './walkthroughs-data'
+
+export type WalkthroughStep = {
+  step: number
+  instruction: string
+  detail?: string
+  warning?: string
+  screenshot_hint?: string
+}
+
+export type Walkthrough = {
+  overview: string
+  why_it_matters: string
+  steps: WalkthroughStep[]
+  if_something_looks_wrong: string[]
+  estimated_minutes: number
+}
+
 export type FilingChecklistItem = {
   key: string
   phase: 1 | 2 | 3 | 4
@@ -8,12 +26,13 @@ export type FilingChecklistItem = {
   severity: 'critical' | 'required' | 'recommended'
   isGate: boolean
   order: number
+  walkthrough?: Walkthrough
 }
 
 export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
   const priorYear = taxYear - 1
 
-  return [
+  const items: FilingChecklistItem[] = [
     // ============================================================
     // PHASE 1 — Audit [priorYear] WinTeam Setup (22 items, all gated)
     // ============================================================
@@ -685,6 +704,11 @@ export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
       order: 13,
     },
   ]
+
+  return items.map((item) => ({
+    ...item,
+    walkthrough: WALKTHROUGHS[item.key],
+  }))
 }
 
 // Helper to get all items for a specific phase
