@@ -147,7 +147,7 @@ export async function getAccessLog(): Promise<AccessLogEntry[]> {
     for (const s of wizardSessions) {
       entries.push({
         user_name:
-          (s.profiles as { full_name: string | null } | null)?.full_name ??
+          (s.profiles as { full_name: string | null }[] | null)?.[0]?.full_name ??
           null,
         action: "Ran wizard",
         timestamp: s.created_at,
@@ -168,7 +168,7 @@ export async function getAccessLog(): Promise<AccessLogEntry[]> {
     for (const item of checklistItems) {
       entries.push({
         user_name:
-          (item.profiles as { full_name: string | null } | null)?.full_name ??
+          (item.profiles as { full_name: string | null }[] | null)?.[0]?.full_name ??
           null,
         action: "Completed checklist item",
         timestamp: item.completed_at as string,
