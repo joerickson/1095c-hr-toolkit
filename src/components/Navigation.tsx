@@ -3,9 +3,24 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Deadline badge helpers
+function getDeadlineDays(): number {
+  const deadline = new Date(2026, 3, 30); // April 30, 2026
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function deadlineBadgeClass(days: number): string {
+  if (days <= 7) return "bg-red-600 text-white";
+  if (days <= 14) return "bg-amber-500 text-white";
+  return "bg-blue-600 text-white";
+}
 
 const FILING_NAV_ITEMS = [
+  { href: "/filing", label: "2025 Filing", showDeadline: true },
   { href: "/checklist", label: "Audit Checklist" },
   { href: "/wizard", label: "Code Wizard" },
   { href: "/tracker", label: "Employee Tracker" },
@@ -26,6 +41,13 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [deadlineDays, setDeadlineDays] = useState<number | null>(null);
+
+  useEffect(() => {
+    const days = getDeadlineDays();
+    // Only show badge if deadline hasn't passed
+    if (days >= 0) setDeadlineDays(days);
+  }, []);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -37,6 +59,9 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
     if (href === "/payroll") {
       // Active for /payroll and /payroll/employees/... but NOT /payroll/offers
       return pathname === "/payroll" || pathname.startsWith("/payroll/employees");
+    }
+    if (href === "/filing") {
+      return pathname === "/filing" || pathname.startsWith("/filing/");
     }
     return pathname.startsWith(href);
   }
@@ -75,8 +100,13 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
             {FILING_NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} className={linkClass(item.href)}>
+              <Link key={item.href} href={item.href} className={`${linkClass(item.href)} flex items-center gap-1.5`}>
                 {item.label}
+                {'showDeadline' in item && item.showDeadline && deadlineDays !== null && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${deadlineBadgeClass(deadlineDays)}`}>
+                    {deadlineDays}d
+                  </span>
+                )}
               </Link>
             ))}
             <span className="text-navy-500 mx-1 select-none">|</span>
@@ -134,10 +164,15 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={mobileLinkClass(item.href)}
+                className={`${mobileLinkClass(item.href)} flex items-center justify-between`}
                 onClick={() => setMobileOpen(false)}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {'showDeadline' in item && item.showDeadline && deadlineDays !== null && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${deadlineBadgeClass(deadlineDays)}`}>
+                    {deadlineDays}d
+                  </span>
+                )}
               </Link>
             ))}
             <div className="px-3 pt-2 pb-1 text-navy-400 text-xs font-semibold uppercase tracking-wider border-t border-navy-600 mt-1">

@@ -305,3 +305,61 @@ export interface EligibilityDashboardRow {
   in_admin_period: boolean | null;
   days_until_coverage_must_start: number | null;
 }
+
+// ============================================================
+// Filing Assistant Module Types
+// ============================================================
+
+export interface FilingPhase {
+  id: string;
+  taxYear: number;
+  phaseNumber: 1 | 2 | 3 | 4;
+  phaseName: string;
+  status: "locked" | "in_progress" | "complete" | "blocked";
+  startedAt: string | null;
+  completedAt: string | null;
+}
+
+export interface FilingChecklistProgress {
+  id: string;
+  taxYear: number;
+  itemKey: string;
+  isComplete: boolean;
+  completedBy: string | null;
+  completedAt: string | null;
+  finding: string | null;
+  actionTaken: string | null;
+}
+
+export interface FilingIssue {
+  id: string;
+  taxYear: number;
+  phaseFound: number;
+  category: string;
+  severity: "blocking" | "warning" | "informational";
+  title: string;
+  description: string | null;
+  winteamFixPath: string | null;
+  fixInstructions: string | null;
+  affectedCount: number;
+  status: "open" | "in_progress" | "resolved" | "wont_fix";
+  resolvedAt: string | null;
+  resolutionNotes: string | null;
+  createdAt: string;
+}
+
+export interface EmployeeFilingStatus {
+  id: string;
+  employeeId: string;
+  taxYear: number;
+  benefitPackageAssigned: boolean;
+  stabilityStartDateSet: boolean;
+  planEnrolled: "P1" | "P2" | "P3" | "declined" | null;
+  electionEnteredWinteam: boolean;
+  dependentsReviewed: boolean;
+  spouseSsnOnFile: boolean | null;
+  allDependentInfoComplete: boolean;
+  isReady: boolean;
+  blockingIssues: string[];
+  lastReviewedAt: string | null;
+}
