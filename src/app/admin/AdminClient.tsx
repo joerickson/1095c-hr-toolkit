@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useToast } from "@/components/Toast";
 import {
   changeUserRole,
@@ -75,6 +76,9 @@ export default function AdminClient({
   serviceKeyConfigured,
 }: Props) {
   const { showToast } = useToast();
+  const t = useTranslations("admin");
+  const tCommon = useTranslations("common");
+  const tErrors = useTranslations("errors");
   const [activeTab, setActiveTab] = useState<Tab>("users");
   const [users, setUsers] = useState<UserWithAuth[]>(initialUsers);
 
@@ -127,10 +131,10 @@ export default function AdminClient({
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
       );
-      const label = newRole === "admin" ? "Admin" : "HR User";
+      const label = newRole === "admin" ? t("users.roles.admin") : t("users.roles.hr_user");
       showToast(`${user?.full_name || user?.email} is now ${label}`, "success");
     } else {
-      showToast(result.error || "Failed to change role", "error");
+      showToast(result.error || tErrors("generic"), "error");
     }
   }
 
@@ -140,9 +144,9 @@ export default function AdminClient({
     const result = await resetUserPassword(user.email);
     setActionLoading(null);
     if (result.success) {
-      showToast(`Password reset email sent to ${user.email}`, "success");
+      showToast(t("users.passwordResetSent", { email: user.email }), "success");
     } else {
-      showToast(result.error || "Failed to send reset email", "error");
+      showToast(result.error || tErrors("generic"), "error");
     }
   }
 
@@ -155,9 +159,9 @@ export default function AdminClient({
     setActionLoading(null);
     if (result.success) {
       setUsers((prev) => prev.filter((u) => u.id !== user.id));
-      showToast(`${user.full_name || user.email} has been removed`, "success");
+      showToast(t("users.userRemoved", { name: user.full_name || user.email }), "success");
     } else {
-      showToast(result.error || "Failed to remove user", "error");
+      showToast(result.error || tErrors("generic"), "error");
     }
   }
 
@@ -174,7 +178,7 @@ export default function AdminClient({
       const updated = await getUsers();
       if (updated.success && updated.data) setUsers(updated.data);
     } else {
-      setInviteError(result.error || "Failed to send invitation");
+      setInviteError(result.error || t("invite.inviteFailed"));
     }
   }
 
@@ -195,9 +199,9 @@ export default function AdminClient({
     <div>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Manage users, view activity, and configure access
+          {t("subtitle")}
         </p>
       </div>
 
@@ -207,7 +211,7 @@ export default function AdminClient({
           <div className="flex items-start gap-3">
             <span className="text-amber-500 text-lg flex-shrink-0">⚠️</span>
             <div>
-              <p className="font-semibold text-amber-800 text-sm">Setup Required</p>
+              <p className="font-semibold text-amber-800 text-sm">{tErrors("setupRequired")}</p>
               <p className="text-amber-700 text-sm mt-1">
                 The <code className="bg-amber-100 px-1 rounded">SUPABASE_SERVICE_ROLE_KEY</code> environment variable is not configured.
               </p>
@@ -221,7 +225,7 @@ export default function AdminClient({
                 <li>Also add to Vercel environment variables</li>
               </ol>
               <p className="text-amber-700 text-sm mt-2">
-                User management will not work until this is configured.
+                {tErrors("missingServiceKey")}
               </p>
             </div>
           </div>
@@ -232,13 +236,13 @@ export default function AdminClient({
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex">
           <button onClick={() => handleTabChange("users")} className={tabClass("users")}>
-            Users
+            {t("tabs.users")}
           </button>
           <button onClick={() => handleTabChange("invite")} className={tabClass("invite")}>
-            Invite
+            {t("tabs.invite")}
           </button>
           <button onClick={() => handleTabChange("activity")} className={tabClass("activity")}>
-            Activity Log
+            {t("tabs.activity")}
           </button>
         </nav>
       </div>
@@ -249,10 +253,10 @@ export default function AdminClient({
           {/* Stat cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             {[
-              { label: "Total Users", value: totalUsers },
-              { label: "Admins", value: adminCount },
-              { label: "HR Users", value: hrCount },
-              { label: "Invited / Pending", value: invitedCount },
+              { label: t("stats.totalUsers"), value: totalUsers },
+              { label: t("stats.admins"), value: adminCount },
+              { label: t("stats.hrUsers"), value: hrCount },
+              { label: t("stats.pending"), value: invitedCount },
             ].map((stat) => (
               <div key={stat.label} className="card text-center py-4">
                 <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
@@ -267,25 +271,25 @@ export default function AdminClient({
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
+                    {t("users.columns.user")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
+                    {tCommon("email")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
+                    {t("users.columns.role")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Joined
+                    {t("users.columns.joined")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Last Sign In
+                    {t("users.columns.lastSignIn")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    {t("users.columns.status")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    {tCommon("actions")}
                   </th>
                 </tr>
               </thead>
@@ -320,7 +324,7 @@ export default function AdminClient({
                                 : "bg-blue-100 text-blue-700"
                             }`}
                           >
-                            {user.role === "admin" ? "Admin" : "HR User"}
+                            {user.role === "admin" ? t("users.roles.admin") : t("users.roles.hr_user")}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
@@ -337,16 +341,16 @@ export default function AdminClient({
                                 : "bg-yellow-100 text-yellow-700"
                             }`}
                           >
-                            {isActive ? "Active" : "Invited"}
+                            {isActive ? t("users.status.active") : t("users.status.invited")}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           {isSelf ? (
                             <span
                               className="text-xs text-gray-400 italic"
-                              title="Cannot modify your own account"
+                              title={t("users.cannotModifySelf")}
                             >
-                              Cannot modify own account
+                              {t("users.cannotModifySelf")}
                             </span>
                           ) : (
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -365,21 +369,21 @@ export default function AdminClient({
                                 }
                                 className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
                               >
-                                Change Role
+                                {t("users.changeRole")}
                               </button>
                               <button
                                 disabled={isLoading || !user.email || !serviceKeyConfigured}
                                 onClick={() => handleResetPassword(user)}
                                 className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
                               >
-                                Reset Password
+                                {t("users.resetPassword")}
                               </button>
                               <button
                                 disabled={isLoading || !serviceKeyConfigured}
                                 onClick={() => setRemoveConfirm(user)}
                                 className="text-xs px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
                               >
-                                Remove
+                                {t("users.removeUser")}
                               </button>
                             </div>
                           )}
@@ -391,12 +395,10 @@ export default function AdminClient({
                           <td colSpan={7} className="px-4 py-2.5">
                             <div className="flex items-center gap-3 text-sm">
                               <span className="text-gray-700">
-                                Change{" "}
-                                <strong>{user.full_name || user.email}</strong> to{" "}
-                                <strong>
-                                  {pendingRoleChange.newRole === "admin" ? "Admin" : "HR User"}
-                                </strong>
-                                ?
+                                {t("users.changeRoleConfirm", {
+                                  name: user.full_name || user.email,
+                                  role: pendingRoleChange.newRole === "admin" ? t("users.roles.admin") : t("users.roles.hr_user"),
+                                })}
                               </span>
                               <button
                                 onClick={() =>
@@ -407,13 +409,13 @@ export default function AdminClient({
                                 }
                                 className="px-3 py-1 bg-navy-700 text-white text-xs rounded hover:bg-navy-800 transition-colors"
                               >
-                                Confirm
+                                {tCommon("confirm")}
                               </button>
                               <button
                                 onClick={() => setPendingRoleChange(null)}
                                 className="px-3 py-1 bg-white border border-gray-300 text-gray-700 text-xs rounded hover:bg-gray-50 transition-colors"
                               >
-                                Cancel
+                                {tCommon("cancel")}
                               </button>
                             </div>
                           </td>
@@ -425,7 +427,7 @@ export default function AdminClient({
                 {users.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-8 text-center text-gray-400 text-sm">
-                      No users found.
+                      {tCommon("noData")}
                     </td>
                   </tr>
                 )}
@@ -444,10 +446,10 @@ export default function AdminClient({
                 <span className="text-green-500 text-xl">✓</span>
                 <div>
                   <p className="font-semibold text-gray-900">
-                    Invitation sent to {inviteSuccess}
+                    {t("invite.successTitle", { email: inviteSuccess })}
                   </p>
                   <p className="text-sm text-gray-500 mt-1">
-                    They will receive an email with a link to set their password and access the app.
+                    {t("invite.successDescription")}
                   </p>
                 </div>
               </div>
@@ -455,16 +457,16 @@ export default function AdminClient({
                 onClick={() => setInviteSuccess(null)}
                 className="btn-primary px-5"
               >
-                Invite Another Person
+                {t("invite.inviteAnother")}
               </button>
             </div>
           ) : (
             <div className="card">
-              <h2 className="font-semibold text-gray-900 mb-4">Invite a Team Member</h2>
+              <h2 className="font-semibold text-gray-900 mb-4">{t("invite.title")}</h2>
               <form onSubmit={handleInvite} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name <span className="text-red-500">*</span>
+                    {t("invite.fields.fullName")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -479,7 +481,7 @@ export default function AdminClient({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address <span className="text-red-500">*</span>
+                    {t("invite.fields.email")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
@@ -493,7 +495,7 @@ export default function AdminClient({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("invite.fields.role")}</label>
                   <div className="space-y-2">
                     <label
                       className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -513,9 +515,9 @@ export default function AdminClient({
                         className="mt-0.5"
                       />
                       <div>
-                        <div className="font-medium text-sm text-gray-900">HR User</div>
+                        <div className="font-medium text-sm text-gray-900">{t("users.roles.hr_user")}</div>
                         <div className="text-xs text-gray-500">
-                          Can use all filing features and view all data
+                          {t("invite.roleOptions.hr_user")}
                         </div>
                       </div>
                     </label>
@@ -537,9 +539,9 @@ export default function AdminClient({
                         className="mt-0.5"
                       />
                       <div>
-                        <div className="font-medium text-sm text-gray-900">Admin</div>
+                        <div className="font-medium text-sm text-gray-900">{t("users.roles.admin")}</div>
                         <div className="text-xs text-gray-500">
-                          Can also manage users, settings, and delete data
+                          {t("invite.roleOptions.admin")}
                         </div>
                       </div>
                     </label>
@@ -558,7 +560,7 @@ export default function AdminClient({
                     disabled={inviting || !serviceKeyConfigured}
                     className="btn-primary px-5"
                   >
-                    {inviting ? "Sending…" : "Send Invitation"}
+                    {inviting ? t("invite.sending") : t("invite.sendButton")}
                   </button>
                 </div>
               </form>
@@ -572,10 +574,9 @@ export default function AdminClient({
         <div>
           <div className="flex items-start justify-between mb-2">
             <div>
-              <h2 className="font-semibold text-gray-900">Activity Log</h2>
+              <h2 className="font-semibold text-gray-900">{t("activity.title")}</h2>
               <p className="text-sm text-gray-400 mt-0.5">
-                Best-effort log built from existing data — not a comprehensive audit trail.
-                Showing most recent 100 records.
+                {t("activity.subtitle")}
               </p>
             </div>
             <button
@@ -592,17 +593,17 @@ export default function AdminClient({
               disabled={loadingActivity}
               className="text-sm text-navy-700 hover:underline disabled:opacity-50 flex-shrink-0 ml-4"
             >
-              {loadingActivity ? "Loading…" : "Refresh"}
+              {loadingActivity ? tCommon("loading") : tCommon("update")}
             </button>
           </div>
 
           {loadingActivity ? (
-            <div className="py-12 text-center text-gray-400 text-sm">Loading activity log…</div>
+            <div className="py-12 text-center text-gray-400 text-sm">{tCommon("loading")}</div>
           ) : activityLog === null ? (
-            <div className="py-12 text-center text-gray-400 text-sm">Loading activity log…</div>
+            <div className="py-12 text-center text-gray-400 text-sm">{tCommon("loading")}</div>
           ) : activityLog.length === 0 ? (
             <div className="rounded-lg border border-gray-200 py-12 text-center text-gray-400 text-sm">
-              No activity yet.
+              {t("activity.empty")}
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
@@ -610,13 +611,13 @@ export default function AdminClient({
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
+                      {t("activity.columns.user")}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Action
+                      {t("activity.columns.action")}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date & Time
+                      {t("activity.columns.dateTime")}
                     </th>
                   </tr>
                 </thead>
@@ -649,29 +650,23 @@ export default function AdminClient({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
             <h3 className="text-base font-semibold text-gray-900 mb-2">
-              Remove {removeConfirm.full_name || removeConfirm.email}?
+              {t("users.removeConfirmTitle", { name: removeConfirm.full_name || removeConfirm.email })}
             </h3>
-            <p className="text-sm text-gray-600 mb-1">
-              They will immediately lose access to the app.
-            </p>
-            <p className="text-sm text-gray-600 mb-1">
-              Their checklist progress and filing data will be preserved for audit purposes.
-            </p>
-            <p className="text-sm text-gray-600 mb-5 font-medium">
-              This cannot be undone.
+            <p className="text-sm text-gray-600 mb-5">
+              {t("users.removeConfirmDescription")}
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setRemoveConfirm(null)}
                 className="btn-secondary px-4 py-2 text-sm"
               >
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button
                 onClick={handleRemoveUser}
                 className="px-4 py-2 text-sm rounded-md font-medium text-white bg-red-600 hover:bg-red-700 transition-colors"
               >
-                Remove User
+                {t("users.removeButton")}
               </button>
             </div>
           </div>

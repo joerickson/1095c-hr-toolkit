@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import { useTranslations } from "next-intl";
 import {
   getPayPeriodDates,
   formatPayPeriod,
@@ -57,6 +58,9 @@ type Tab = "dashboard" | "hours" | "board";
 export default function PayrollClient({ initialDashboard, variableEmployees, userId }: Props) {
   const supabase = createClient();
   const { showToast } = useToast();
+  const t = useTranslations("payroll");
+  const tCommon = useTranslations("common");
+  const tOffers = useTranslations("offers");
 
   const [dashboard, setDashboard] = useState<EligibilityDashboardRow[]>(initialDashboard);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -271,7 +275,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pay Period Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
             {ppLabel} · Period {ppNumber} of 24
           </p>
@@ -284,8 +288,8 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
           {(
             [
               { id: "dashboard", label: "Overview & Checklist" },
-              { id: "hours", label: "Hours Entry" },
-              { id: "board", label: "Status Board" },
+              { id: "hours", label: t("hoursEntry") },
+              { id: "board", label: t("measurementBoard") },
             ] as { id: Tab; label: string }[]
           ).map((tab) => (
             <button
@@ -311,25 +315,25 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
             <h2 className="text-base font-semibold text-gray-700 mb-3">This Pay Period at a Glance</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard
-                label="Crossed 30 hr/wk"
+                label={t("crossedThreshold")}
                 value={crossedThreshold}
                 color={crossedThreshold > 0 ? "red" : "green"}
                 href="/payroll?tab=board"
               />
               <StatCard
-                label="In Admin Period"
+                label={t("inAdminPeriod")}
                 value={inAdmin}
                 color={inAdmin > 0 ? "amber" : "green"}
                 href="/payroll/offers"
               />
               <StatCard
-                label="Offers Not Sent"
+                label={t("offerNotSent")}
                 value={pendingOffers}
                 color={pendingOffers > 0 ? "red" : "green"}
                 href="/payroll/offers"
               />
               <StatCard
-                label="Expired Offers"
+                label={t("offerExpired")}
                 value={expiredOffers}
                 color={expiredOffers > 0 ? "red" : "green"}
                 href="/payroll/offers"
@@ -346,7 +350,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-semibold text-gray-700">
-                Pay Period Checklist
+                {t("checklist.title")}
               </h2>
               <span className="text-sm text-gray-500">
                 {checklistComplete}/{checklistTotal} complete
@@ -354,7 +358,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
             </div>
 
             {checklistLoading ? (
-              <p className="text-sm text-gray-400">Loading checklist…</p>
+              <p className="text-sm text-gray-400">{tCommon("loading")}</p>
             ) : (
               <div className="card divide-y divide-gray-100">
                 {PAY_PERIOD_CHECKLIST.map((item) => {
@@ -388,14 +392,14 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-gray-700">
-              Hours Entry — {ppLabel}
+              {t("hoursEntry")} — {ppLabel}
             </h2>
             <div className="flex gap-2">
               <button
                 onClick={() => setCsvMode(!csvMode)}
                 className="btn-secondary text-sm"
               >
-                {csvMode ? "Manual Entry" : "CSV Import"}
+                {csvMode ? "Manual Entry" : t("importCSV")}
               </button>
             </div>
           </div>
@@ -433,9 +437,9 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="bg-gray-50 border-b border-gray-200">
-                          <th className="text-left px-4 py-2 font-medium text-gray-600">Employee</th>
+                          <th className="text-left px-4 py-2 font-medium text-gray-600">{t("columns.employee")}</th>
                           <th className="text-left px-4 py-2 font-medium text-gray-600">Type</th>
-                          <th className="text-center px-4 py-2 font-medium text-gray-600">Avg hrs/wk</th>
+                          <th className="text-center px-4 py-2 font-medium text-gray-600">{t("columns.avgHrsWeek")}</th>
                           <th className="text-center px-4 py-2 font-medium text-gray-600">
                             Hours — {ppLabel}
                           </th>
@@ -546,7 +550,7 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
                         <table className="w-full text-sm">
                           <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
-                              <th className="text-left px-3 py-2 font-medium text-gray-600">Name</th>
+                              <th className="text-left px-3 py-2 font-medium text-gray-600">{tCommon("name")}</th>
                               <th className="text-left px-3 py-2 font-medium text-gray-600">Pay Period Start</th>
                               <th className="text-right px-3 py-2 font-medium text-gray-600">Regular</th>
                               <th className="text-right px-3 py-2 font-medium text-gray-600">PTO</th>
@@ -589,7 +593,7 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
                           disabled={csvImporting}
                           className="btn-primary"
                         >
-                          {csvImporting ? "Importing…" : "Confirm Import"}
+                          {csvImporting ? "Importing…" : tCommon("confirm")}
                         </button>
                       </div>
                     </>
@@ -606,7 +610,7 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-gray-700" id="eligibility-board">
-              Measurement Period Status Board
+              {t("measurementBoard")}
             </h2>
             <div className="flex items-center gap-3 text-xs">
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500 inline-block" /> &lt;25 hrs/wk</span>
@@ -627,14 +631,14 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Employee</th>
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Period Type</th>
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Measurement Dates</th>
-                    <th className="text-right px-4 py-2 font-medium text-gray-600">Hours YTD</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Avg hrs/wk</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Days Left</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Status</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Action</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("columns.employee")}</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("columns.periodType")}</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("columns.periodDates")}</th>
+                    <th className="text-right px-4 py-2 font-medium text-gray-600">{t("columns.hoursToDate")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{t("columns.avgHrsWeek")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{t("columns.daysRemaining")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{t("columns.status")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{tCommon("actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -691,14 +695,14 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
                               href="/payroll/offers"
                               className="text-xs text-white bg-navy-600 hover:bg-navy-700 px-2 py-1 rounded"
                             >
-                              Generate Offer
+                              {tOffers("generateOffer")}
                             </Link>
                           ) : (
                             <Link
                               href={`/payroll/employees/${row.employee_id}`}
                               className="text-xs text-navy-600 hover:underline"
                             >
-                              View Details
+                              {tCommon("view")} Details
                             </Link>
                           )}
                         </td>

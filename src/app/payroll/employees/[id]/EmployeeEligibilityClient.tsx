@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type {
   Employee,
   MeasurementPeriod,
@@ -214,6 +215,9 @@ export default function EmployeeEligibilityClient({
   offerLetters,
 }: Props) {
   const [activeSection, setActiveSection] = useState<"overview" | "history">("overview");
+  const t = useTranslations("payroll");
+  const tCommon = useTranslations("common");
+  const tOffers = useTranslations("offers");
   const today = new Date();
 
   const currentPeriod = measurementPeriods[0] ?? null;
@@ -231,7 +235,7 @@ export default function EmployeeEligibilityClient({
     <div>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-        <Link href="/payroll" className="hover:text-navy-600 hover:underline">Pay Period</Link>
+        <Link href="/payroll" className="hover:text-navy-600 hover:underline">{t("title")}</Link>
         <span>›</span>
         <span className="text-gray-800">{fullName}</span>
       </div>
@@ -245,7 +249,7 @@ export default function EmployeeEligibilityClient({
               <span>Hired: {formatDate(employee.hire_date)}</span>
               <span>Type: <span className="capitalize">{employee.employee_type.replace("_", " ")}</span></span>
               {employee.hourly_rate && <span>Rate: ${employee.hourly_rate.toFixed(2)}/hr</span>}
-              <span>Status: <span className="capitalize">{employee.employment_status.replace("_", " ")}</span></span>
+              <span>{tCommon("status")}: <span className="capitalize">{employee.employment_status.replace("_", " ")}</span></span>
             </div>
           </div>
           <div className="text-right">
@@ -273,7 +277,7 @@ export default function EmployeeEligibilityClient({
               <p className={`text-2xl font-bold inline-block px-2 rounded ${HOURS_COLORS[hoursColorKey]}`}>
                 {currentPeriod.avg_hours_per_week?.toFixed(1) ?? "—"}
               </p>
-              <p className="text-xs text-gray-500">Avg hrs/wk</p>
+              <p className="text-xs text-gray-500">{t("columns.avgHrsWeek")}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-gray-800">
@@ -287,7 +291,7 @@ export default function EmployeeEligibilityClient({
               <p className="text-sm font-semibold text-gray-700 capitalize">
                 {currentPeriod.period_type ?? "—"}
               </p>
-              <p className="text-xs text-gray-500">Period Type</p>
+              <p className="text-xs text-gray-500">{t("columns.periodType")}</p>
             </div>
           </div>
         )}
@@ -368,12 +372,12 @@ export default function EmployeeEligibilityClient({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="text-left px-3 py-2 font-medium text-gray-600">Type</th>
-                      <th className="text-left px-3 py-2 font-medium text-gray-600">Measurement Dates</th>
-                      <th className="text-right px-3 py-2 font-medium text-gray-600">Total Hours</th>
-                      <th className="text-right px-3 py-2 font-medium text-gray-600">Avg hrs/wk</th>
+                      <th className="text-left px-3 py-2 font-medium text-gray-600">{t("columns.periodType")}</th>
+                      <th className="text-left px-3 py-2 font-medium text-gray-600">{t("columns.periodDates")}</th>
+                      <th className="text-right px-3 py-2 font-medium text-gray-600">{t("columns.hoursToDate")}</th>
+                      <th className="text-right px-3 py-2 font-medium text-gray-600">{t("columns.avgHrsWeek")}</th>
                       <th className="text-center px-3 py-2 font-medium text-gray-600">Result</th>
-                      <th className="text-center px-3 py-2 font-medium text-gray-600">Status</th>
+                      <th className="text-center px-3 py-2 font-medium text-gray-600">{tCommon("status")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -411,7 +415,7 @@ export default function EmployeeEligibilityClient({
 
           {/* Section 5: Offer Letter History */}
           <div className="card">
-            <h2 className="text-base font-semibold text-gray-700 mb-4">Offer Letter History</h2>
+            <h2 className="text-base font-semibold text-gray-700 mb-4">{tOffers("offerHistory")}</h2>
             {offerLetters.length === 0 ? (
               <p className="text-gray-400 text-sm">No offer letters on record.</p>
             ) : (
@@ -419,13 +423,13 @@ export default function EmployeeEligibilityClient({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="text-left px-3 py-2 font-medium text-gray-600">Offer Date</th>
-                      <th className="text-left px-3 py-2 font-medium text-gray-600">Deadline</th>
-                      <th className="text-left px-3 py-2 font-medium text-gray-600">Coverage Start</th>
-                      <th className="text-center px-3 py-2 font-medium text-gray-600">Status</th>
+                      <th className="text-left px-3 py-2 font-medium text-gray-600">{tOffers("fields.offerDate")}</th>
+                      <th className="text-left px-3 py-2 font-medium text-gray-600">{tOffers("fields.offerDeadline")}</th>
+                      <th className="text-left px-3 py-2 font-medium text-gray-600">{tOffers("fields.coverageStart")}</th>
+                      <th className="text-center px-3 py-2 font-medium text-gray-600">{tCommon("status")}</th>
                       <th className="text-center px-3 py-2 font-medium text-gray-600">Response</th>
-                      <th className="text-left px-3 py-2 font-medium text-gray-600">Plan Selected</th>
-                      <th className="text-center px-3 py-2 font-medium text-gray-600">Waiver</th>
+                      <th className="text-left px-3 py-2 font-medium text-gray-600">{tOffers("fields.planSelected")}</th>
+                      <th className="text-center px-3 py-2 font-medium text-gray-600">{tOffers("fields.waiverOnFile")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">

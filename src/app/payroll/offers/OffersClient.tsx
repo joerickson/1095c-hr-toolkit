@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import { useTranslations } from "next-intl";
 import { calcCoverageStartDate } from "@/lib/aca-calculations";
 import type { EligibilityDashboardRow, OfferLetter } from "@/lib/types";
 
@@ -68,6 +69,8 @@ interface ResponseForm {
 export default function OffersClient({ dashboardRows, allOffers, userId }: Props) {
   const supabase = createClient();
   const { showToast } = useToast();
+  const t = useTranslations("offers");
+  const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<Tab>("queue");
   const [offers, setOffers] = useState<OfferLetter[]>(allOffers);
   const [dashboard, setDashboard] = useState<EligibilityDashboardRow[]>(dashboardRows);
@@ -302,9 +305,9 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Offer Letters</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Generate and track benefit offers for newly eligible employees
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -321,8 +324,8 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
         <nav className="-mb-px flex gap-6">
           {(
             [
-              { id: "queue", label: `Offer Queue${sortedQueue.length > 0 ? ` (${sortedQueue.length})` : ""}` },
-              { id: "all_offers", label: `All Offers${offers.length > 0 ? ` (${offers.length})` : ""}` },
+              { id: "queue", label: `${t("offerQueue")}${sortedQueue.length > 0 ? ` (${sortedQueue.length})` : ""}` },
+              { id: "all_offers", label: `${t("offerHistory")}${offers.length > 0 ? ` (${offers.length})` : ""}` },
             ] as { id: Tab; label: string }[]
           ).map((tab) => (
             <button
@@ -394,7 +397,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                         onClick={() => openGenerateForm(row)}
                         className="btn-primary text-sm flex-shrink-0"
                       >
-                        Generate Offer
+                        {t("generateOffer")}
                       </button>
                     </div>
                   );
@@ -417,14 +420,14 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Employee</th>
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Offer Date</th>
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Deadline</th>
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Coverage Start</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Status</th>
-                    <th className="text-left px-4 py-2 font-medium text-gray-600">Plan Selected</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Waiver</th>
-                    <th className="text-center px-4 py-2 font-medium text-gray-600">Action</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{tCommon("name")}</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("fields.offerDate")}</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("fields.offerDeadline")}</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("fields.coverageStart")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{tCommon("status")}</th>
+                    <th className="text-left px-4 py-2 font-medium text-gray-600">{t("fields.planSelected")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{t("fields.waiverOnFile")}</th>
+                    <th className="text-center px-4 py-2 font-medium text-gray-600">{tCommon("actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -472,7 +475,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                               onClick={() => openResponseForm(offer)}
                               className="text-xs text-navy-600 hover:underline"
                             >
-                              Record Response
+                              {t("recordResponse")}
                             </button>
                           )}
                           {(offer.status === "pending" || offer.status === "sent") && (
@@ -480,7 +483,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                               onClick={() => setPrintOffer({ offer, row })}
                               className="text-xs text-gray-500 hover:underline ml-2"
                             >
-                              Print
+                              {tCommon("print")}
                             </button>
                           )}
                         </td>
@@ -496,7 +499,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
       {/* ── Generate Offer Modal ── */}
       {generateForm && (
-        <Modal title={`Generate Offer — ${generateForm.employeeName}`} onClose={() => setGenerateForm(null)}>
+        <Modal title={`${t("generateOffer")} — ${generateForm.employeeName}`} onClose={() => setGenerateForm(null)}>
           <div className="space-y-4">
             {/* Timing rules info */}
             <div className="bg-blue-50 border border-blue-200 rounded-md px-3 py-2 text-xs text-blue-700">
@@ -514,7 +517,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Offer Date</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.offerDate")}</label>
                 <input
                   type="date"
                   value={generateForm.offerDate}
@@ -523,7 +526,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Response Deadline</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.offerDeadline")}</label>
                 <input
                   type="date"
                   value={generateForm.offerDeadline}
@@ -534,7 +537,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Coverage Start Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.coverageStart")}</label>
               <input
                 type="date"
                 value={generateForm.coverageStartDate}
@@ -544,7 +547,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
             </div>
 
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Plans Being Offered</p>
+              <p className="text-sm font-medium text-gray-700 mb-1">{t("fields.plansOffered")}</p>
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 rounded-full bg-navy-600 flex-shrink-0 flex items-center justify-center text-white text-xs">✓</span>
@@ -563,10 +566,10 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
             <div className="flex justify-end gap-3 pt-2">
               <button onClick={() => setGenerateForm(null)} className="btn-secondary">
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button onClick={handleGenerateOffer} disabled={generating} className="btn-primary">
-                {generating ? "Creating…" : "Create Offer Letter"}
+                {generating ? "Creating…" : t("generateOffer")}
               </button>
             </div>
           </div>
@@ -575,7 +578,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
       {/* ── Record Response Modal ── */}
       {responseForm && (
-        <Modal title={`Record Response — ${responseForm.employeeName}`} onClose={() => setResponseForm(null)}>
+        <Modal title={`${t("recordResponse")} — ${responseForm.employeeName}`} onClose={() => setResponseForm(null)}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Response</label>
@@ -587,15 +590,15 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                 className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
               >
                 <option value="">Select…</option>
-                <option value="accepted">Accepted</option>
-                <option value="declined">Declined</option>
-                <option value="no_response">No Response</option>
+                <option value="accepted">{t("response.accepted")}</option>
+                <option value="declined">{t("response.declined")}</option>
+                <option value="no_response">{t("response.noResponse")}</option>
               </select>
             </div>
 
             {responseForm.response === "accepted" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Plan Selected</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.planSelected")}</label>
                 <select
                   value={responseForm.planSelected}
                   onChange={(e) =>
@@ -625,7 +628,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                     }
                     className="h-4 w-4 rounded border-gray-300 text-navy-600"
                   />
-                  <span className="text-sm font-medium text-gray-700">Signed waiver on file</span>
+                  <span className="text-sm font-medium text-gray-700">{t("fields.waiverOnFile")}</span>
                 </label>
                 {!responseForm.waiverOnFile && (
                   <p className="text-xs text-red-600 mt-1">
@@ -636,7 +639,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{tCommon("notes")} ({tCommon("optional")})</label>
               <textarea
                 rows={2}
                 value={responseForm.notes}
@@ -648,14 +651,14 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
             <div className="flex justify-end gap-3 pt-2">
               <button onClick={() => setResponseForm(null)} className="btn-secondary">
-                Cancel
+                {tCommon("cancel")}
               </button>
               <button
                 onClick={handleRecordResponse}
                 disabled={recording || !responseForm.response}
                 className="btn-primary"
               >
-                {recording ? "Saving…" : "Save Response"}
+                {recording ? "Saving…" : tCommon("save")}
               </button>
             </div>
           </div>
@@ -667,8 +670,8 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
         <Modal title="Offer Letter Preview" onClose={() => setPrintOffer(null)} wide>
           <PrintableOffer offer={printOffer.offer} row={printOffer.row} />
           <div className="flex justify-end gap-3 mt-4 print:hidden">
-            <button onClick={() => setPrintOffer(null)} className="btn-secondary">Close</button>
-            <button onClick={() => window.print()} className="btn-primary">Print / Save PDF</button>
+            <button onClick={() => setPrintOffer(null)} className="btn-secondary">{tCommon("close")}</button>
+            <button onClick={() => window.print()} className="btn-primary">{tCommon("print")} / Save PDF</button>
           </div>
         </Modal>
       )}

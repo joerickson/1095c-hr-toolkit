@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { calculateCodes, testAffordability, LINE14_CODES, LINE16_CODES } from "@/lib/wizard-logic";
 import { useToast } from "@/components/Toast";
+import { useTranslations } from "next-intl";
 import type { AppSettings, WizardAnswers, WizardResult, WizardSession } from "@/lib/types";
 
 interface Props {
@@ -33,6 +34,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
   const cfg = settings ?? DEFAULT_SETTINGS;
   const { showToast } = useToast();
   const supabase = createClient();
+  const t = useTranslations("wizard");
 
   const [step, setStep] = useState<Step>(1);
   const [answers, setAnswers] = useState<Partial<WizardAnswers>>({});
@@ -92,9 +94,9 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">1095-C Code Lookup Wizard</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Determine the correct Line 14, 15, and 16 codes for any employee scenario
+          {t("subtitle")}
         </p>
       </div>
 
@@ -137,10 +139,10 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
           {step === 1 && (
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 1: Employment Status
+                {t("step1Title")}
               </h2>
               <p className="text-gray-600 text-sm mb-6">
-                Was this employee considered a full-time employee (≥130 hours/month) for this month?
+                {t("step1Question")}
               </p>
               <div className="space-y-3">
                 <button
@@ -150,8 +152,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     setStep(2);
                   }}
                 >
-                  <div className="font-medium text-gray-900">Yes — Full-time (≥130 hours)</div>
-                  <div className="text-sm text-gray-500 mt-0.5">Employee meets the full-time threshold this month</div>
+                  <div className="font-medium text-gray-900">{t("step1OptionYes")}</div>
                 </button>
                 <button
                   className="w-full text-left p-4 border-2 border-gray-200 rounded-lg hover:border-navy-400 hover:bg-navy-50 transition-all"
@@ -160,8 +161,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     setStep(2);
                   }}
                 >
-                  <div className="font-medium text-gray-900">No — Part-time, not yet employed, or not employed</div>
-                  <div className="text-sm text-gray-500 mt-0.5">Employee does not meet the full-time threshold this month</div>
+                  <div className="font-medium text-gray-900">{t("step1OptionNo")}</div>
                 </button>
               </div>
             </div>
@@ -171,10 +171,10 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
           {step === 2 && (
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 2: Offer of Coverage
+                {t("step2Title")}
               </h2>
               <p className="text-gray-600 text-sm mb-6">
-                Was the employee offered health coverage this month?
+                {t("step2Question")}
               </p>
               <div className="space-y-3">
                 <button
@@ -184,8 +184,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     setStep(3);
                   }}
                 >
-                  <div className="font-medium text-gray-900">Yes — Coverage was offered</div>
-                  <div className="text-sm text-gray-500 mt-0.5">Employee received an offer of coverage this month</div>
+                  <div className="font-medium text-gray-900">{t("step2OptionYes")}</div>
                 </button>
                 <button
                   className="w-full text-left p-4 border-2 border-gray-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition-all"
@@ -194,8 +193,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     computeResult(a as WizardAnswers);
                   }}
                 >
-                  <div className="font-medium text-gray-900">Waiting period / Limited Non-Assessment Period</div>
-                  <div className="text-sm text-gray-500 mt-0.5">Employee is in a waiting period and no offer was made yet</div>
+                  <div className="font-medium text-gray-900">{t("step2OptionWaiting")}</div>
                 </button>
                 <button
                   className="w-full text-left p-4 border-2 border-gray-200 rounded-lg hover:border-red-400 hover:bg-red-50 transition-all"
@@ -204,12 +202,11 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     computeResult(a as WizardAnswers);
                   }}
                 >
-                  <div className="font-medium text-gray-900">No — No offer of coverage was made</div>
-                  <div className="text-sm text-gray-500 mt-0.5">Employee was not offered coverage (and not employed or not full-time)</div>
+                  <div className="font-medium text-gray-900">{t("step2OptionNo")}</div>
                 </button>
               </div>
               <button onClick={() => setStep(1)} className="mt-4 text-sm text-gray-400 hover:text-gray-600">
-                ← Back
+                {t("backButton")}
               </button>
             </div>
           )}
@@ -218,20 +215,20 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
           {step === 3 && (
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 3: Who Was Coverage Offered To?
+                {t("step3Title")}
               </h2>
               <p className="text-gray-600 text-sm mb-2">
-                Select who the coverage offer included.
+                {t("step3Question")}
               </p>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-md mb-4 text-sm text-blue-800">
                 <strong>Note for RBM Services Inc.:</strong> All three plans are offered to every eligible employee, spouse, and dependents — so this should always be the last option (→ Code 1E).
               </div>
               <div className="space-y-3">
                 {[
-                  { value: "all", label: "Employee + Spouse + Dependents", desc: "All three categories → Code 1E (standard for RBM Services Inc.)" },
-                  { value: "employee_only", label: "Employee only", desc: "Code 1B" },
-                  { value: "employee_dependents", label: "Employee + Dependents (not spouse)", desc: "Code 1C" },
-                  { value: "employee_spouse", label: "Employee + Spouse (not dependents)", desc: "Code 1D" },
+                  { value: "all", label: t("step4OptionAll"), desc: "All three categories → Code 1E (standard for RBM Services Inc.)" },
+                  { value: "employee_only", label: t("step4OptionEmployee"), desc: "Code 1B" },
+                  { value: "employee_dependents", label: t("step4OptionEmployeeDep"), desc: "Code 1C" },
+                  { value: "employee_spouse", label: t("step4OptionEmployeeSp"), desc: "Code 1D" },
                 ].map((opt) => (
                   <button
                     key={opt.value}
@@ -247,7 +244,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                 ))}
               </div>
               <button onClick={() => setStep(2)} className="mt-4 text-sm text-gray-400 hover:text-gray-600">
-                ← Back
+                {t("backButton")}
               </button>
             </div>
           )}
@@ -256,10 +253,10 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
           {step === 4 && (
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Step 4: Did the Employee Enroll?
+                {t("step5Title")}
               </h2>
               <p className="text-gray-600 text-sm mb-6">
-                Did the employee actually enroll in any of the offered health plans?
+                {t("step5Question")}
               </p>
               <div className="space-y-3">
                 <button
@@ -270,7 +267,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     saveSession(a, calculateCodes(a, cfg));
                   }}
                 >
-                  <div className="font-medium text-gray-900">Yes — Enrolled in coverage</div>
+                  <div className="font-medium text-gray-900">{t("step5OptionYes")}</div>
                   <div className="text-sm text-gray-500 mt-0.5">Employee accepted and enrolled in Plan 1, 2, or 3 → Code 2C</div>
                 </button>
                 <button
@@ -281,14 +278,14 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                     saveSession(a, calculateCodes(a, cfg));
                   }}
                 >
-                  <div className="font-medium text-gray-900">No — Declined all coverage</div>
+                  <div className="font-medium text-gray-900">{t("step5OptionNo")}</div>
                   <div className="text-sm text-gray-500 mt-0.5">
                     Employee declined all plans → Safe harbor code ({cfg.safe_harbor_method === "w2" ? "2F" : cfg.safe_harbor_method === "fpl" ? "2G" : "2H"})
                   </div>
                 </button>
               </div>
               <button onClick={() => setStep(3)} className="mt-4 text-sm text-gray-400 hover:text-gray-600">
-                ← Back
+                {t("backButton")}
               </button>
             </div>
           )}
@@ -297,13 +294,13 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
           {step === 5 && result && (
             <div className="space-y-4">
               <div className="card border-2 border-navy-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Results</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("resultTitle")}</h2>
 
                 <div className="grid grid-cols-3 gap-4 mb-4">
                   {[
-                    { label: "Line 14", value: result.line14, desc: result.line14Description },
-                    { label: "Line 15", value: `$${result.line15.toFixed(2)}`, desc: "MEC employee-only monthly premium" },
-                    { label: "Line 16", value: result.line16, desc: result.line16Description },
+                    { label: t("line14Label"), value: result.line14, desc: result.line14Description },
+                    { label: t("line15Label"), value: `$${result.line15.toFixed(2)}`, desc: "MEC employee-only monthly premium" },
+                    { label: t("line16Label"), value: result.line16, desc: result.line16Description },
                   ].map((r) => (
                     <div key={r.label} className="bg-navy-50 border border-navy-200 rounded-lg p-4 text-center">
                       <div className="text-xs font-medium text-navy-600 uppercase tracking-wide mb-1">{r.label}</div>
@@ -330,7 +327,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                       onClick={() => setShowAffordability(!showAffordability)}
                       className="text-sm text-navy-600 hover:text-navy-800 font-medium flex items-center gap-1"
                     >
-                      {showAffordability ? "▼" : "▶"} Affordability Calculator
+                      {showAffordability ? "▼" : "▶"} {t("affordabilityTitle")}
                     </button>
                     {showAffordability && (
                       <div className="mt-3 space-y-3">
@@ -373,7 +370,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                               : "bg-red-50 border-red-200 text-red-800"
                           }`}>
                             <div className="font-semibold mb-1">
-                              {affordabilityResult.affordable ? "✓ Coverage is affordable" : "✕ Coverage may NOT be affordable"}
+                              {affordabilityResult.affordable ? `✓ ${t("affordabilityPass")}` : `✕ ${t("affordabilityFail")}`}
                             </div>
                             <div>{affordabilityResult.detail}</div>
                             <div className="mt-1">
@@ -388,7 +385,7 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
               </div>
 
               <button onClick={reset} className="btn-primary">
-                Run Another Lookup
+                {t("lookupAnother")}
               </button>
             </div>
           )}
@@ -489,9 +486,9 @@ export default function WizardClient({ settings, userId, recentSessions }: Props
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="px-3 py-2 text-left font-medium text-gray-700">Date</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Line 14</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Line 15</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Line 16</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">{t("line14Label")}</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">{t("line15Label")}</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">{t("line16Label")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">

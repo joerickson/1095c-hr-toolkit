@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import type { EmployeeStatus } from "@/lib/types";
@@ -29,13 +30,6 @@ interface Props {
   initialFilingStatus: FilingStatusRow[];
 }
 
-const PLAN_LABELS: Record<string, string> = {
-  P1: "Plan 1 — MEC",
-  P2: "Plan 2 — Self-Insured",
-  P3: "Plan 3 — Select Health",
-  declined: "Declined",
-};
-
 export default function FilingEmployeesClient({
   userId,
   taxYear,
@@ -44,6 +38,15 @@ export default function FilingEmployeesClient({
 }: Props) {
   const { showToast } = useToast();
   const supabase = createClient();
+  const tCommon = useTranslations("common");
+  const tTracker = useTranslations("tracker");
+
+  const PLAN_LABELS: Record<string, string> = {
+    P1: tTracker("plans.P1"),
+    P2: tTracker("plans.P2"),
+    P3: tTracker("plans.P3"),
+    declined: tTracker("plans.declined"),
+  };
 
   const [employees] = useState<EmployeeStatus[]>(initialEmployees);
   const [filingStatus, setFilingStatus] = useState<FilingStatusRow[]>(initialFilingStatus);
@@ -171,7 +174,7 @@ export default function FilingEmployeesClient({
           disabled={initializingAll}
           className="btn-secondary text-sm disabled:opacity-50"
         >
-          {initializingAll ? "Initializing..." : "Initialize All Employees"}
+          {initializingAll ? tCommon("loading") : "Initialize All Employees"}
         </button>
       </div>
 
@@ -179,9 +182,9 @@ export default function FilingEmployeesClient({
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
           { label: `Total ${taxYear}`, value: stats.total, color: "text-gray-900" },
-          { label: "Ready", value: stats.ready, color: "text-green-700" },
-          { label: "Issues", value: stats.notReady, color: stats.notReady > 0 ? "text-amber-700" : "text-gray-400" },
-          { label: "Missing SSN", value: stats.missingSsn, color: stats.missingSsn > 0 ? "text-red-700" : "text-gray-400" },
+          { label: tCommon("ready"), value: stats.ready, color: "text-green-700" },
+          { label: tCommon("issues"), value: stats.notReady, color: stats.notReady > 0 ? "text-amber-700" : "text-gray-400" },
+          { label: tTracker("stats.missingSSN"), value: stats.missingSsn, color: stats.missingSsn > 0 ? "text-red-700" : "text-gray-400" },
           { label: "Missing Deps", value: stats.missingDependents, color: stats.missingDependents > 0 ? "text-amber-700" : "text-gray-400" },
           { label: "Not Reviewed", value: stats.notReviewed, color: stats.notReviewed > 0 ? "text-blue-700" : "text-gray-400" },
         ].map(({ label, value, color }) => (
@@ -197,7 +200,7 @@ export default function FilingEmployeesClient({
         <div className="px-5 py-3 border-b border-gray-200 flex flex-wrap gap-3 items-center">
           <input
             type="text"
-            placeholder="Search employees..."
+            placeholder={tCommon("search") + " employees..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 w-52"
@@ -213,7 +216,7 @@ export default function FilingEmployeesClient({
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                {f === "all" ? "All" : f === "ready" ? "Ready" : f === "not_ready" ? "Has Issues" : "Not Reviewed"}
+                {f === "all" ? tCommon("all") : f === "ready" ? tCommon("ready") : f === "not_ready" ? tCommon("issues") : "Not Reviewed"}
               </button>
             ))}
           </div>
@@ -224,16 +227,16 @@ export default function FilingEmployeesClient({
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan {taxYear}</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Line 14</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Line 16</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Part III</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SSN</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">DOB</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deps</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("name")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.plan")} {taxYear}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.line14")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.line16")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.part3")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.ssn")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.dob")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.dependents")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("status")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -261,21 +264,21 @@ export default function FilingEmployeesClient({
                     </td>
                     <td className="px-4 py-3 text-center">
                       {emp.part3_required ? (
-                        <span className="badge-info">Required</span>
+                        <span className="badge-info">{tTracker("status.required")}</span>
                       ) : (
                         <span className="text-gray-400 text-xs">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {emp.issue_missing_ssn ? (
-                        <span className="badge-critical">Missing</span>
+                        <span className="badge-critical">{tTracker("status.missing")}</span>
                       ) : (
                         <span className="text-green-600 text-xs">✓</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {emp.issue_missing_dob ? (
-                        <span className="badge-required">Missing</span>
+                        <span className="badge-required">{tTracker("status.missing")}</span>
                       ) : (
                         <span className="text-green-600 text-xs">✓</span>
                       )}
@@ -293,9 +296,9 @@ export default function FilingEmployeesClient({
                           Not reviewed
                         </span>
                       ) : isReady ? (
-                        <span className="badge-success">Ready ✓</span>
+                        <span className="badge-success">{tCommon("ready")} ✓</span>
                       ) : (
-                        <span className="badge-required">Has Issues</span>
+                        <span className="badge-required">{tCommon("issues")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -313,7 +316,7 @@ export default function FilingEmployeesClient({
                           disabled={markingReady === emp.id}
                           className="text-xs text-green-700 hover:text-green-900 font-medium disabled:opacity-50"
                         >
-                          {markingReady === emp.id ? "..." : "Mark Ready"}
+                          {markingReady === emp.id ? "..." : tCommon("markComplete")}
                         </button>
                       ) : (
                         <span className="text-xs text-gray-400">
@@ -330,7 +333,7 @@ export default function FilingEmployeesClient({
           </table>
           {filtered.length === 0 && (
             <div className="px-5 py-10 text-center text-gray-500">
-              No employees found.
+              {tCommon("noResults")}
             </div>
           )}
         </div>

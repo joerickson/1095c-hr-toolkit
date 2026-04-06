@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useToast } from "@/components/Toast";
 import { updateProfileName, sendPasswordResetEmail } from "@/app/settings/userActions";
 
@@ -18,6 +19,9 @@ export default function ProfileClient({
   role,
 }: Props) {
   const { showToast } = useToast();
+  const t = useTranslations("profile");
+  const tCommon = useTranslations("common");
+  const tAdmin = useTranslations("admin");
   const [fullName, setFullName] = useState(initialFullName);
   const [saving, setSaving] = useState(false);
   const [sendingReset, setSendingReset] = useState(false);
@@ -27,7 +31,7 @@ export default function ProfileClient({
     setSaving(true);
     try {
       await updateProfileName(fullName);
-      showToast("Display name updated.", "success");
+      showToast(t("nameSaved"), "success");
     } catch (err) {
       showToast((err as Error).message || "Failed to update name", "error");
     } finally {
@@ -39,7 +43,7 @@ export default function ProfileClient({
     setSendingReset(true);
     try {
       await sendPasswordResetEmail(email);
-      showToast(`Password reset email sent to ${email}`, "success");
+      showToast(t("resetPasswordSent"), "success");
     } catch (err) {
       showToast(
         (err as Error).message || "Failed to send reset email",
@@ -53,20 +57,20 @@ export default function ProfileClient({
   return (
     <div className="max-w-lg">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Manage your account settings.
+          {t("subtitle")}
         </p>
       </div>
 
       <div className="space-y-6">
         {/* Display Name */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-4">Display Name</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">{t("sections.info")}</h2>
           <form onSubmit={handleUpdateName} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+                {t("fields.fullName")}
               </label>
               <input
                 type="text"
@@ -82,7 +86,7 @@ export default function ProfileClient({
                 disabled={saving}
                 className="btn-primary px-5"
               >
-                {saving ? "Saving…" : "Update Name"}
+                {saving ? tCommon("loading") : tCommon("update")}
               </button>
             </div>
           </form>
@@ -90,17 +94,17 @@ export default function ProfileClient({
 
         {/* Account Info */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-4">Account</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">{t("sections.account")}</h2>
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Email
+                {t("fields.email")}
               </label>
               <p className="text-sm text-gray-900 mt-1">{email}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Role
+                {t("fields.role")}
               </label>
               <span
                 className={`inline-flex items-center mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -109,10 +113,10 @@ export default function ProfileClient({
                     : "bg-blue-100 text-blue-700"
                 }`}
               >
-                {role === "admin" ? "Admin" : "HR User"}
+                {role === "admin" ? tAdmin("users.roles.admin") : tAdmin("users.roles.hr_user")}
               </span>
               <p className="text-xs text-gray-400 mt-1">
-                Role is managed by your administrator.
+                {t("roleNote")}
               </p>
             </div>
           </div>
@@ -120,16 +124,16 @@ export default function ProfileClient({
 
         {/* Change Password */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-2">Change Password</h2>
+          <h2 className="font-semibold text-gray-900 mb-2">{t("sections.password")}</h2>
           <p className="text-sm text-gray-500 mb-4">
-            We&apos;ll send a password reset link to your email address.
+            {t("resetPasswordNote", { email })}
           </p>
           <button
             onClick={handlePasswordReset}
             disabled={sendingReset}
             className="btn-primary px-5"
           >
-            {sendingReset ? "Sending…" : "Send Password Reset Email"}
+            {sendingReset ? tCommon("loading") : t("resetPasswordButton")}
           </button>
         </div>
       </div>
