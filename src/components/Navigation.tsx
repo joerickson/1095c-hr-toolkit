@@ -6,8 +6,10 @@ import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
 
 // Deadline badge helpers
-function getDeadlineDays(): number {
-  const deadline = new Date(2026, 3, 30); // April 30, 2026
+function getDeadlineDays(taxYear: number, extensionFiled: boolean): number {
+  const deadline = extensionFiled
+    ? new Date(taxYear + 1, 3, 30) // April 30 of following year
+    : new Date(taxYear + 1, 2, 31); // March 31 of following year
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   return Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -19,15 +21,6 @@ function deadlineBadgeClass(days: number): string {
   return "bg-blue-600 text-white";
 }
 
-const FILING_NAV_ITEMS = [
-  { href: "/filing", label: "2025 Filing", showDeadline: true },
-  { href: "/filing/access", label: "Access Plan" },
-  { href: "/checklist", label: "Audit Checklist" },
-  { href: "/wizard", label: "Code Wizard" },
-  { href: "/tracker", label: "Employee Tracker" },
-  { href: "/guide", label: "WinTeam Guide" },
-];
-
 const YEAR_ROUND_NAV_ITEMS = [
   { href: "/payroll", label: "Pay Period" },
   { href: "/payroll/offers", label: "Offer Letters" },
@@ -36,19 +29,30 @@ const YEAR_ROUND_NAV_ITEMS = [
 interface NavigationProps {
   userEmail?: string | null;
   isAdmin?: boolean;
+  taxYear?: number;
+  extensionFiled?: boolean;
 }
 
-export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
+export default function Navigation({ userEmail, isAdmin, taxYear = new Date().getFullYear(), extensionFiled = false }: NavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [deadlineDays, setDeadlineDays] = useState<number | null>(null);
 
+  const filingNavItems = [
+    { href: "/filing", label: `${taxYear} Filing`, showDeadline: true },
+    { href: "/filing/access", label: "Access Plan" },
+    { href: "/checklist", label: "Audit Checklist" },
+    { href: "/wizard", label: "Code Wizard" },
+    { href: "/tracker", label: "Employee Tracker" },
+    { href: "/guide", label: "WinTeam Guide" },
+  ];
+
   useEffect(() => {
-    const days = getDeadlineDays();
+    const days = getDeadlineDays(taxYear, extensionFiled);
     // Only show badge if deadline hasn't passed
     if (days >= 0) setDeadlineDays(days);
-  }, []);
+  }, [taxYear, extensionFiled]);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -100,7 +104,7 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
-            {FILING_NAV_ITEMS.map((item) => (
+            {filingNavItems.map((item) => (
               <Link key={item.href} href={item.href} className={`${linkClass(item.href)} flex items-center gap-1.5`}>
                 {item.label}
                 {'showDeadline' in item && item.showDeadline && deadlineDays !== null && (
@@ -161,7 +165,7 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
             <div className="px-3 py-1 text-navy-400 text-xs font-semibold uppercase tracking-wider">
               Filing Tools
             </div>
-            {FILING_NAV_ITEMS.map((item) => (
+            {filingNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

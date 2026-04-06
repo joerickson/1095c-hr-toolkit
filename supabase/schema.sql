@@ -30,7 +30,7 @@ create policy "Users can update their own profile"
 -- ============================================================
 create table app_settings (
   id uuid default uuid_generate_v4() primary key,
-  tax_year integer default 2025,
+  tax_year integer default extract(year from current_date)::integer,
   company_name text default 'RBM Services Inc.',
   company_ein text default '87-1234567',
   contact_phone text default '(801) 555-0100',
@@ -54,8 +54,8 @@ create policy "Only admins can update settings"
     exists (select 1 from profiles where id = auth.uid() and role = 'admin')
   );
 
--- Insert default settings row
-insert into app_settings default values;
+-- Insert default settings row (tax_year defaults to current calendar year)
+insert into app_settings (tax_year) values (extract(year from current_date)::integer);
 
 -- ============================================================
 -- Table: employees
@@ -136,7 +136,7 @@ create policy "Authenticated users can manage dependents"
 create table audit_checklist_progress (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references profiles(id) on delete cascade,
-  tax_year integer default 2025,
+  tax_year integer default extract(year from current_date)::integer,
   checklist_item_key text not null,
   is_complete boolean default false,
   completed_at timestamptz,
@@ -156,7 +156,7 @@ create policy "Users can manage their own checklist progress"
 create table wizard_sessions (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references profiles(id) on delete cascade,
-  tax_year integer default 2025,
+  tax_year integer default extract(year from current_date)::integer,
   employee_id uuid references employees(id) on delete set null,
   answers jsonb not null,
   result_line14 text,

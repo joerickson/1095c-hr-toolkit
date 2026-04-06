@@ -187,7 +187,7 @@ export default function FilingClient({
     return { total: items.length, done: doneCount, gateRemaining };
   });
 
-  // Suggested schedule: today = April 6, deadline = April 30
+  // Suggested schedule: based on today's date and the filing deadline
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const totalDays = getDaysRemaining(deadline);
@@ -208,7 +208,7 @@ export default function FilingClient({
   if (!tablesReady) {
     return (
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">2025 Filing Assistant</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{taxYear} Filing Assistant</h1>
         <div className="card border-blue-200 bg-blue-50">
           <div className="flex gap-3">
             <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -249,7 +249,7 @@ export default function FilingClient({
             disabled={loadingYear}
             className="border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 disabled:opacity-50"
           >
-            {[2023, 2024, 2025, 2026].map((y) => (
+            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map((y) => (
               <option key={y} value={y}>{y}</option>
             ))}
           </select>

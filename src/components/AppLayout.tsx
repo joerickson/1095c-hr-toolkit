@@ -10,6 +10,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   let isAdmin = false;
   let alertRows: EligibilityDashboardRow[] = [];
+  let navTaxYear = new Date().getFullYear();
+  let navExtensionFiled = false;
 
   if (user) {
     const { data: profile } = await supabase
@@ -18,6 +20,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       .eq("id", user.id)
       .single();
     isAdmin = profile?.role === "admin";
+
+    // Load settings for nav deadline display
+    const { data: navSettings } = await supabase
+      .from("app_settings")
+      .select("tax_year, extension_filed")
+      .single();
+    if (navSettings) {
+      navTaxYear = navSettings.tax_year ?? navTaxYear;
+      navExtensionFiled = navSettings.extension_filed ?? false;
+    }
 
     // Fetch eligibility alerts — gracefully skip if table doesn't exist yet
     try {
@@ -35,7 +47,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <ToastProvider>
       <div className="min-h-screen flex flex-col">
-        <Navigation userEmail={user?.email} isAdmin={isAdmin} />
+        <Navigation userEmail={user?.email} isAdmin={isAdmin} taxYear={navTaxYear} extensionFiled={navExtensionFiled} />
         {alertRows.length > 0 && <EligibilityAlerts rows={alertRows} />}
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {children}

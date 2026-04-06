@@ -94,7 +94,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-navy-300 text-xs mt-6">
-          Tax Year 2025 · ACA 1095-C Compliance
+          Tax Year {new Date().getFullYear()} · ACA 1095-C Compliance
         </p>
       </div>
     </div>
