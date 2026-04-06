@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -217,5 +217,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }
