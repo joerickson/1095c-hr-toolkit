@@ -650,7 +650,7 @@ export default function AdminClient({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
             <h3 className="text-base font-semibold text-gray-900 mb-2">
-              {t("users.removeConfirmTitle", { name: removeConfirm.full_name || removeConfirm.email })}
+              {t("users.removeConfirmTitle", { name: removeConfirm.full_name || removeConfirm.email || "" })}
             </h3>
             <p className="text-sm text-gray-600 mb-5">
               {t("users.removeConfirmDescription")}
