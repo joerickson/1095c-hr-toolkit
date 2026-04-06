@@ -193,6 +193,25 @@ export default function Navigation({
 
           {/* Right: settings gear + user menu (desktop) + hamburger (mobile) */}
           <div className="flex items-center gap-3">
+            {/* Admin button — admin only, desktop ≥ 1024px */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="hidden lg:flex items-center justify-center transition-opacity hover:opacity-80"
+                style={{
+                  background: pathname.startsWith("/admin") ? "#142d47" : "rgba(255,255,255,0.15)",
+                  color: "white",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  borderRadius: 6,
+                  padding: "4px 10px",
+                  lineHeight: 1.4,
+                }}
+              >
+                Admin
+              </Link>
+            )}
+
             {/* Settings gear — admin only, desktop ≥ 1024px */}
             {isAdmin && (
               <Link
@@ -383,10 +402,23 @@ export default function Navigation({
               </Link>
             ))}
 
-            {/* Settings — admin only */}
+            {/* Admin + Settings — admin only */}
             {isAdmin && (
               <>
                 <div style={{ borderTop: "1px solid #f3f4f6", marginTop: 8 }} />
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-md text-sm transition-colors"
+                  style={{
+                    color: isActive("/admin") ? "#1a3a5c" : "#374151",
+                    background: isActive("/admin") ? "#e8eef5" : "transparent",
+                    fontWeight: isActive("/admin") ? 600 : 400,
+                  }}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <span>🛡</span>
+                  <span>Admin</span>
+                </Link>
                 <Link
                   href="/settings"
                   className="flex items-center gap-2 px-3 py-2.5 rounded-md text-sm transition-colors"
