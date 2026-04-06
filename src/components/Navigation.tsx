@@ -21,6 +21,7 @@ function deadlineBadgeClass(days: number): string {
 
 const FILING_NAV_ITEMS = [
   { href: "/filing", label: "2025 Filing", showDeadline: true },
+  { href: "/filing/access", label: "Access Plan" },
   { href: "/checklist", label: "Audit Checklist" },
   { href: "/wizard", label: "Code Wizard" },
   { href: "/tracker", label: "Employee Tracker" },
@@ -61,7 +62,7 @@ export default function Navigation({ userEmail, isAdmin }: NavigationProps) {
       return pathname === "/payroll" || pathname.startsWith("/payroll/employees");
     }
     if (href === "/filing") {
-      return pathname === "/filing" || pathname.startsWith("/filing/");
+      return pathname === "/filing" || (pathname.startsWith("/filing/") && !pathname.startsWith("/filing/access"));
     }
     return pathname.startsWith(href);
   }

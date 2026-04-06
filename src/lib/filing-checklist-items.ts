@@ -16,6 +16,57 @@ export type Walkthrough = {
   estimated_minutes: number
 }
 
+export type WinTeamAccess = {
+  module: string
+  permission_level: 'read' | 'read_write' | 'admin'
+  specific_permission?: string
+  notes?: string
+}
+
+export type WinTeamRole = 'standard_hr' | 'hr_manager' | 'winteam_admin' | 'team_software_support'
+
+export type AccessRequired = {
+  winteam_role: WinTeamRole
+  modules: WinTeamAccess[]
+  can_delegate: boolean
+  delegation_notes?: string
+}
+
+export const ROLE_METADATA: Record<WinTeamRole, { label: string; description: string; color: string; badgeClass: string; textClass: string; borderClass: string }> = {
+  standard_hr: {
+    label: 'Standard HR User',
+    description: 'Basic HR staff with access to view and edit employee records, enter hours, and manage benefit enrollments in INS: Benefits by Employee. Cannot access SYS: Company Setup or INS: Benefit Setup.',
+    color: 'blue',
+    badgeClass: 'bg-blue-100 text-blue-800 border border-blue-200',
+    textClass: 'text-blue-700',
+    borderClass: 'border-blue-200',
+  },
+  hr_manager: {
+    label: 'HR Manager / Power User',
+    description: 'HR staff with elevated access to run 1095-C reports, execute the Eligibility Testing Wizard, view and edit benefit packages, and access most INS screens. Cannot access SYS.',
+    color: 'purple',
+    badgeClass: 'bg-purple-100 text-purple-800 border border-purple-200',
+    textClass: 'text-purple-700',
+    borderClass: 'border-purple-200',
+  },
+  winteam_admin: {
+    label: 'WinTeam Administrator',
+    description: 'Full system access including SYS: Company Setup, INS: Benefit Setup, and all configuration screens. Typically the person who manages your WinTeam system. There may only be one or two people with this role.',
+    color: 'red',
+    badgeClass: 'bg-red-100 text-red-800 border border-red-200',
+    textClass: 'text-red-700',
+    borderClass: 'border-red-200',
+  },
+  team_software_support: {
+    label: 'TEAM Software Support',
+    description: 'Tasks that require involvement from TEAM Software directly — either because they require backend access or because the risk of error is high enough that professional support is recommended.',
+    color: 'gray',
+    badgeClass: 'bg-gray-200 text-gray-800 border border-gray-300',
+    textClass: 'text-gray-700',
+    borderClass: 'border-gray-300',
+  },
+}
+
 export type FilingChecklistItem = {
   key: string
   phase: 1 | 2 | 3 | 4
@@ -27,12 +78,380 @@ export type FilingChecklistItem = {
   isGate: boolean
   order: number
   walkthrough?: Walkthrough
+  access_required: AccessRequired
+}
+
+// Access requirements for each checklist item
+const ACCESS_REQUIREMENTS: Record<string, AccessRequired> = {
+  // ── Phase 1: SYS Company Setup ─────────────────────────────────────────────
+  audit_sys_aca_enabled: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'SYS: Company Setup', permission_level: 'admin', notes: 'SYS access required. Standard HR and HR Manager roles cannot access Company Setup.' }],
+    can_delegate: false,
+    delegation_notes: 'Must be performed by your WinTeam Administrator. If you are not sure who that is, contact TEAM Software support.',
+  },
+  audit_sys_ein: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'SYS: Company Setup', permission_level: 'admin' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only. Have your accountant or payroll provider confirm the correct EIN before making any changes.',
+  },
+  audit_sys_phone: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'SYS: Company Setup', permission_level: 'admin' }],
+    can_delegate: false,
+  },
+  // ── Phase 1: INS Eligibility Setup ─────────────────────────────────────────
+  audit_ins_aca_compliant: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Eligibility Setup', permission_level: 'admin', notes: 'Eligibility Setup is typically restricted to WinTeam Administrators. Some organizations grant HR Managers read access but not write access.' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator must make any changes. An HR Manager with read access can verify the setting but cannot fix it if it is wrong.',
+  },
+  audit_ins_plan_start_month: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Eligibility Setup', permission_level: 'admin' }],
+    can_delegate: false,
+  },
+  // ── Phase 1: INS Benefit Setup (all plan config items) ─────────────────────
+  audit_plan1_aca: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit', notes: 'Benefit Setup is a configuration screen restricted to WinTeam Administrators. Changes here affect all employees assigned to these plans.' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only. These are system configuration changes — not employee data entry. One wrong checkbox here affects every 1095-C you generate.',
+  },
+  audit_plan1_self_insured: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only. These are system configuration changes.',
+  },
+  audit_plan1_min_value: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan1_premium: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan1_options: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan2_aca: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit', notes: 'Benefit Setup is a configuration screen restricted to WinTeam Administrators.' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only. These are system configuration changes.',
+  },
+  audit_plan2_self_insured: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan2_min_value: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan2_options: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan3_aca: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit', notes: 'Benefit Setup is a configuration screen restricted to WinTeam Administrators.' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan3_self_insured: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan3_min_value: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  audit_plan3_options: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', specific_permission: 'INS: Benefit Setup - Edit' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  // ── Phase 1: Benefit Package Verification ──────────────────────────────────
+  audit_packages_all_three: {
+    winteam_role: 'hr_manager',
+    modules: [
+      { module: 'INS: Benefits by Employee', permission_level: 'read_write', notes: 'Read access needed to verify packages. Write access needed if packages must be corrected.' },
+      { module: 'INS: Benefit Setup', permission_level: 'admin', notes: 'If packages need to be updated to include all three plans, the package template itself must be edited by a WinTeam Administrator.' },
+    ],
+    can_delegate: true,
+    delegation_notes: 'An HR Manager can verify whether packages are correct. If corrections are needed, a WinTeam Administrator must make them. Plan to have both people available for this step.',
+  },
+  // ── Phase 1: Preview Report ─────────────────────────────────────────────────
+  audit_preview_line14: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run', notes: 'Running the 1095-C report typically requires HR Manager level access or a specific report permission granted by the WinTeam Administrator.' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff member with 1095-C Report access can run this. If no one has this access, contact your WinTeam Administrator to grant it before starting Phase 1.',
+  },
+  audit_part3_populated: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff member with 1095-C Report access can run this.',
+  },
+  audit_line15_consistent: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff member with 1095-C Report access can run this.',
+  },
+  // ── Phase 2 ─────────────────────────────────────────────────────────────────
+  rollforward_blocking_resolved: {
+    winteam_role: 'winteam_admin',
+    modules: [],
+    can_delegate: false,
+    delegation_notes: 'Resolution of blocking issues requires whoever has the WinTeam access level that corresponds to the issue category. Most blocking issues from Phase 1 will require WinTeam Administrator access.',
+  },
+  rollforward_tax_year: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', notes: 'The tax year is set at report run time, not in a settings screen. HR Manager access to the report is sufficient.' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with 1095-C Report access can do this.',
+  },
+  rollforward_affordability: {
+    winteam_role: 'standard_hr',
+    modules: [],
+    can_delegate: true,
+    delegation_notes: 'This setting is updated in this app on the Settings page. Any admin user of this app can make this change. No WinTeam access required for this specific step.',
+  },
+  rollforward_fpl: {
+    winteam_role: 'standard_hr',
+    modules: [],
+    can_delegate: true,
+    delegation_notes: 'This setting is updated in this app on the Settings page. Any admin user of this app can make this change. No WinTeam access required for this specific step.',
+  },
+  rollforward_plan1_premium: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefit Setup', permission_level: 'admin', notes: 'If the MEC premium changed for this year, it must also be updated in WinTeam INS: Benefit Setup Pricing tab — not just in this app. That part requires a WinTeam Administrator.' }],
+    can_delegate: true,
+    delegation_notes: 'App settings changes can be done by any admin user of this app. The WinTeam Benefit Setup update requires a WinTeam Administrator.',
+  },
+  rollforward_eligibility_wizard: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Eligibility Testing Wizard', permission_level: 'admin', specific_permission: 'INS: Eligibility Testing Wizard - Execute', notes: 'The Eligibility Testing Wizard re-evaluates and reassigns benefit eligibility for your entire workforce. It requires Administrator access and should be run with care.' }],
+    can_delegate: false,
+    delegation_notes: 'This must be run by your WinTeam Administrator. Consider having TEAM Software support on standby the first time you run this for a new year. Recommended to run during off-hours.',
+  },
+  rollforward_benefit_packages: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write', notes: 'Assigning packages to employees requires write access to Benefits by Employee.' }],
+    can_delegate: true,
+    delegation_notes: 'HR Manager or Standard HR with write access to INS: Benefits by Employee can do this. This is the most time-intensive step in Phase 2 — consider assigning it to multiple HR staff members splitting the employee list.',
+  },
+  rollforward_stability_dates: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'HR Manager or Standard HR with Benefits by Employee write access. Can be split across multiple staff members.',
+  },
+  // ── Phase 3 ─────────────────────────────────────────────────────────────────
+  data_all_ft_employees: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'Employee Master File', permission_level: 'read_write', notes: 'Write access is needed to add any missing employee records.' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with Employee Master File write access can do this.',
+  },
+  data_valid_ssn: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'Employee Master File', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with Employee Master File write access can do this. Consider assigning one person to pull a list of all employees missing SSN and contact them directly.',
+  },
+  data_dob: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'Employee Master File', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with Employee Master File write access can do this.',
+  },
+  data_plan1_enrollments: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write', notes: 'Entering benefit elections is standard HR data entry. Standard HR users with write access to Benefits by Employee can complete this.' }],
+    can_delegate: true,
+    delegation_notes: 'This is the most delegatable task in the entire process. Any HR staff member with INS: Benefits by Employee write access can enter elections. Consider splitting the employee list across your whole HR team.',
+  },
+  data_plan2_enrollments: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write', notes: 'Entering benefit elections is standard HR data entry.' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff member with INS: Benefits by Employee write access can enter elections.',
+  },
+  data_plan3_enrollments: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff member with INS: Benefits by Employee write access can enter elections.',
+  },
+  data_declined_packages: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff member with INS: Benefits by Employee write access can complete this.',
+  },
+  data_spouse_ssn: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write', notes: 'Dependent data is entered on the Covered Individuals tab within Benefits by Employee.' }],
+    can_delegate: true,
+    delegation_notes: 'Standard HR with Benefits by Employee write access. Collecting missing SSNs from employees may require reaching out directly by phone or email — build time for that into your schedule.',
+  },
+  data_dependent_dob: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write', notes: 'Dependent data is entered on the Covered Individuals tab within Benefits by Employee.' }],
+    can_delegate: true,
+    delegation_notes: 'Standard HR with Benefits by Employee write access.',
+  },
+  data_adult_ssn: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'Standard HR with Benefits by Employee write access.',
+  },
+  data_coverage_months: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'INS: Benefits by Employee', permission_level: 'read_write' }],
+    can_delegate: true,
+    delegation_notes: 'Standard HR with Benefits by Employee write access.',
+  },
+  data_variable_hour: {
+    winteam_role: 'hr_manager',
+    modules: [
+      { module: 'INS: Benefits by Employee', permission_level: 'read_write' },
+      { module: 'Eligibility Board (this app)', permission_level: 'read_write', notes: 'Check the Eligibility Board in this app first to see which employees need attention, then make changes in WinTeam.' },
+    ],
+    can_delegate: true,
+  },
+  data_terminations: {
+    winteam_role: 'standard_hr',
+    modules: [
+      { module: 'Employee Master File', permission_level: 'read_write' },
+      { module: 'INS: Benefits by Employee', permission_level: 'read_write' },
+    ],
+    can_delegate: true,
+  },
+  data_new_hires: {
+    winteam_role: 'standard_hr',
+    modules: [
+      { module: 'Employee Master File', permission_level: 'read_write' },
+      { module: 'INS: Benefits by Employee', permission_level: 'read_write' },
+    ],
+    can_delegate: true,
+  },
+  data_tracker_ready: {
+    winteam_role: 'standard_hr',
+    modules: [{ module: 'Employee Tracker (this app)', permission_level: 'read', notes: 'This step is completed entirely in this app — no WinTeam access required. Review the tracker and fix any flagged issues in WinTeam before marking this complete.' }],
+    can_delegate: true,
+  },
+  // ── Phase 4 ─────────────────────────────────────────────────────────────────
+  file_preview_all: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with 1095-C Report access can run the test report. Spot-checking the output can be done by anyone who understands what the codes should look like — use the Code Wizard in this app to verify codes if unsure.',
+  },
+  file_spot_plan1: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Spot-checking can be done by anyone who understands what the codes should look like — use the Code Wizard in this app to verify codes if unsure.',
+  },
+  file_spot_plan2: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Spot-checking can be done by anyone who understands what the codes should look like.',
+  },
+  file_spot_plan3: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Spot-checking can be done by anyone who understands what the codes should look like.',
+  },
+  file_spot_declined: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Spot-checking can be done by anyone who understands what the codes should look like.',
+  },
+  file_line15_consistent: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with 1095-C Report access can run the report.',
+  },
+  file_count_matches: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with 1095-C Report access can run the report.',
+  },
+  file_fix_rerun: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'read_write', specific_permission: 'INS: 1095-C Report - Run' }],
+    can_delegate: true,
+    delegation_notes: 'Any HR staff with 1095-C Report access can run the report. Spot-checking can be done by anyone who understands what the codes should look like.',
+  },
+  file_generate_1095c: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'admin', specific_permission: 'INS: 1095-C Electronic File - Generate', notes: 'Generating the electronic file and transmitter information requires Administrator access. This is the step that creates the actual file submitted to the IRS.' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only. Do not rush this step. Verify the transmitter information window carefully — your TCC and EIN must be exact.',
+  },
+  file_generate_1094c: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'INS: Employee 1095-C Report', permission_level: 'admin', specific_permission: 'INS: 1095-C Electronic File - Generate', notes: 'Generating the transmitter file requires Administrator access.' }],
+    can_delegate: false,
+    delegation_notes: 'WinTeam Administrator only.',
+  },
+  file_submit: {
+    winteam_role: 'winteam_admin',
+    modules: [{ module: 'IRS FIRE System or TEAM Software e-file portal', permission_level: 'admin', notes: 'Submitting through FIRE requires your TCC. Submitting through TEAM Software requires your TEAM Software portal credentials.' }],
+    can_delegate: false,
+    delegation_notes: 'Must be performed by whoever holds your TCC credentials. If you do not know who that is or where the TCC is stored, find out immediately — you cannot file without it.',
+  },
+  file_acknowledgement: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'IRS FIRE System', permission_level: 'read', notes: 'Checking acknowledgement status requires logging into FIRE with your TCC credentials.' }],
+    can_delegate: true,
+  },
+  file_save_copies: {
+    winteam_role: 'hr_manager',
+    modules: [{ module: 'IRS FIRE System', permission_level: 'read', notes: 'Download and save the acknowledgement file from FIRE.' }],
+    can_delegate: true,
+  },
 }
 
 export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
   const priorYear = taxYear - 1
 
-  const items: FilingChecklistItem[] = [
+  // Intermediate type without fields populated at map time
+  type ItemDef = Omit<FilingChecklistItem, 'access_required' | 'walkthrough'>
+
+  const items: ItemDef[] = [
     // ============================================================
     // PHASE 1 — Audit [priorYear] WinTeam Setup (22 items, all gated)
     // ============================================================
@@ -708,6 +1127,11 @@ export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
   return items.map((item) => ({
     ...item,
     walkthrough: WALKTHROUGHS[item.key],
+    access_required: ACCESS_REQUIREMENTS[item.key] ?? {
+      winteam_role: 'hr_manager' as WinTeamRole,
+      modules: [],
+      can_delegate: true,
+    },
   }))
 }
 
