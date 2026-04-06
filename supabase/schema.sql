@@ -13,6 +13,7 @@ create table profiles (
   full_name text,
   email text,
   role text default 'hr_user' check (role in ('admin', 'hr_user')),
+  preferred_language text default 'en' check (preferred_language in ('en', 'es')),
   created_at timestamptz default now()
 );
 
@@ -23,6 +24,24 @@ create policy "Users can view their own profile"
 
 create policy "Users can update their own profile"
   on profiles for update using (auth.uid() = id);
+
+create policy "Admins can view all profiles"
+  on profiles for select
+  using (
+    exists (
+      select 1 from profiles p
+      where p.id = auth.uid() and p.role = 'admin'
+    )
+  );
+
+create policy "Admins can update all profiles"
+  on profiles for update
+  using (
+    exists (
+      select 1 from profiles p
+      where p.id = auth.uid() and p.role = 'admin'
+    )
+  );
 
 -- ============================================================
 -- Table: app_settings

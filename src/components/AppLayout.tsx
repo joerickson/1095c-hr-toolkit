@@ -18,14 +18,27 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let preferredLanguage: Language = 'en';
 
   if (user) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role, full_name, preferred_language")
       .eq("id", user.id)
       .single();
-    isAdmin = profile?.role === "admin";
-    userFullName = profile?.full_name ?? null;
-    if (profile?.preferred_language === 'es') preferredLanguage = 'es';
+
+    // If preferred_language column doesn't exist yet (migration not run),
+    // fall back to selecting only the critical fields so isAdmin still works.
+    if (profileError && !profile) {
+      const { data: basicProfile } = await supabase
+        .from("profiles")
+        .select("role, full_name")
+        .eq("id", user.id)
+        .single();
+      isAdmin = basicProfile?.role === "admin";
+      userFullName = basicProfile?.full_name ?? null;
+    } else {
+      isAdmin = profile?.role === "admin";
+      userFullName = profile?.full_name ?? null;
+      if (profile?.preferred_language === 'es') preferredLanguage = 'es';
+    }
 
     // Load settings for nav deadline display
     const { data: navSettings } = await supabase
