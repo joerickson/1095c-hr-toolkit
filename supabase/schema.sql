@@ -19,6 +19,23 @@ create table profiles (
 
 alter table profiles enable row level security;
 
+-- Helper function: check admin status without triggering RLS recursion.
+-- SECURITY DEFINER means the function runs as its owner (bypasses RLS),
+-- so the admin policies below don't cause "infinite recursion detected
+-- in policy for relation profiles" when the user JWT is used.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select exists (
+    select 1 from profiles
+    where id = auth.uid() and role = 'admin'
+  );
+$$;
+
 create policy "Users can view their own profile"
   on profiles for select using (auth.uid() = id);
 
@@ -27,21 +44,11 @@ create policy "Users can update their own profile"
 
 create policy "Admins can view all profiles"
   on profiles for select
-  using (
-    exists (
-      select 1 from profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (is_admin());
 
 create policy "Admins can update all profiles"
   on profiles for update
-  using (
-    exists (
-      select 1 from profiles p
-      where p.id = auth.uid() and p.role = 'admin'
-    )
-  );
+  using (is_admin());
 
 -- ============================================================
 -- Table: app_settings
