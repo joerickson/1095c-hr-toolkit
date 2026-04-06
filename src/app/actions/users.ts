@@ -100,10 +100,9 @@ export async function resetUserPassword(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await requireAdmin();
-    const adminClient = createAdminClient();
-    const { error } = await adminClient.auth.admin.generateLink({
-      type: "recovery",
-      email,
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://rbmhr.com/auth/callback",
     });
 
     if (error) return { success: false, error: error.message };
