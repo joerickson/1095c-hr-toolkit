@@ -20,6 +20,13 @@ export default async function PhasePage({ params, searchParams }: Props) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Load user role
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user!.id)
+    .single();
+
   // Load phase info
   const { data: phase } = await supabase
     .from("filing_phases")
@@ -38,6 +45,7 @@ export default async function PhasePage({ params, searchParams }: Props) {
     <AppLayout>
       <PhaseClient
         userId={user!.id}
+        userRole={profile?.role ?? "hr_user"}
         phaseNumber={phaseNum as 1 | 2 | 3 | 4}
         taxYear={taxYear}
         initialPhase={phase ?? null}
