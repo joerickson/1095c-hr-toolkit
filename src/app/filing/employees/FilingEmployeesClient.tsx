@@ -65,10 +65,10 @@ export default function FilingEmployeesClient({
   }
 
   async function initializeEmployee(emp: EmployeeStatus) {
-    setInitializingOne(emp.employee_id);
+    setInitializingOne(emp.id);
     const { error } = await supabase.from("employee_filing_status").upsert(
       {
-        employee_id: emp.employee_id,
+        employee_id: emp.id,
         tax_year: taxYear,
         plan_enrolled: emp.plan_enrolled ?? null,
         is_ready: false,
@@ -85,14 +85,14 @@ export default function FilingEmployeesClient({
   }
 
   async function initializeAll() {
-    const missing = employees.filter((e) => !statusMap.has(e.employee_id));
+    const missing = employees.filter((e) => !statusMap.has(e.id));
     if (missing.length === 0) {
       showToast("All employees are already initialized.", "info");
       return;
     }
     setInitializingAll(true);
     const rows = missing.map((emp) => ({
-      employee_id: emp.employee_id,
+      employee_id: emp.id,
       tax_year: taxYear,
       plan_enrolled: emp.plan_enrolled ?? null,
       is_ready: false,
@@ -133,7 +133,7 @@ export default function FilingEmployeesClient({
   const filtered = employees.filter((emp) => {
     const q = search.toLowerCase();
     if (q && !emp.full_name.toLowerCase().includes(q)) return false;
-    const fs = statusMap.get(emp.employee_id);
+    const fs = statusMap.get(emp.id);
     if (filterStatus === "ready") return fs?.is_ready === true;
     if (filterStatus === "not_ready") return fs && !fs.is_ready;
     if (filterStatus === "not_reviewed") return !fs;
@@ -144,7 +144,7 @@ export default function FilingEmployeesClient({
     total: employees.length,
     ready: filingStatus.filter((s) => s.is_ready).length,
     notReady: filingStatus.filter((s) => !s.is_ready).length,
-    notReviewed: employees.filter((e) => !statusMap.has(e.employee_id)).length,
+    notReviewed: employees.filter((e) => !statusMap.has(e.id)).length,
     missingSsn: employees.filter((e) => e.issue_missing_ssn).length,
     missingDependents: employees.filter(
       (e) => e.issue_no_dependents_entered && (e.plan_enrolled === "P1" || e.plan_enrolled === "P2")
@@ -238,12 +238,12 @@ export default function FilingEmployeesClient({
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((emp) => {
-                const fs = statusMap.get(emp.employee_id);
+                const fs = statusMap.get(emp.id);
                 const isReady = fs?.is_ready ?? false;
                 const isNotReviewed = !fs;
 
                 return (
-                  <tr key={emp.employee_id} className="hover:bg-gray-50">
+                  <tr key={emp.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{emp.full_name}</div>
                       <div className="text-xs text-gray-400">{emp.employment_status}</div>
@@ -302,15 +302,15 @@ export default function FilingEmployeesClient({
                       {isNotReviewed ? (
                         <button
                           onClick={() => initializeEmployee(emp)}
-                          disabled={initializingOne === emp.employee_id}
+                          disabled={initializingOne === emp.id}
                           className="text-xs text-navy-600 hover:text-navy-800 font-medium disabled:opacity-50"
                         >
-                          {initializingOne === emp.employee_id ? "..." : "Initialize"}
+                          {initializingOne === emp.id ? "..." : "Initialize"}
                         </button>
                       ) : !isReady ? (
                         <button
-                          onClick={() => markReady(emp.employee_id)}
-                          disabled={markingReady === emp.employee_id}
+                          onClick={() => markReady(emp.id)}
+                          disabled={markingReady === emp.id}
                           className="text-xs text-green-700 hover:text-green-900 font-medium disabled:opacity-50"
                         >
                           {markingReady === emp.employee_id ? "..." : "Mark Ready"}
