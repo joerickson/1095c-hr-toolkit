@@ -46,7 +46,7 @@ function LoginContent() {
 
     const supabase = createClient();
     await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: "https://rbmhr.com/auth/callback",
+      redirectTo: "https://rbmhr.com/auth/callback?type=recovery",
     });
 
     // Always show success — do not reveal whether email exists
@@ -85,9 +85,9 @@ function LoginContent() {
             <>
               <h2 className="text-lg font-semibold text-gray-900 mb-6">{t("welcomeSubtitle")}</h2>
 
-              {callbackError === "auth_callback_failed" && (
+              {(callbackError === "auth_callback_failed" || callbackError === "link_expired") && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
-                  Your sign-in link has expired. Please try again.
+                  Your link has expired. Please request a new one.
                 </div>
               )}
 

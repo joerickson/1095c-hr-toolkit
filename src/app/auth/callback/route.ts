@@ -12,13 +12,14 @@ export async function GET(request: NextRequest) {
 
   // Handle PKCE code exchange (standard OAuth flow)
   if (code) {
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-    // If this was an invite or recovery, go to set-password
-    if (type === "invite" || type === "recovery") {
-      return NextResponse.redirect(new URL("/set-password", request.url));
+    if (!error) {
+      if (type === "invite" || type === "recovery") {
+        return NextResponse.redirect(new URL("/set-password", request.url));
+      }
+      return NextResponse.redirect(new URL(next, request.url));
     }
-    return NextResponse.redirect(new URL(next, request.url));
   }
 
   // Handle email OTP tokens (invite, recovery, email change)
@@ -38,6 +39,6 @@ export async function GET(request: NextRequest) {
 
   // Something went wrong — redirect to login with error
   return NextResponse.redirect(
-    new URL("/login?error=auth_callback_failed", request.url)
+    new URL("/login?error=link_expired", request.url)
   );
 }
