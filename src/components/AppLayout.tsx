@@ -1,6 +1,8 @@
 import Navigation from "./Navigation";
 import EligibilityAlerts from "./EligibilityAlerts";
 import { ToastProvider } from "./Toast";
+import { IntlProvider } from "@/providers/IntlProvider";
+import type { Language } from "@/providers/IntlProvider";
 import { createClient } from "@/lib/supabase/server";
 import type { EligibilityDashboardRow } from "@/lib/types";
 
@@ -13,15 +15,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let alertRows: EligibilityDashboardRow[] = [];
   let navTaxYear = new Date().getFullYear();
   let navExtensionFiled = false;
+  let preferredLanguage: Language = 'en';
 
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role, full_name")
+      .select("role, full_name, preferred_language")
       .eq("id", user.id)
       .single();
     isAdmin = profile?.role === "admin";
     userFullName = profile?.full_name ?? null;
+    if (profile?.preferred_language === 'es') {
+      preferredLanguage = 'es';
+    }
 
     // Load settings for nav deadline display
     const { data: navSettings } = await supabase
@@ -47,14 +53,23 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <ToastProvider>
-      <div className="min-h-screen flex flex-col">
-        <Navigation userEmail={user?.email} userFullName={userFullName} isAdmin={isAdmin} taxYear={navTaxYear} extensionFiled={navExtensionFiled} />
-        {alertRows.length > 0 && <EligibilityAlerts rows={alertRows} />}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
-      </div>
-    </ToastProvider>
+    <IntlProvider initialLanguage={preferredLanguage}>
+      <ToastProvider>
+        <div className="min-h-screen flex flex-col">
+          <Navigation
+            userEmail={user?.email}
+            userFullName={userFullName}
+            isAdmin={isAdmin}
+            taxYear={navTaxYear}
+            extensionFiled={navExtensionFiled}
+            initialLanguage={preferredLanguage}
+          />
+          {alertRows.length > 0 && <EligibilityAlerts rows={alertRows} />}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {children}
+          </main>
+        </div>
+      </ToastProvider>
+    </IntlProvider>
   );
 }

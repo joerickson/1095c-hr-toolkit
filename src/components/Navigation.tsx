@@ -4,6 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
+
+import { changeLanguage } from "@/providers/IntlProvider";
+import type { Language } from "@/providers/IntlProvider";
+import { saveLanguagePreference } from "@/app/actions/language";
 
 // Deadline badge helpers
 function getDeadlineDays(taxYear: number, extensionFiled: boolean): number {
@@ -96,17 +101,13 @@ function NavTab({ href, active, children }: NavTabProps) {
   );
 }
 
-const YEAR_ROUND_NAV_ITEMS = [
-  { href: "/payroll", label: "Pay Period" },
-  { href: "/payroll/offers", label: "Offer Letters" },
-];
-
 interface NavigationProps {
   userEmail?: string | null;
   userFullName?: string | null;
   isAdmin?: boolean;
   taxYear?: number;
   extensionFiled?: boolean;
+  initialLanguage?: Language;
 }
 
 export default function Navigation({
@@ -115,21 +116,30 @@ export default function Navigation({
   isAdmin,
   taxYear = new Date().getFullYear(),
   extensionFiled = false,
+  initialLanguage = 'en',
 }: NavigationProps) {
+  const t = useTranslations('navigation');
+  const tLang = useTranslations('language');
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [deadlineDays, setDeadlineDays] = useState<number | null>(null);
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(initialLanguage);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filingNavItems = [
     { href: "/filing", label: `${taxYear} Filing`, showDeadline: true },
-    { href: "/filing/access", label: "Access Plan" },
-    { href: "/checklist", label: "Audit Checklist" },
-    { href: "/wizard", label: "Code Wizard" },
-    { href: "/tracker", label: "Employee Tracker" },
-    { href: "/guide", label: "WinTeam Guide" },
+    { href: "/filing/access", label: t('accessPlan') },
+    { href: "/checklist", label: t('auditChecklist') },
+    { href: "/wizard", label: t('codeWizard') },
+    { href: "/tracker", label: t('employeeTracker') },
+    { href: "/guide", label: t('winteamGuide') },
+  ];
+
+  const YEAR_ROUND_NAV_ITEMS = [
+    { href: "/payroll", label: t('payPeriod') },
+    { href: "/payroll/offers", label: t('offerLetters') },
   ];
 
   useEffect(() => {
@@ -146,10 +156,26 @@ export default function Navigation({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Keep local language state in sync with IntlProvider events
+  useEffect(() => {
+    const handler = (e: CustomEvent<Language>) => {
+      setCurrentLanguage(e.detail);
+    };
+    window.addEventListener('languageChange', handler as EventListener);
+    return () => window.removeEventListener('languageChange', handler as EventListener);
+  }, []);
+
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
+  }
+
+  function handleLanguageToggle(lang: Language) {
+    setCurrentLanguage(lang);
+    changeLanguage(lang);
+    // Fire-and-forget save to database
+    saveLanguagePreference(lang);
   }
 
   function isActive(href: string): boolean {
@@ -168,6 +194,47 @@ export default function Navigation({
   const initials = getInitials(userFullName, userEmail);
   const firstName = getFirstName(userFullName, userEmail);
 
+  function LanguageToggle({ className = "" }: { className?: string }) {
+    return (
+      <div className={`flex items-center gap-1 ${className}`}>
+        <button
+          onClick={() => handleLanguageToggle('en')}
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            height: 24,
+            padding: "0 8px",
+            borderRadius: 4,
+            border: currentLanguage === 'en' ? 'none' : '1px solid #4a6a8a',
+            background: currentLanguage === 'en' ? 'white' : 'transparent',
+            color: currentLanguage === 'en' ? '#1a3a5c' : '#9db9d9',
+            cursor: 'pointer',
+            lineHeight: 1,
+          }}
+        >
+          EN
+        </button>
+        <button
+          onClick={() => handleLanguageToggle('es')}
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            height: 24,
+            padding: "0 8px",
+            borderRadius: 4,
+            border: currentLanguage === 'es' ? 'none' : '1px solid #4a6a8a',
+            background: currentLanguage === 'es' ? 'white' : 'transparent',
+            color: currentLanguage === 'es' ? '#1a3a5c' : '#9db9d9',
+            cursor: 'pointer',
+            lineHeight: 1,
+          }}
+        >
+          ES
+        </button>
+      </div>
+    );
+  }
+
   return (
     <nav className="print:hidden" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.10)" }}>
       {/* ROW 1 — App bar: 52px, navy background */}
@@ -183,15 +250,15 @@ export default function Navigation({
             </div>
             <div>
               <div className="font-semibold text-sm leading-tight text-white">
-                1095-C HR Toolkit
+                {t('appName')}
               </div>
               <div className="text-xs leading-tight" style={{ color: "#9db9d9" }}>
-                RBM Services Inc.
+                {t('companyName')}
               </div>
             </div>
           </Link>
 
-          {/* Right: settings gear + user menu (desktop) + hamburger (mobile) */}
+          {/* Right: language toggle + settings gear + user menu (desktop) + hamburger (mobile) */}
           <div className="flex items-center gap-3">
             {/* Admin button — admin only, desktop ≥ 1024px */}
             {isAdmin && (
@@ -208,7 +275,7 @@ export default function Navigation({
                   lineHeight: 1.4,
                 }}
               >
-                Admin
+                {t('admin')}
               </Link>
             )}
 
@@ -218,12 +285,15 @@ export default function Navigation({
                 href="/settings"
                 className="hidden lg:flex items-center justify-center transition-opacity hover:opacity-80"
                 style={{ color: "#9db9d9", fontSize: 20, lineHeight: 1 }}
-                title="Settings"
-                aria-label="Settings"
+                title={t('settings')}
+                aria-label={t('settings')}
               >
                 ⚙
               </Link>
             )}
+
+            {/* Language toggle — desktop ≥ 1024px */}
+            <LanguageToggle className="hidden lg:flex" />
 
             {/* User dropdown — desktop ≥ 1024px */}
             <div className="hidden lg:block relative" ref={dropdownRef}>
@@ -274,14 +344,14 @@ export default function Navigation({
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                     onClick={() => setDropdownOpen(false)}
                   >
-                    My Profile
+                    {t('myProfile')}
                   </Link>
                   <div className="my-1" style={{ borderTop: "1px solid #f3f4f6" }} />
                   <button
                     onClick={handleSignOut}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    Sign Out
+                    {t('signOut')}
                   </button>
                 </div>
               )}
@@ -358,7 +428,7 @@ export default function Navigation({
           <div className="px-4 py-3 space-y-0.5">
             {/* Filing tools section */}
             <div className="pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Filing Tools
+              {t('filingGroup')}
             </div>
             {filingNavItems.map((item) => (
               <Link
@@ -384,7 +454,7 @@ export default function Navigation({
               className="pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"
               style={{ borderTop: "1px solid #f3f4f6", marginTop: 8 }}
             >
-              Year-Round
+              {t('yearRoundGroup')}
             </div>
             {YEAR_ROUND_NAV_ITEMS.map((item) => (
               <Link
@@ -417,7 +487,7 @@ export default function Navigation({
                   onClick={() => setMobileOpen(false)}
                 >
                   <span>🛡</span>
-                  <span>Admin</span>
+                  <span>{t('admin')}</span>
                 </Link>
                 <Link
                   href="/settings"
@@ -430,25 +500,66 @@ export default function Navigation({
                   onClick={() => setMobileOpen(false)}
                 >
                   <span>⚙</span>
-                  <span>Settings</span>
+                  <span>{t('settings')}</span>
                 </Link>
               </>
             )}
 
-            {/* User actions */}
+            {/* Language toggle in mobile menu */}
             <div style={{ borderTop: "1px solid #f3f4f6", marginTop: 8, paddingTop: 8 }}>
+              <div className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                {tLang('toggle')}
+              </div>
+              <div className="px-3 py-2 flex gap-2">
+                <button
+                  onClick={() => { handleLanguageToggle('en'); setMobileOpen(false); }}
+                  style={{
+                    fontSize: 13,
+                    fontWeight: currentLanguage === 'en' ? 700 : 400,
+                    padding: "4px 12px",
+                    borderRadius: 6,
+                    border: '1px solid',
+                    borderColor: currentLanguage === 'en' ? '#1a3a5c' : '#d1d5db',
+                    background: currentLanguage === 'en' ? '#1a3a5c' : 'transparent',
+                    color: currentLanguage === 'en' ? 'white' : '#6b7280',
+                    cursor: 'pointer',
+                  }}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => { handleLanguageToggle('es'); setMobileOpen(false); }}
+                  style={{
+                    fontSize: 13,
+                    fontWeight: currentLanguage === 'es' ? 700 : 400,
+                    padding: "4px 12px",
+                    borderRadius: 6,
+                    border: '1px solid',
+                    borderColor: currentLanguage === 'es' ? '#1a3a5c' : '#d1d5db',
+                    background: currentLanguage === 'es' ? '#1a3a5c' : 'transparent',
+                    color: currentLanguage === 'es' ? 'white' : '#6b7280',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ES
+                </button>
+              </div>
+            </div>
+
+            {/* User actions */}
+            <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 8 }}>
               <Link
                 href="/profile"
                 className="flex items-center px-3 py-2.5 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 onClick={() => setMobileOpen(false)}
               >
-                My Profile
+                {t('myProfile')}
               </Link>
               <button
                 onClick={handleSignOut}
                 className="flex w-full items-center px-3 py-2.5 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Sign Out
+                {t('signOut')}
               </button>
             </div>
           </div>

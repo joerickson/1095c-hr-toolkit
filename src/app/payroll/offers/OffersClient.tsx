@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { calcCoverageStartDate } from "@/lib/aca-calculations";
@@ -66,6 +67,8 @@ interface ResponseForm {
 }
 
 export default function OffersClient({ dashboardRows, allOffers, userId }: Props) {
+  const t = useTranslations("offers");
+  const tc = useTranslations("common");
   const supabase = createClient();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<Tab>("queue");
@@ -302,9 +305,9 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Offer Letters</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Generate and track benefit offers for newly eligible employees
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -321,8 +324,8 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
         <nav className="-mb-px flex gap-6">
           {(
             [
-              { id: "queue", label: `Offer Queue${sortedQueue.length > 0 ? ` (${sortedQueue.length})` : ""}` },
-              { id: "all_offers", label: `All Offers${offers.length > 0 ? ` (${offers.length})` : ""}` },
+              { id: "queue", label: `${t("offerQueue")}${sortedQueue.length > 0 ? ` (${sortedQueue.length})` : ""}` },
+              { id: "all_offers", label: `${t("offerHistory")}${offers.length > 0 ? ` (${offers.length})` : ""}` },
             ] as { id: Tab; label: string }[]
           ).map((tab) => (
             <button
@@ -394,7 +397,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                         onClick={() => openGenerateForm(row)}
                         className="btn-primary text-sm flex-shrink-0"
                       >
-                        Generate Offer
+                        {t("generateOffer")}
                       </button>
                     </div>
                   );
@@ -472,7 +475,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                               onClick={() => openResponseForm(offer)}
                               className="text-xs text-navy-600 hover:underline"
                             >
-                              Record Response
+                              {t("recordResponse")}
                             </button>
                           )}
                           {(offer.status === "pending" || offer.status === "sent") && (
@@ -480,7 +483,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                               onClick={() => setPrintOffer({ offer, row })}
                               className="text-xs text-gray-500 hover:underline ml-2"
                             >
-                              Print
+                              {tc("print")}
                             </button>
                           )}
                         </td>
@@ -514,7 +517,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Offer Date</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.offerDate")}</label>
                 <input
                   type="date"
                   value={generateForm.offerDate}
@@ -523,7 +526,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Response Deadline</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.offerDeadline")}</label>
                 <input
                   type="date"
                   value={generateForm.offerDeadline}
@@ -534,7 +537,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Coverage Start Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.coverageStart")}</label>
               <input
                 type="date"
                 value={generateForm.coverageStartDate}
@@ -544,7 +547,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
             </div>
 
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Plans Being Offered</p>
+              <p className="text-sm font-medium text-gray-700 mb-1">{t("fields.plansOffered")}</p>
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 rounded-full bg-navy-600 flex-shrink-0 flex items-center justify-center text-white text-xs">✓</span>
@@ -563,10 +566,10 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
             <div className="flex justify-end gap-3 pt-2">
               <button onClick={() => setGenerateForm(null)} className="btn-secondary">
-                Cancel
+                {tc("cancel")}
               </button>
               <button onClick={handleGenerateOffer} disabled={generating} className="btn-primary">
-                {generating ? "Creating…" : "Create Offer Letter"}
+                {generating ? tc("loading") : t("generateOffer")}
               </button>
             </div>
           </div>
@@ -578,7 +581,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
         <Modal title={`Record Response — ${responseForm.employeeName}`} onClose={() => setResponseForm(null)}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Response</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{tc("status")}</label>
               <select
                 value={responseForm.response}
                 onChange={(e) =>
@@ -587,15 +590,15 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                 className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
               >
                 <option value="">Select…</option>
-                <option value="accepted">Accepted</option>
-                <option value="declined">Declined</option>
-                <option value="no_response">No Response</option>
+                <option value="accepted">{t("response.accepted")}</option>
+                <option value="declined">{t("response.declined")}</option>
+                <option value="no_response">{t("response.noResponse")}</option>
               </select>
             </div>
 
             {responseForm.response === "accepted" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Plan Selected</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.planSelected")}</label>
                 <select
                   value={responseForm.planSelected}
                   onChange={(e) =>
@@ -625,7 +628,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
                     }
                     className="h-4 w-4 rounded border-gray-300 text-navy-600"
                   />
-                  <span className="text-sm font-medium text-gray-700">Signed waiver on file</span>
+                  <span className="text-sm font-medium text-gray-700">{t("fields.waiverOnFile")}</span>
                 </label>
                 {!responseForm.waiverOnFile && (
                   <p className="text-xs text-red-600 mt-1">
@@ -636,7 +639,7 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{tc("notes")} ({tc("optional")})</label>
               <textarea
                 rows={2}
                 value={responseForm.notes}
@@ -648,14 +651,14 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
 
             <div className="flex justify-end gap-3 pt-2">
               <button onClick={() => setResponseForm(null)} className="btn-secondary">
-                Cancel
+                {tc("cancel")}
               </button>
               <button
                 onClick={handleRecordResponse}
                 disabled={recording || !responseForm.response}
                 className="btn-primary"
               >
-                {recording ? "Saving…" : "Save Response"}
+                {recording ? tc("loading") : tc("save")}
               </button>
             </div>
           </div>
@@ -667,8 +670,8 @@ export default function OffersClient({ dashboardRows, allOffers, userId }: Props
         <Modal title="Offer Letter Preview" onClose={() => setPrintOffer(null)} wide>
           <PrintableOffer offer={printOffer.offer} row={printOffer.row} />
           <div className="flex justify-end gap-3 mt-4 print:hidden">
-            <button onClick={() => setPrintOffer(null)} className="btn-secondary">Close</button>
-            <button onClick={() => window.print()} className="btn-primary">Print / Save PDF</button>
+            <button onClick={() => setPrintOffer(null)} className="btn-secondary">{tc("close")}</button>
+            <button onClick={() => window.print()} className="btn-primary">{tc("print")}</button>
           </div>
         </Modal>
       )}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations("auth");
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -37,12 +39,12 @@ export default function LoginPage() {
             <span className="text-navy-700 font-bold text-xl">1095</span>
           </div>
           <h1 className="text-2xl font-bold text-white">1095-C HR Toolkit</h1>
-          <p className="text-navy-200 mt-1">RBM Services Inc.</p>
+          <p className="text-navy-200 mt-1">{t("welcomeSubtitle")}</p>
         </div>
 
         {/* Login card */}
         <div className="bg-white rounded-xl shadow-xl p-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Sign in to your account</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">{t("welcomeBack")}</h2>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
@@ -53,7 +55,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
+                {t("email")}
               </label>
               <input
                 type="email"
@@ -61,13 +63,13 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-transparent"
-                placeholder="hr@abcjanitorial.com"
+                placeholder={t("emailPlaceholder")}
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {t("password")}
               </label>
               <input
                 type="password"
@@ -75,7 +77,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-transparent"
-                placeholder="••••••••"
+                placeholder={t("passwordPlaceholder")}
               />
             </div>
 
@@ -84,7 +86,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full btn-primary py-2.5 text-sm"
             >
-              {loading ? "Signing in…" : "Sign in"}
+              {loading ? t("signingIn") : t("signInButton")}
             </button>
           </form>
 

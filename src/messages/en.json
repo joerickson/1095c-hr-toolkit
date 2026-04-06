@@ -1,0 +1,747 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "required": "Required",
+    "optional": "Optional",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "print": "Print",
+    "export": "Export",
+    "import": "Import",
+    "upload": "Upload",
+    "download": "Download",
+    "view": "View",
+    "add": "Add",
+    "remove": "Remove",
+    "update": "Update",
+    "submit": "Submit",
+    "send": "Send",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions",
+    "notes": "Notes",
+    "complete": "Complete",
+    "incomplete": "Incomplete",
+    "ready": "Ready",
+    "issues": "Issues",
+    "noData": "No data available",
+    "noResults": "No results found",
+    "markComplete": "Mark Complete",
+    "markCompleteAndClose": "Mark Complete and Close",
+    "walkMeThrough": "Walk me through this →",
+    "showDetail": "Show detail",
+    "hideDetail": "Hide detail",
+    "logAnIssue": "Log an Issue",
+    "stepOf": "Step {current} of {total}",
+    "aboutMinutes": "About {minutes} minutes",
+    "delegatable": "Delegatable",
+    "assignTo": "Assign to",
+    "namePlaceholder": "Name...",
+    "whatDidYouFind": "What did you find?",
+    "findingPlaceholder": "Note what you found or changed...",
+    "daysRemaining": "{days}d remaining",
+    "overdue": "OVERDUE",
+    "deadline": "Deadline",
+    "taxYear": "Tax Year",
+    "selectYear": "Select Year"
+  },
+
+  "language": {
+    "english": "English",
+    "spanish": "Spanish",
+    "toggle": "Language"
+  },
+
+  "navigation": {
+    "appName": "1095-C HR Toolkit",
+    "companyName": "RBM Services Inc.",
+    "filing": "2025 Filing",
+    "accessPlan": "Access Plan",
+    "auditChecklist": "Audit Checklist",
+    "codeWizard": "Code Wizard",
+    "employeeTracker": "Employee Tracker",
+    "winteamGuide": "WinTeam Guide",
+    "payPeriod": "Pay Period",
+    "offerLetters": "Offer Letters",
+    "settings": "Settings",
+    "admin": "Admin",
+    "signOut": "Sign out",
+    "myProfile": "My Profile",
+    "filingGroup": "Filing Tools",
+    "yearRoundGroup": "Year-Round"
+  },
+
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "email": "Email address",
+    "password": "Password",
+    "emailPlaceholder": "you@rbmservices.com",
+    "passwordPlaceholder": "Your password",
+    "signingIn": "Signing in...",
+    "signInButton": "Sign In",
+    "forgotPassword": "Forgot your password?",
+    "accessDenied": "Access Denied",
+    "accessDeniedMessage": "You need administrator access to view this page.",
+    "backToDashboard": "← Back to Dashboard",
+    "welcomeBack": "Welcome back",
+    "welcomeSubtitle": "Sign in to your 1095-C HR Toolkit account",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "notAuthenticated": "Not authenticated"
+  },
+
+  "filing": {
+    "title": "2025 Filing Assistant",
+    "subtitle": "Guided workflow to complete your {taxYear} 1095-C filing",
+    "deadlineBanner": "{taxYear} filing deadline — {days} days remaining",
+    "deadlinePassed": "Filing deadline has passed",
+    "suggestedSchedule": "Suggested Schedule",
+    "phase1Complete": "Complete by {date}",
+    "phase2Complete": "Complete by {date}",
+    "phase3Complete": "Complete by {date}",
+    "phase4Complete": "Complete by {date}",
+    "bufferDays": "{days}-day buffer before deadline",
+    "blockingIssuesAlert": "{count} blocking issues must be resolved before you can advance.",
+    "viewIssues": "View Issues →",
+    "openIssues": "Open Issues",
+    "blocking": "Blocking",
+    "warnings": "Warnings",
+    "informational": "Informational",
+    "screenshotsCaptured": "{count} screenshots captured",
+    "continuePhase": "Continue →",
+    "phaseComplete": "Complete",
+    "phaseLocked": "Locked",
+    "phaseInProgress": "In Progress",
+    "phaseBlocked": "Blocked",
+    "estimatedTime": "Estimated time: {time}",
+    "phase1Time": "2–4 hours",
+    "phase2Time": "2–6 hours",
+    "phase3Time": "1–3 days",
+    "phase4Time": "3–5 hours",
+    "phase1Name": "Audit {priorYear} WinTeam Setup",
+    "phase2Name": "Fix Issues and Roll Forward to {taxYear}",
+    "phase3Name": "{taxYear} Data Catch-Up",
+    "phase4Name": "Generate, Verify, and File",
+    "advanceToPhase": "Advance to Phase {next} →",
+    "gateItemsRemaining": "{count} gate items must be completed before advancing",
+    "phaseAdvanced": "Phase {current} complete! Moving to Phase {next}",
+    "itemsComplete": "{complete} of {total} items complete",
+    "gateItem": "Gate item",
+    "gateLocked": "Complete all gate items above to unlock",
+    "accessNeeded": "Access needed",
+    "thisStepRequires": "This step requires {role} access in WinTeam",
+    "anyHRStaff": "Any HR staff member can do this step"
+  },
+
+  "phases": {
+    "phase1": {
+      "title": "Audit {priorYear} WinTeam Setup",
+      "description": "Verify that last year's WinTeam configuration was correct before building on it for {taxYear}.",
+      "sections": {
+        "companySetup": "SYS: Company Setup",
+        "eligibilitySetup": "INS: Eligibility Setup",
+        "plan1": "INS: Benefit Setup — Plan 1 MEC (Self-Insured)",
+        "plan2": "INS: Benefit Setup — Plan 2 Self-Insured Full Coverage",
+        "plan3": "INS: Benefit Setup — Plan 3 Select Health",
+        "packages": "INS: Benefit Packages",
+        "testReport": "Validation — Run {priorYear} Test Report"
+      }
+    },
+    "phase2": {
+      "title": "Fix Issues and Roll Forward to {taxYear}",
+      "description": "Resolve any issues found in Phase 1 and update WinTeam settings for the new tax year.",
+      "sections": {
+        "fixIssues": "Fix {priorYear} Issues",
+        "rollForward": "Roll Forward to {taxYear}"
+      }
+    },
+    "phase3": {
+      "title": "{taxYear} Data Catch-Up",
+      "description": "Enter all {taxYear} employee data, benefit elections, and dependent information into WinTeam.",
+      "sections": {
+        "rosterReview": "Employee Roster Review",
+        "benefitElections": "Benefit Elections",
+        "dependentData": "Dependent Data — Self-Insured Plans",
+        "midYearChanges": "Mid-Year Changes",
+        "trackerReview": "Employee Tracker Review"
+      }
+    },
+    "phase4": {
+      "title": "Generate, Verify, and File",
+      "description": "Generate the {taxYear} 1095-C forms in WinTeam, verify the codes are correct, and submit electronically.",
+      "sections": {
+        "testReport": "Test Report",
+        "fixAndRetest": "Fix and Retest",
+        "generateFile": "Generate Electronic File",
+        "submit": "Submit"
+      }
+    }
+  },
+
+  "checklist": {
+    "title": "Audit Checklist",
+    "subtitle": "Annual pre-filing checklist for {taxYear}",
+    "progress": "{pct}% complete ({done} of {total})",
+    "sections": {
+      "companySetup": "SYS: Company Setup",
+      "eligibilitySetup": "INS: Eligibility Setup",
+      "plan1": "Plan 1 — MEC (Self-Insured)",
+      "plan2": "Plan 2 — Self-Insured Full Coverage",
+      "plan3": "Plan 3 — Select Health Small Group",
+      "employeeMasterFile": "Employee Master File",
+      "benefitsByEmployee": "INS: Benefits by Employee — Self-Insured Plans",
+      "preFiling": "Pre-Filing Final Checks"
+    }
+  },
+
+  "wizard": {
+    "title": "Code Lookup Wizard",
+    "subtitle": "Determine the correct Lines 14, 15, and 16 codes for any employee situation",
+    "step1Title": "Step 1 of 5 — Full-Time Status",
+    "step1Question": "Was this employee a full-time employee during this month?",
+    "step1OptionYes": "Yes — full-time (average 30+ hours/week or 130+ hours/month)",
+    "step1OptionNo": "No — part-time or variable hour employee",
+    "step2Title": "Step 2 of 5 — Coverage Offer",
+    "step2Question": "Was the employee offered health coverage this month?",
+    "step2OptionYes": "Yes — coverage was offered for the entire month",
+    "step2OptionWaiting": "No — employee was in a waiting period or hired mid-month",
+    "step2OptionNo": "No — no offer was made this month",
+    "step3Title": "Step 3 of 5 — Which Plan",
+    "step3Question": "Which plan was offered to this employee?",
+    "step3OptionP1": "Plan 1 — MEC only (self-insured, does NOT meet minimum value)",
+    "step3OptionP2": "Plan 2 — Self-Insured Full Coverage (meets minimum value)",
+    "step3OptionP3": "Plan 3 — Select Health Small Group (meets minimum value)",
+    "step4Title": "Step 4 of 5 — Who Was Covered",
+    "step4Question": "Who was the coverage offered to?",
+    "step4OptionEmployee": "Employee only",
+    "step4OptionEmployeeDep": "Employee + dependents (no spouse offer)",
+    "step4OptionEmployeeSp": "Employee + spouse (no dependent offer)",
+    "step4OptionAll": "Employee + spouse + dependents",
+    "step5Title": "Step 5 of 5 — Enrollment",
+    "step5Question": "Did the employee actually enroll in the coverage that was offered?",
+    "step5OptionYes": "Yes — enrolled in the coverage offered",
+    "step5OptionNo": "No — waived / declined coverage",
+    "resultTitle": "Recommended codes for this employee",
+    "line14Label": "Line 14",
+    "line15Label": "Line 15",
+    "line16Label": "Line 16",
+    "part3Label": "Part III",
+    "part3Required": "Required — enter all covered individuals in INS: Benefits by Employee",
+    "part3NotRequired": "Not required — Select Health issues the 1095-B",
+    "affordabilityTitle": "Affordability Test",
+    "affordabilityPass": "Passes affordability test",
+    "affordabilityFail": "Fails affordability test — review coverage cost",
+    "lookupAnother": "Look up another employee",
+    "backButton": "← Back",
+    "nextButton": "Next →",
+    "showCodes": "Show codes →"
+  },
+
+  "tracker": {
+    "title": "Employee Tracker",
+    "subtitle": "Track 1095-C compliance status for all employees",
+    "addEmployee": "Add Employee",
+    "searchPlaceholder": "Search by name...",
+    "filterByPlan": "All plans",
+    "filterByStatus": "All statuses",
+    "hasIssues": "Has issues",
+    "columns": {
+      "name": "Employee Name",
+      "plan": "Plan",
+      "line14": "Line 14 Code",
+      "line16": "Line 16 Code",
+      "part3": "Part III Required",
+      "ssn": "SSN",
+      "dob": "DOB",
+      "dependents": "Dependents",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "ready": "Ready",
+      "issues": "Issues",
+      "onFile": "On file",
+      "missing": "Missing",
+      "complete": "Complete",
+      "partial": "Partial",
+      "none": "None entered",
+      "notRequired": "N/A",
+      "required": "Required"
+    },
+    "stats": {
+      "total": "Total tracked",
+      "ready": "Ready to file",
+      "issues": "Has issues",
+      "part3Required": "Part III required",
+      "missingSSN": "Missing SSN"
+    },
+    "modals": {
+      "addTitle": "Add Employee",
+      "editTitle": "Edit Employee",
+      "dependentsTitle": "Dependents — {name}",
+      "addDependent": "Add Dependent",
+      "deleteConfirm": "Delete this employee? Their data will be permanently removed.",
+      "deleteDepConfirm": "Delete this dependent record?"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "middleInitial": "Middle Initial",
+      "ssn": "SSN on file?",
+      "ssnLastFour": "Last 4 of SSN",
+      "dob": "Date of Birth",
+      "dobOnFile": "DOB on file?",
+      "address": "Street Address",
+      "city": "City",
+      "state": "State",
+      "zip": "ZIP Code",
+      "employmentStatus": "Employment Status",
+      "employeeType": "Employee Type",
+      "hourlyRate": "Hourly Rate",
+      "hireDate": "Hire Date",
+      "terminationDate": "Termination Date",
+      "planEnrolled": "Plan Enrolled",
+      "stabilityStartDate": "Stability Start Date",
+      "notes": "Notes",
+      "relationship": "Relationship",
+      "coverageMonths": "Months Covered"
+    },
+    "employmentStatus": {
+      "active": "Active",
+      "terminated": "Terminated",
+      "leave_of_absence": "Leave of Absence"
+    },
+    "employeeType": {
+      "full_time": "Full-Time",
+      "part_time": "Part-Time",
+      "variable": "Variable Hour",
+      "seasonal": "Seasonal"
+    },
+    "relationships": {
+      "spouse": "Spouse",
+      "dependent_minor": "Minor Dependent (under 18)",
+      "dependent_adult": "Adult Dependent (18+)"
+    },
+    "plans": {
+      "P1": "Plan 1 — MEC",
+      "P2": "Plan 2 — Self-Insured Full",
+      "P3": "Plan 3 — Select Health",
+      "declined": "Declined all coverage"
+    }
+  },
+
+  "guide": {
+    "title": "WinTeam Setup Guide",
+    "subtitle": "Step-by-step configuration reference for all three plans",
+    "printButton": "Print Guide",
+    "importantNote": "Because RBM Services offers all three plans to every eligible employee, every employee benefit package in WinTeam must include all three plans — not just the one the employee enrolled in. WinTeam derives the Line 14 code from the package, so if only Plan 1 (MEC) is in the package, WinTeam will generate 1F instead of 1E. This is the most common setup error.",
+    "steps": {
+      "step1Title": "Step 1 — SYS: Company Setup",
+      "step1Sub": "Done once. Applies to all three plans.",
+      "step2Title": "Step 2 — INS: Eligibility Setup",
+      "step2Sub": "Done once per eligibility rule. Controls who gets a 1095-C generated.",
+      "step3Title": "Step 3 — INS: Benefit Setup",
+      "step3Sub": "Configure each plan separately. This is where the three plans diverge.",
+      "step4Title": "Step 4 — INS: Benefits by Employee",
+      "step4Sub": "Done per employee. This is where coverage becomes personal."
+    },
+    "dataSourceTitle": "Data Source Quick Reference",
+    "dataSourceSubtitle": "Where every 1095-C field comes from in WinTeam"
+  },
+
+  "payroll": {
+    "title": "Pay Period Dashboard",
+    "subtitle": "Eligibility monitoring and hours tracking",
+    "currentPeriod": "Current Pay Period",
+    "hoursEntry": "Hours Entry",
+    "importCSV": "Import CSV",
+    "measurementBoard": "Measurement Period Status",
+    "newHires": "New Hires",
+    "thresholdAlerts": "Threshold Alerts",
+    "approachingThreshold": "Approaching 30hr threshold",
+    "crossedThreshold": "Crossed 30hr threshold — offer required",
+    "inAdminPeriod": "In administrative period",
+    "offerNotSent": "Offer letter not sent",
+    "offerExpired": "Offer letter expired",
+    "columns": {
+      "employee": "Employee",
+      "periodType": "Period Type",
+      "periodDates": "Period Dates",
+      "hoursToDate": "Hours to Date",
+      "avgHrsWeek": "Avg hrs/week",
+      "daysRemaining": "Days Remaining",
+      "status": "Status"
+    },
+    "periodTypes": {
+      "standard": "Standard",
+      "initial": "Initial"
+    },
+    "checklist": {
+      "title": "Pay Period Checklist",
+      "subtitle": "Complete these tasks every pay period (1st and 15th)"
+    }
+  },
+
+  "offers": {
+    "title": "Offer Letters",
+    "subtitle": "Manage benefit offers for newly eligible employees",
+    "generateOffer": "Generate Offer",
+    "recordResponse": "Record Response",
+    "offerQueue": "Employees Awaiting Offer",
+    "offerHistory": "Offer History",
+    "status": {
+      "pending": "Pending",
+      "sent": "Sent",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "expired": "Expired"
+    },
+    "response": {
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "noResponse": "No Response"
+    },
+    "fields": {
+      "offerDate": "Offer Date",
+      "offerDeadline": "Response Deadline",
+      "coverageStart": "Coverage Start Date",
+      "plansOffered": "Plans Offered",
+      "planSelected": "Plan Selected",
+      "waiverOnFile": "Waiver on File"
+    }
+  },
+
+  "issues": {
+    "title": "Filing Issues",
+    "subtitle": "Issues found during the filing process",
+    "logIssue": "Log New Issue",
+    "markResolved": "Mark Resolved",
+    "resolutionNotes": "Resolution Notes",
+    "categories": {
+      "benefit_setup": "Benefit Setup",
+      "eligibility_setup": "Eligibility Setup",
+      "company_setup": "Company Setup",
+      "employee_data": "Employee Data",
+      "dependent_data": "Dependent Data",
+      "benefit_assignment": "Benefit Assignment",
+      "hours_data": "Hours Data",
+      "measurement_period": "Measurement Period",
+      "other": "Other"
+    },
+    "severity": {
+      "blocking": "Blocking",
+      "warning": "Warning",
+      "informational": "Informational"
+    },
+    "status": {
+      "open": "Open",
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "wont_fix": "Won't Fix"
+    },
+    "fields": {
+      "title": "Issue Title",
+      "category": "Category",
+      "severity": "Severity",
+      "description": "Description",
+      "winteamPath": "WinTeam Fix Path",
+      "fixInstructions": "Fix Instructions",
+      "affectedCount": "Affected Employees"
+    }
+  },
+
+  "access": {
+    "title": "Access Plan",
+    "subtitle": "Review who needs what WinTeam access before starting the {taxYear} filing process",
+    "printButton": "Print Access Plan",
+    "roles": {
+      "standard_hr": "Standard HR User",
+      "hr_manager": "HR Manager / Power User",
+      "winteam_admin": "WinTeam Administrator",
+      "team_software_support": "TEAM Software Support"
+    },
+    "roleDescriptions": {
+      "standard_hr": "Basic HR staff with access to view and edit employee records, enter hours, and manage benefit enrollments in INS: Benefits by Employee. Cannot access SYS: Company Setup or INS: Benefit Setup.",
+      "hr_manager": "HR staff with elevated access to run 1095-C reports, execute the Eligibility Testing Wizard, view and edit benefit packages, and access most INS screens. Cannot access SYS.",
+      "winteam_admin": "Full system access including SYS: Company Setup, INS: Benefit Setup, and all configuration screens. Typically the person who manages your WinTeam system. There may only be one or two people with this role.",
+      "team_software_support": "Tasks that require involvement from TEAM Software directly — either because they require backend access or because the risk of error is high enough that professional support is recommended."
+    },
+    "grantAccess": "Grant access in WinTeam via",
+    "tasks": "tasks",
+    "accessByPhase": "Access Requirements by Phase",
+    "columns": {
+      "task": "Task",
+      "whoCanDoIt": "Who Can Do It",
+      "winteamModules": "WinTeam Modules",
+      "delegate": "Delegate?",
+      "assignTo": "Assign To"
+    },
+    "preChecklist": "Before You Begin — Confirm Access",
+    "preChecklistSubtitle": "Complete this checklist before starting Phase 1",
+    "checkItems": {
+      "adminIdentified": "WinTeam Administrator identified: _______________",
+      "adminAccess": "WinTeam Administrator has access to: SYS: Company Setup, INS: Benefit Setup, INS: Eligibility Setup, INS: Eligibility Testing Wizard, INS: Employee 1095-C Report (Electronic File)",
+      "managerIdentified": "HR Manager identified: _______________",
+      "managerAccess": "HR Manager has access to: INS: Employee 1095-C Report (Preview/Print), INS: Benefits by Employee (Read/Write), Employee Master File (Read/Write)",
+      "staffIdentified": "HR Staff identified for data entry: _______________",
+      "staffAccess": "HR Staff have access to: INS: Benefits by Employee (Read/Write), Employee Master File (Read/Write)",
+      "tccLocated": "TCC (Transmitter Control Code) located — Stored at: _______________",
+      "fireCredentials": "FIRE system credentials located — Held by: _______________",
+      "teamSoftware": "TEAM Software e-file portal credentials (if using their service) — Held by: _______________"
+    }
+  },
+
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Company-wide ACA configuration",
+    "adminOnly": "Admin access required to modify settings",
+    "sections": {
+      "company": "Company Information",
+      "aca": "ACA Configuration",
+      "safeHarbor": "Safe Harbor Method",
+      "filing": "Filing Settings"
+    },
+    "fields": {
+      "taxYear": "Tax Year",
+      "companyName": "Company Name",
+      "companyEIN": "Employer EIN",
+      "contactPhone": "1095-C Contact Phone",
+      "planStartMonth": "Plan Start Month",
+      "mecPremium": "Plan 1 MEC Employee-Only Monthly Premium",
+      "mecPremiumHelper": "This amount appears on Line 15 of every employee's 1095-C regardless of which plan they enrolled in.",
+      "safeHarborMethod": "Safe Harbor Method",
+      "affordabilityThreshold": "Affordability Threshold",
+      "fplThreshold": "FPL Monthly Threshold",
+      "extensionFiled": "Extension filed for this tax year (deadline moves to April 30)"
+    },
+    "safeHarborOptions": {
+      "rate_of_pay": "Rate of Pay (2H) — Recommended for hourly workers",
+      "w2": "W-2 Wages (2F)",
+      "fpl": "Federal Poverty Line (2G)"
+    },
+    "saved": "Settings saved successfully",
+    "tabs": {
+      "general": "General",
+      "users": "User Management"
+    }
+  },
+
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Manage users, view activity, and configure access",
+    "tabs": {
+      "users": "Users",
+      "invite": "Invite",
+      "activity": "Activity Log"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "admins": "Admins",
+      "hrUsers": "HR Users",
+      "pending": "Invited / Pending"
+    },
+    "users": {
+      "columns": {
+        "user": "User",
+        "role": "Role",
+        "joined": "Joined",
+        "lastSignIn": "Last Sign In",
+        "status": "Status"
+      },
+      "status": {
+        "active": "Active",
+        "invited": "Invited"
+      },
+      "neverSignedIn": "Never signed in",
+      "changeRole": "Change Role",
+      "resetPassword": "Reset Password",
+      "removeUser": "Remove",
+      "changeRoleConfirm": "Change {name} to {role}?",
+      "changeRoleDescription": "Admins can manage users and settings. HR Users can use all filing features.",
+      "removeConfirmTitle": "Remove {name}?",
+      "removeConfirmDescription": "They will immediately lose access to the app. Their checklist progress and filing data will be preserved for audit purposes. This cannot be undone.",
+      "removeButton": "Remove User",
+      "cannotModifySelf": "You cannot modify your own account",
+      "roleChanged": "{name} is now a {role}",
+      "passwordResetSent": "Password reset email sent to {email}",
+      "userRemoved": "{name} has been removed",
+      "roles": {
+        "admin": "Admin",
+        "hr_user": "HR User"
+      }
+    },
+    "invite": {
+      "title": "Invite a Team Member",
+      "subtitle": "They will receive an email to set their password and access the app",
+      "fields": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "role": "Role"
+      },
+      "roleOptions": {
+        "hr_user": "HR User — can use all filing features and view all data",
+        "admin": "Admin — can also manage users, settings, and delete data"
+      },
+      "sendButton": "Send Invitation",
+      "sending": "Sending...",
+      "successTitle": "Invitation sent to {email}",
+      "successDescription": "They will receive an email with a link to set their password and access the app.",
+      "inviteAnother": "Invite Another Person",
+      "emailAlreadyExists": "This email already has an account",
+      "inviteFailed": "Failed to send invitation. Please try again."
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "subtitle": "Best-effort log of recent user actions based on available data",
+      "columns": {
+        "user": "User",
+        "action": "Action",
+        "dateTime": "Date / Time"
+      },
+      "events": {
+        "completedChecklist": "Completed checklist item: {key}",
+        "completedFiling": "Completed filing step: {key}",
+        "ranWizard": "Ran code lookup wizard — Line 14: {line14}",
+        "loggedIssue": "Logged issue: {title}",
+        "resolvedIssue": "Resolved issue: {title}"
+      },
+      "empty": "No activity yet"
+    }
+  },
+
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Manage your account settings",
+    "sections": {
+      "info": "Profile Information",
+      "password": "Change Password",
+      "account": "Account Info"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "role": "Role",
+      "language": "Preferred Language"
+    },
+    "emailNote": "To change your email, contact your administrator.",
+    "roleNote": "Your role is set by your administrator.",
+    "nameSaved": "Name updated",
+    "resetPasswordButton": "Send Password Reset Email",
+    "resetPasswordNote": "We will send a reset link to {email}",
+    "resetPasswordSent": "Check your email for a reset link",
+    "memberSince": "Member since",
+    "accountStatus": "Account status",
+    "accountActive": "Active"
+  },
+
+  "screenshots": {
+    "title": "Screenshots — What it should look like",
+    "subtitle": "Upload screenshots as you complete this step. They become permanent visual guides for your team.",
+    "uploadArea": "Drag a screenshot here, or click to browse",
+    "uploadFormats": "JPEG, PNG, WebP or GIF · Max 5MB",
+    "captionLabel": "Caption (optional)",
+    "captionPlaceholder": "Describe what this screenshot shows — e.g. 'Self Insured checkbox correctly checked'",
+    "uploadButton": "Upload Screenshot",
+    "uploading": "Uploading...",
+    "uploadSuccess": "Screenshot uploaded",
+    "uploadError": "Upload failed: {error}",
+    "deleteConfirm": "Delete this screenshot? This cannot be undone.",
+    "maxReached": "Maximum 10 screenshots reached. Delete one to add more.",
+    "uploadedBy": "Uploaded by {name} · {time}",
+    "addScreenshot": "Add screenshot",
+    "noScreenshots": "No screenshots yet",
+    "noScreenshotsDescription": "Be the first to capture this step — upload a screenshot while you are working through it and your team will have a visual guide going forward.",
+    "savedCaption": "Saved",
+    "lightboxClose": "Close image"
+  },
+
+  "walkthroughs": {
+    "accessNeeded": "Access needed",
+    "whyItMatters": "Why this matters",
+    "ifSomethingLooksWrong": "If something looks wrong",
+    "close": "Close",
+    "previousStep": "← Previous step",
+    "nextStep": "Next step →"
+  },
+
+  "winteamPaths": {
+    "sysCompanySetup": "SYS > Company Setup > ACA Configuration",
+    "sysEIN": "SYS > Company Setup > EIN field",
+    "sysPhone": "SYS > Company Setup > Insurance Benefits 1095-C Contact Phone",
+    "eligACA": "INS > Eligibility Setup > ACA Compliant Eligibility checkbox",
+    "eligPlanStart": "INS > Eligibility Setup > Plan Start Month",
+    "benefitSetupP1ACA": "INS > Benefit Setup > [Plan 1] > Pricing Tab > ACA checkbox",
+    "benefitSetupP1SelfIns": "INS > Benefit Setup > [Plan 1] > Pricing Tab > Self Insured checkbox",
+    "benefitSetupP1MinVal": "INS > Benefit Setup > [Plan 1] > Pricing Tab > Minimum Value checkbox",
+    "benefitSetupP1Premium": "INS > Benefit Setup > [Plan 1] > Pricing Tab > Employee premium field",
+    "benefitSetupP1Options": "INS > Benefit Setup > [Plan 1] > Plan Options Tab",
+    "benefitSetupP2ACA": "INS > Benefit Setup > [Plan 2] > Pricing Tab > ACA checkbox",
+    "benefitSetupP2SelfIns": "INS > Benefit Setup > [Plan 2] > Pricing Tab > Self Insured checkbox",
+    "benefitSetupP2MinVal": "INS > Benefit Setup > [Plan 2] > Pricing Tab > Minimum Value checkbox",
+    "benefitSetupP2Options": "INS > Benefit Setup > [Plan 2] > Plan Options Tab",
+    "benefitSetupP3ACA": "INS > Benefit Setup > [Plan 3] > Pricing Tab > ACA checkbox",
+    "benefitSetupP3SelfIns": "INS > Benefit Setup > [Plan 3] > Pricing Tab > Self Insured checkbox",
+    "benefitSetupP3MinVal": "INS > Benefit Setup > [Plan 3] > Pricing Tab > Minimum Value checkbox",
+    "benefitSetupP3Options": "INS > Benefit Setup > [Plan 3] > Plan Options Tab",
+    "benefitsByEmployee": "INS > Benefits by Employee > Package Tab",
+    "benefitsByEmployeePackage": "INS > Benefits by Employee > Package Tab > review package contents",
+    "report2024": "INS > Employee 1095-C Report > Tax Year {priorYear} > Output Type: Preview",
+    "report2025": "INS > Employee 1095-C Report > Tax Year {taxYear} > Output Type: 1095-C Forms (preview)",
+    "eligWizard": "INS > Eligibility Testing Wizard > run for {taxYear}",
+    "efileGenerate": "INS > Employee 1095-C Report > Output Type: 1095-C Electronic File",
+    "employeeMasterFile": "Employee Master File",
+    "coveredIndividuals": "INS > Benefits by Employee > Covered Individuals Tab"
+  },
+
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "notAuthenticated": "You must be signed in to do this.",
+    "notAdmin": "Admin access required.",
+    "notFound": "Not found.",
+    "uploadFailed": "Upload failed.",
+    "saveFailed": "Save failed. Please try again.",
+    "deleteFailed": "Delete failed. Please try again.",
+    "missingServiceKey": "SUPABASE_SERVICE_ROLE_KEY is not configured. User management will not work until this is set up.",
+    "setupRequired": "Setup Required"
+  },
+
+  "toasts": {
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "updated": "Updated successfully",
+    "itemCompleted": "Step marked complete",
+    "phaseAdvanced": "Phase {current} complete! Moving to Phase {next}",
+    "issueLogged": "Issue logged",
+    "issueResolved": "Issue resolved",
+    "screenshotUploaded": "Screenshot uploaded",
+    "screenshotDeleted": "Screenshot deleted",
+    "inviteSent": "Invitation sent to {email}",
+    "roleChanged": "Role updated",
+    "passwordResetSent": "Password reset email sent",
+    "userRemoved": "User removed",
+    "languageChanged": "Language changed to {language}",
+    "nameUpdated": "Name updated",
+    "settingsSaved": "Settings saved"
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { EligibilityDashboardRow } from "@/lib/types";
 
@@ -11,14 +12,17 @@ interface Alert {
   href: string;
 }
 
-function buildAlerts(rows: EligibilityDashboardRow[]): Alert[] {
+function buildAlerts(
+  rows: EligibilityDashboardRow[],
+  t: ReturnType<typeof useTranslations>
+): Alert[] {
   const alerts: Alert[] = [];
 
   const crossedThreshold = rows.filter((r) => r.warning_crossed_threshold);
   if (crossedThreshold.length > 0) {
     alerts.push({
       id: "crossed_threshold",
-      message: `${crossedThreshold.length} employee${crossedThreshold.length > 1 ? "s" : ""} crossed the 30 hr/week threshold — offer letter${crossedThreshold.length > 1 ? "s" : ""} required`,
+      message: `${crossedThreshold.length} employee${crossedThreshold.length > 1 ? "s" : ""} ${t("crossedThreshold")}`,
       severity: "critical",
       href: "/payroll",
     });
@@ -28,7 +32,7 @@ function buildAlerts(rows: EligibilityDashboardRow[]): Alert[] {
   if (expiredOffers.length > 0) {
     alerts.push({
       id: "offer_expired",
-      message: `${expiredOffers.length} offer letter${expiredOffers.length > 1 ? "s" : ""} expired with no response`,
+      message: `${expiredOffers.length} offer letter${expiredOffers.length > 1 ? "s" : ""} — ${t("offerExpired")}`,
       severity: "critical",
       href: "/payroll/offers",
     });
@@ -38,7 +42,7 @@ function buildAlerts(rows: EligibilityDashboardRow[]): Alert[] {
   if (offersNotSent.length > 0) {
     alerts.push({
       id: "offer_not_sent",
-      message: `${offersNotSent.length} employee${offersNotSent.length > 1 ? "s" : ""} determined full-time but no offer letter sent`,
+      message: `${offersNotSent.length} employee${offersNotSent.length > 1 ? "s" : ""} — ${t("offerNotSent")}`,
       severity: "critical",
       href: "/payroll/offers",
     });
@@ -49,7 +53,7 @@ function buildAlerts(rows: EligibilityDashboardRow[]): Alert[] {
     const minDays = Math.min(...inAdminPeriod.map((r) => r.days_until_coverage_must_start ?? 999));
     alerts.push({
       id: "admin_period",
-      message: `Admin period active — ${inAdminPeriod.length} employee${inAdminPeriod.length > 1 ? "s" : ""} need offers processed. Coverage must start in ${minDays} day${minDays !== 1 ? "s" : ""}.`,
+      message: `${t("inAdminPeriod")} — ${inAdminPeriod.length} employee${inAdminPeriod.length > 1 ? "s" : ""} need offers processed. Coverage must start in ${minDays} day${minDays !== 1 ? "s" : ""}.`,
       severity: "high",
       href: "/payroll/offers",
     });
@@ -79,7 +83,7 @@ function buildAlerts(rows: EligibilityDashboardRow[]): Alert[] {
   if (approachingThreshold.length > 0) {
     alerts.push({
       id: "approaching_threshold",
-      message: `${approachingThreshold.length} employee${approachingThreshold.length > 1 ? "s" : ""} averaging 25–29 hrs/week — approaching full-time threshold`,
+      message: `${approachingThreshold.length} employee${approachingThreshold.length > 1 ? "s" : ""} — ${t("approachingThreshold")}`,
       severity: "medium",
       href: "/payroll",
     });
@@ -114,8 +118,9 @@ interface EligibilityAlertsProps {
 }
 
 export default function EligibilityAlerts({ rows }: EligibilityAlertsProps) {
+  const t = useTranslations("payroll");
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
-  const alerts = buildAlerts(rows).filter((a) => !dismissed.has(a.id));
+  const alerts = buildAlerts(rows, t).filter((a) => !dismissed.has(a.id));
 
   if (alerts.length === 0) return null;
 

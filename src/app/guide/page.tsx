@@ -1,6 +1,7 @@
 import AppLayout from "@/components/AppLayout";
 import PrintButton from "./PrintButton";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 
 export default async function GuidePage() {
   const supabase = await createClient();
@@ -10,26 +11,27 @@ export default async function GuidePage() {
     .single();
   const taxYear = settings?.tax_year ?? new Date().getFullYear();
   const companyName = settings?.company_name ?? "RBM Services Inc.";
+  const t = await getTranslations("guide");
 
   return (
     <AppLayout>
-      <GuideContent taxYear={taxYear} companyName={companyName} />
+      <GuideContent taxYear={taxYear} companyName={companyName} title={t("title")} printButton={t("printButton")} />
     </AppLayout>
   );
 }
 
-function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: string }) {
+function GuideContent({ taxYear, companyName, title, printButton }: { taxYear: number; companyName: string; title: string; printButton: string }) {
   return (
     <div className="max-w-4xl">
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">WinTeam 1095-C Setup Guide</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
           <p className="text-gray-500 text-sm mt-1">
             {companyName} · Tax Year {taxYear}
           </p>
         </div>
-        <PrintButton />
+        <PrintButton label={printButton} />
       </div>
 
       {/* Critical Warning */}

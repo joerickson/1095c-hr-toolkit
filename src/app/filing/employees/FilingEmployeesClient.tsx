@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import type { EmployeeStatus } from "@/lib/types";
@@ -42,6 +43,8 @@ export default function FilingEmployeesClient({
   initialEmployees,
   initialFilingStatus,
 }: Props) {
+  const tTracker = useTranslations("tracker");
+  const tCommon = useTranslations("common");
   const { showToast } = useToast();
   const supabase = createClient();
 
@@ -161,9 +164,9 @@ export default function FilingEmployeesClient({
               ← Filing Assistant
             </a>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Employee Readiness</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{tTracker("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            {taxYear} 1095-C readiness review — used during Phase 3
+            {tTracker("subtitle")}
           </p>
         </div>
         <button
@@ -171,19 +174,19 @@ export default function FilingEmployeesClient({
           disabled={initializingAll}
           className="btn-secondary text-sm disabled:opacity-50"
         >
-          {initializingAll ? "Initializing..." : "Initialize All Employees"}
+          {initializingAll ? tCommon("loading") : tTracker("addEmployee")}
         </button>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: `Total ${taxYear}`, value: stats.total, color: "text-gray-900" },
-          { label: "Ready", value: stats.ready, color: "text-green-700" },
-          { label: "Issues", value: stats.notReady, color: stats.notReady > 0 ? "text-amber-700" : "text-gray-400" },
-          { label: "Missing SSN", value: stats.missingSsn, color: stats.missingSsn > 0 ? "text-red-700" : "text-gray-400" },
+          { label: tTracker("stats.total"), value: stats.total, color: "text-gray-900" },
+          { label: tTracker("stats.ready"), value: stats.ready, color: "text-green-700" },
+          { label: tTracker("stats.issues"), value: stats.notReady, color: stats.notReady > 0 ? "text-amber-700" : "text-gray-400" },
+          { label: tTracker("stats.missingSSN"), value: stats.missingSsn, color: stats.missingSsn > 0 ? "text-red-700" : "text-gray-400" },
           { label: "Missing Deps", value: stats.missingDependents, color: stats.missingDependents > 0 ? "text-amber-700" : "text-gray-400" },
-          { label: "Not Reviewed", value: stats.notReviewed, color: stats.notReviewed > 0 ? "text-blue-700" : "text-gray-400" },
+          { label: tTracker("stats.part3Required"), value: stats.notReviewed, color: stats.notReviewed > 0 ? "text-blue-700" : "text-gray-400" },
         ].map(({ label, value, color }) => (
           <div key={label} className="card text-center py-4">
             <div className={`text-2xl font-bold ${color}`}>{value}</div>
@@ -197,7 +200,7 @@ export default function FilingEmployeesClient({
         <div className="px-5 py-3 border-b border-gray-200 flex flex-wrap gap-3 items-center">
           <input
             type="text"
-            placeholder="Search employees..."
+            placeholder={tTracker("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 w-52"
@@ -213,7 +216,7 @@ export default function FilingEmployeesClient({
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                {f === "all" ? "All" : f === "ready" ? "Ready" : f === "not_ready" ? "Has Issues" : "Not Reviewed"}
+                {f === "all" ? tCommon("all") : f === "ready" ? tTracker("status.ready") : f === "not_ready" ? tTracker("stats.issues") : tTracker("filterByStatus")}
               </button>
             ))}
           </div>
@@ -224,16 +227,16 @@ export default function FilingEmployeesClient({
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan {taxYear}</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Line 14</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Line 16</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Part III</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SSN</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">DOB</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deps</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.name")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.plan")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.line14")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.line16")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.part3")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.ssn")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.dob")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tTracker("columns.dependents")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("status")}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -290,12 +293,12 @@ export default function FilingEmployeesClient({
                     <td className="px-4 py-3">
                       {isNotReviewed ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
-                          Not reviewed
+                          {tTracker("filterByStatus")}
                         </span>
                       ) : isReady ? (
-                        <span className="badge-success">Ready ✓</span>
+                        <span className="badge-success">{tTracker("status.ready")} ✓</span>
                       ) : (
-                        <span className="badge-required">Has Issues</span>
+                        <span className="badge-required">{tTracker("stats.issues")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -305,7 +308,7 @@ export default function FilingEmployeesClient({
                           disabled={initializingOne === emp.id}
                           className="text-xs text-navy-600 hover:text-navy-800 font-medium disabled:opacity-50"
                         >
-                          {initializingOne === emp.id ? "..." : "Initialize"}
+                          {initializingOne === emp.id ? "..." : tCommon("add")}
                         </button>
                       ) : !isReady ? (
                         <button
@@ -313,7 +316,7 @@ export default function FilingEmployeesClient({
                           disabled={markingReady === emp.id}
                           className="text-xs text-green-700 hover:text-green-900 font-medium disabled:opacity-50"
                         >
-                          {markingReady === emp.id ? "..." : "Mark Ready"}
+                          {markingReady === emp.id ? "..." : tCommon("markComplete")}
                         </button>
                       ) : (
                         <span className="text-xs text-gray-400">

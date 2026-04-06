@@ -1,4 +1,5 @@
 import { WALKTHROUGHS } from './walkthroughs-data'
+import { WALKTHROUGHS_ES } from './walkthroughs-data-es'
 
 export type WalkthroughStep = {
   step: number
@@ -445,7 +446,7 @@ const ACCESS_REQUIREMENTS: Record<string, AccessRequired> = {
   },
 }
 
-export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
+export function getFilingChecklist(taxYear: number, lang: 'en' | 'es' = 'en'): FilingChecklistItem[] {
   const priorYear = taxYear - 1
 
   // Intermediate type without fields populated at map time
@@ -1124,9 +1125,10 @@ export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
     },
   ]
 
+  const walkthroughs = lang === 'es' ? WALKTHROUGHS_ES : WALKTHROUGHS
   return items.map((item) => ({
     ...item,
-    walkthrough: WALKTHROUGHS[item.key],
+    walkthrough: walkthroughs[item.key],
     access_required: ACCESS_REQUIREMENTS[item.key] ?? {
       winteam_role: 'hr_manager' as WinTeamRole,
       modules: [],
@@ -1136,13 +1138,13 @@ export function getFilingChecklist(taxYear: number): FilingChecklistItem[] {
 }
 
 // Helper to get all items for a specific phase
-export function getPhaseChecklist(taxYear: number, phase: 1 | 2 | 3 | 4): FilingChecklistItem[] {
-  return getFilingChecklist(taxYear).filter((item) => item.phase === phase)
+export function getPhaseChecklist(taxYear: number, phase: 1 | 2 | 3 | 4, lang: 'en' | 'es' = 'en'): FilingChecklistItem[] {
+  return getFilingChecklist(taxYear, lang).filter((item) => item.phase === phase)
 }
 
 // Helper to get all gate items for a phase
-export function getGateItems(taxYear: number, phase: 1 | 2 | 3 | 4): FilingChecklistItem[] {
-  return getPhaseChecklist(taxYear, phase).filter((item) => item.isGate)
+export function getGateItems(taxYear: number, phase: 1 | 2 | 3 | 4, lang: 'en' | 'es' = 'en'): FilingChecklistItem[] {
+  return getPhaseChecklist(taxYear, phase, lang).filter((item) => item.isGate)
 }
 
 // Phase metadata

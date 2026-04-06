@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import WalkthroughOverlay from "@/components/WalkthroughOverlay";
@@ -94,12 +95,16 @@ export default function PhaseClient({
   initialPhase,
   initialProgress,
 }: Props) {
+  const tFiling = useTranslations("filing");
+  const tIssues = useTranslations("issues");
+  const tCommon = useTranslations("common");
+  const locale = useLocale() as 'en' | 'es';
   const router = useRouter();
   const { showToast } = useToast();
   const supabase = createClient();
   const [isPending, startTransition] = useTransition();
 
-  const checklist = getFilingChecklist(taxYear);
+  const checklist = getFilingChecklist(taxYear, locale);
   const phaseItems = checklist.filter((i) => i.phase === phaseNumber);
   const gateItems = phaseItems.filter((i) => i.isGate);
 
@@ -320,14 +325,14 @@ export default function PhaseClient({
             Phase {phaseNumber}: {initialPhase?.phase_name ?? `Phase ${phaseNumber}`}
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            {PHASE_METADATA[phaseNumber].description} · Tax Year {taxYear}
+            {PHASE_METADATA[phaseNumber].description} · {tCommon("taxYear")} {taxYear}
           </p>
         </div>
         <button
           onClick={() => openIssueDrawer()}
           className="btn-secondary text-sm"
         >
-          + Log Issue
+          + {tCommon("logAnIssue")}
         </button>
       </div>
 
@@ -353,7 +358,7 @@ export default function PhaseClient({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
             <span>
-              <strong>{gateRemaining} gate {gateRemaining === 1 ? "item" : "items"}</strong> must be checked before you can advance to Phase {phaseNumber < 4 ? phaseNumber + 1 : "completion"}.
+              <strong>{tFiling("gateItemsRemaining", { count: gateRemaining })}</strong>
             </span>
           </p>
         )}
@@ -427,7 +432,7 @@ export default function PhaseClient({
                                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
-                                Gate item
+                                {tFiling("gateItem")}
                               </span>
                             )}
                             {item.winteamPath && (
@@ -451,7 +456,7 @@ export default function PhaseClient({
                             })()}
                             {item.access_required.can_delegate && (
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                                Delegatable
+                                {tCommon("delegatable")}
                               </span>
                             )}
                           </div>
@@ -466,7 +471,7 @@ export default function PhaseClient({
                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Walk me through this →
+                                {tCommon("walkMeThrough")}
                               </button>
                             </div>
                           )}
@@ -481,7 +486,7 @@ export default function PhaseClient({
                             })}
                             className="text-xs text-navy-600 hover:text-navy-800 mb-2"
                           >
-                            {isExpandedItem ? "Hide detail ▲" : "Show detail ▼"}
+                            {isExpandedItem ? `${tCommon("hideDetail")} ▲` : `${tCommon("showDetail")} ▼`}
                           </button>
 
                           {isExpandedItem && (
@@ -494,7 +499,7 @@ export default function PhaseClient({
                           <div className="flex gap-2 items-start">
                             <input
                               type="text"
-                              placeholder="What did you find? (optional note)"
+                              placeholder={tCommon("whatDidYouFind")}
                               value={findings[item.key] ?? ""}
                               onChange={(e) =>
                                 setFindings((prev) => ({ ...prev, [item.key]: e.target.value }))
@@ -506,16 +511,16 @@ export default function PhaseClient({
                               onClick={() => openIssueDrawer(item)}
                               className="text-xs btn-secondary py-1.5 px-2 whitespace-nowrap"
                             >
-                              Log Issue
+                              {tCommon("logAnIssue")}
                             </button>
                           </div>
 
                           {/* Assign to */}
                           <div className="flex gap-2 items-center mt-1.5">
-                            <label className="text-xs text-gray-500 whitespace-nowrap">Assign to:</label>
+                            <label className="text-xs text-gray-500 whitespace-nowrap">{tCommon("assignTo")}:</label>
                             <input
                               type="text"
-                              placeholder="Team member name"
+                              placeholder={tCommon("namePlaceholder")}
                               value={assignments[item.key] ?? ""}
                               onChange={(e) =>
                                 setAssignments((prev) => ({ ...prev, [item.key]: e.target.value }))
@@ -541,7 +546,7 @@ export default function PhaseClient({
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            {screenshotItems.has(item.key) ? "Hide screenshots ▲" : "Screenshots ▼"}
+                            {screenshotItems.has(item.key) ? `${tCommon("hideDetail")} ▲` : `${tCommon("showDetail")} ▼`}
                           </button>
 
                           {/* Screenshot panel — lazy mounts on first open */}
@@ -569,12 +574,12 @@ export default function PhaseClient({
           <div>
             <p className="font-medium text-gray-900">
               {phaseNumber < 4
-                ? `Advance to Phase ${phaseNumber + 1}`
-                : "Complete Filing Process"}
+                ? tFiling("advanceToPhase", { next: phaseNumber + 1 })
+                : tFiling("phaseComplete")}
             </p>
             {!gatesComplete && (
               <p className="text-sm text-gray-500 mt-0.5">
-                {gateRemaining} gate {gateRemaining === 1 ? "item" : "items"} must be checked first
+                {tFiling("gateItemsRemaining", { count: gateRemaining })}
               </p>
             )}
           </div>
@@ -584,10 +589,10 @@ export default function PhaseClient({
             className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {advancing
-              ? "Saving..."
+              ? tCommon("loading")
               : phaseNumber < 4
-              ? `Complete Phase ${phaseNumber} →`
-              : "Mark Filing Complete ✓"}
+              ? tFiling("advanceToPhase", { next: phaseNumber + 1 })
+              : tCommon("markComplete")}
           </button>
         </div>
       </div>
@@ -615,7 +620,7 @@ export default function PhaseClient({
           <div className="relative bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-lg mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-gray-900 text-lg">Log Filing Issue</h2>
+                <h2 className="font-semibold text-gray-900 text-lg">{tCommon("logAnIssue")}</h2>
                 <button
                   onClick={() => setIssueDrawerOpen(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -629,7 +634,7 @@ export default function PhaseClient({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title <span className="text-red-500">*</span>
+                    {tIssues("fields.title")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -642,7 +647,7 @@ export default function PhaseClient({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{tIssues("fields.category")}</label>
                     <select
                       value={issueForm.category}
                       onChange={(e) => setIssueForm((f) => ({ ...f, category: e.target.value }))}
@@ -654,21 +659,21 @@ export default function PhaseClient({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{tIssues("fields.severity")}</label>
                     <select
                       value={issueForm.severity}
                       onChange={(e) => setIssueForm((f) => ({ ...f, severity: e.target.value }))}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500"
                     >
-                      <option value="blocking">Blocking</option>
-                      <option value="warning">Warning</option>
-                      <option value="informational">Informational</option>
+                      <option value="blocking">{tIssues("severity.blocking")}</option>
+                      <option value="warning">{tIssues("severity.warning")}</option>
+                      <option value="informational">{tIssues("severity.informational")}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{tIssues("fields.description")}</label>
                   <textarea
                     rows={3}
                     value={issueForm.description}
@@ -680,7 +685,7 @@ export default function PhaseClient({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    WinTeam Fix Path (optional)
+                    {tIssues("fields.winteamPath")} ({tCommon("optional")})
                   </label>
                   <input
                     type="text"
@@ -693,7 +698,7 @@ export default function PhaseClient({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fix Instructions (optional)
+                    {tIssues("fields.fixInstructions")} ({tCommon("optional")})
                   </label>
                   <textarea
                     rows={2}
@@ -706,7 +711,7 @@ export default function PhaseClient({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Affected Employee Count (optional)
+                    {tIssues("fields.affectedCount")} ({tCommon("optional")})
                   </label>
                   <input
                     type="number"
@@ -724,13 +729,13 @@ export default function PhaseClient({
                     disabled={savingIssue}
                     className="btn-primary flex-1 disabled:opacity-50"
                   >
-                    {savingIssue ? "Saving..." : "Log Issue"}
+                    {savingIssue ? tCommon("loading") : tCommon("logAnIssue")}
                   </button>
                   <button
                     onClick={() => setIssueDrawerOpen(false)}
                     className="btn-secondary flex-1"
                   >
-                    Cancel
+                    {tCommon("cancel")}
                   </button>
                 </div>
               </div>

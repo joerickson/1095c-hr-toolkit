@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import type { EmployeeStatus, EmployeeDependent, DependentRelationship } from "@/lib/types";
@@ -10,15 +11,13 @@ interface Props {
   onClose: () => void;
 }
 
-const RELATIONSHIP_LABELS: Record<DependentRelationship, string> = {
-  spouse: "Spouse",
-  dependent_minor: "Dependent (Minor)",
-  dependent_adult: "Dependent (Adult 18+)",
-};
+// RELATIONSHIP_LABELS is replaced by t("relationships.*") in the component
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 export default function DependentModal({ employee, onClose }: Props) {
+  const t = useTranslations("tracker");
+  const tc = useTranslations("common");
   const supabase = createClient();
   const { showToast } = useToast();
   const [dependents, setDependents] = useState<EmployeeDependent[]>([]);
@@ -63,8 +62,7 @@ export default function DependentModal({ employee, onClose }: Props) {
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Covered Individuals (Part III)</h2>
-            <p className="text-sm text-gray-500">{employee.full_name}</p>
+            <h2 className="text-lg font-semibold text-gray-900">{t("modals.dependentsTitle", { name: employee.full_name })}</h2>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
         </div>
@@ -98,8 +96,8 @@ export default function DependentModal({ employee, onClose }: Props) {
                       <div>
                         <div className="font-medium text-gray-900">{dep.full_name}</div>
                         <div className="text-sm text-gray-500 mt-0.5">
-                          {RELATIONSHIP_LABELS[dep.relationship]} ·{" "}
-                          SSN: {dep.ssn_on_file ? <span className="text-green-600">On file</span> : <span className="text-red-500">Missing</span>} ·{" "}
+                          {t(`relationships.${dep.relationship}`)} ·{" "}
+                          SSN: {dep.ssn_on_file ? <span className="text-green-600">{t("status.onFile")}</span> : <span className="text-red-500">{t("status.missing")}</span>} ·{" "}
                           DOB: {dep.dob ?? <span className="text-gray-400">Not entered</span>}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
@@ -112,8 +110,8 @@ export default function DependentModal({ employee, onClose }: Props) {
                         )}
                       </div>
                       <div className="flex gap-2">
-                        <button onClick={() => setEditDep(dep)} className="text-navy-600 hover:text-navy-800 text-xs font-medium">Edit</button>
-                        <button onClick={() => handleDelete(dep.id, dep.full_name)} className="text-red-500 hover:text-red-700 text-xs font-medium">Remove</button>
+                        <button onClick={() => setEditDep(dep)} className="text-navy-600 hover:text-navy-800 text-xs font-medium">{tc("edit")}</button>
+                        <button onClick={() => handleDelete(dep.id, dep.full_name)} className="text-red-500 hover:text-red-700 text-xs font-medium">{tc("remove")}</button>
                       </div>
                     </div>
                   </div>
@@ -122,7 +120,7 @@ export default function DependentModal({ employee, onClose }: Props) {
 
               {!showAdd && !editDep && (
                 <button onClick={() => setShowAdd(true)} className="btn-secondary w-full text-sm mt-2">
-                  + Add Covered Individual
+                  + {t("modals.addDependent")}
                 </button>
               )}
 
@@ -143,7 +141,7 @@ export default function DependentModal({ employee, onClose }: Props) {
           )}
 
           <div className="flex justify-end mt-4 pt-4 border-t border-gray-200">
-            <button onClick={onClose} className="btn-primary">Done</button>
+            <button onClick={onClose} className="btn-primary">{tc("close")}</button>
           </div>
         </div>
       </div>
@@ -162,6 +160,8 @@ function DependentForm({
   onSaved: () => void;
   onCancel: () => void;
 }) {
+  const t = useTranslations("tracker");
+  const tc = useTranslations("common");
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -219,31 +219,31 @@ function DependentForm({
   return (
     <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg p-4 mt-3 space-y-3">
       <h3 className="font-medium text-gray-900 text-sm">
-        {dependent ? "Edit Dependent" : "Add Covered Individual"}
+        {dependent ? tc("edit") : t("modals.addDependent")}
       </h3>
 
       {error && <div className="p-2 bg-red-50 text-red-700 text-xs rounded">{error}</div>}
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Full Name *</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">{tc("name")} *</label>
           <input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Relationship *</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">{t("fields.relationship")} *</label>
           <select value={form.relationship} onChange={(e) => setForm({ ...form, relationship: e.target.value as DependentRelationship })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-            <option value="spouse">Spouse</option>
-            <option value="dependent_minor">Dependent (Minor under 18)</option>
-            <option value="dependent_adult">Dependent (Adult 18+)</option>
+            <option value="spouse">{t("relationships.spouse")}</option>
+            <option value="dependent_minor">{t("relationships.dependent_minor")}</option>
+            <option value="dependent_adult">{t("relationships.dependent_adult")}</option>
           </select>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Date of Birth</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">{t("fields.dob")}</label>
           <input type="date" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
         </div>
@@ -251,9 +251,9 @@ function DependentForm({
           <input type="checkbox" id="ssn_on_file" checked={form.ssn_on_file}
             onChange={(e) => setForm({ ...form, ssn_on_file: e.target.checked })} className="rounded" />
           <label htmlFor="ssn_on_file" className="text-sm text-gray-700">
-            SSN on file
+            {t("fields.ssn")}
             {(form.relationship === "spouse" || form.relationship === "dependent_adult") && (
-              <span className="text-red-500 ml-1">*required</span>
+              <span className="text-red-500 ml-1">*{tc("required")}</span>
             )}
           </label>
         </div>
@@ -286,9 +286,9 @@ function DependentForm({
       </div>
 
       <div className="flex justify-end gap-2">
-        <button type="button" onClick={onCancel} className="btn-secondary text-sm">Cancel</button>
+        <button type="button" onClick={onCancel} className="btn-secondary text-sm">{tc("cancel")}</button>
         <button type="submit" disabled={saving} className="btn-primary text-sm">
-          {saving ? "Saving…" : dependent ? "Save Changes" : "Add"}
+          {saving ? tc("loading") : dependent ? tc("save") : tc("add")}
         </button>
       </div>
     </form>

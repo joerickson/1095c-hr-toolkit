@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CHECKLIST_ITEMS, CHECKLIST_SECTIONS } from "@/lib/checklist-items";
 import { useToast } from "@/components/Toast";
 import type { ChecklistSeverity } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 interface Props {
   initialCompleted: string[];
@@ -30,6 +31,8 @@ export default function ChecklistClient({ initialCompleted, userId, taxYear, com
   const [isPending, startTransition] = useTransition();
   const { showToast } = useToast();
   const supabase = createClient();
+  const t = useTranslations("checklist");
+  const tCommon = useTranslations("common");
 
   const total = CHECKLIST_ITEMS.length;
   const doneCount = completed.size;
@@ -124,9 +127,9 @@ export default function ChecklistClient({ initialCompleted, userId, taxYear, com
       <div className="mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">ACA Audit Checklist</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
             <p className="text-gray-500 text-sm mt-1">
-              {companyName} · Tax Year {taxYear}
+              {companyName} · {t("subtitle", { taxYear })}
             </p>
           </div>
           <button
@@ -144,7 +147,7 @@ export default function ChecklistClient({ initialCompleted, userId, taxYear, com
               Overall Progress
             </span>
             <span className="text-sm font-bold text-navy-700">
-              {doneCount} / {total} items ({pct}%)
+              {t("progress", { pct, done: doneCount, total })}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
@@ -206,7 +209,7 @@ export default function ChecklistClient({ initialCompleted, userId, taxYear, com
                     onClick={() => markSectionComplete(section)}
                     className="text-xs text-navy-600 hover:text-navy-800 font-medium no-print"
                   >
-                    Mark all complete
+                    {tCommon("markComplete")}
                   </button>
                 )}
               </div>

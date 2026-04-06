@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import {
@@ -45,6 +46,8 @@ function RoleBadge({ role }: { role: WinTeamRole }) {
 }
 
 export default function AccessClient({ taxYear, initialProgress }: Props) {
+  const tAccess = useTranslations("access");
+  const tCommon = useTranslations("common");
   const { showToast } = useToast();
   const supabase = createClient();
   const checklist = getFilingChecklist(taxYear);
@@ -111,16 +114,16 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
               ← Filing Assistant
             </a>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Access Plan</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{tAccess("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Review who needs what WinTeam access before starting the {taxYear} filing process.
+            {tAccess("subtitle", { taxYear })}
           </p>
         </div>
         <button
           onClick={() => window.print()}
           className="btn-secondary text-sm print:hidden"
         >
-          🖨 Print Access Plan
+          🖨 {tAccess("printButton")}
         </button>
       </div>
 
@@ -148,7 +151,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
                   <span className={`text-sm font-bold ${meta.textClass}`}>{meta.label}</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900 mb-1">{count}</p>
-                <p className="text-xs text-gray-500 mb-3">tasks</p>
+                <p className="text-xs text-gray-500 mb-3">{tAccess("tasks")}</p>
                 <p className="text-xs text-gray-600 leading-relaxed">{meta.description}</p>
                 <div className={`mt-3 pt-3 border-t ${meta.borderClass}`}>
                   <p className="text-xs text-gray-500 italic leading-relaxed">
@@ -163,7 +166,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
 
       {/* B. Access by Phase Tables */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Access Requirements by Phase</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">{tAccess("accessByPhase")}</h2>
         <div className="space-y-6">
           {([1, 2, 3, 4] as const).map((phase) => {
             const phaseItems = checklist.filter((i) => i.phase === phase);
@@ -176,11 +179,11 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 bg-white">
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-2/5">Task</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Who Can Do It</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">WinTeam Modules</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-24">Delegate?</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-36 print:hidden">Assign To</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-2/5">{tAccess("columns.task")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{tAccess("columns.whoCanDoIt")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{tAccess("columns.winteamModules")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-24">{tAccess("columns.delegate")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-36 print:hidden">{tAccess("columns.assignTo")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -221,7 +224,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
                             <td className="px-4 py-3 print:hidden">
                               <input
                                 type="text"
-                                placeholder="Name..."
+                                placeholder={tCommon("namePlaceholder")}
                                 value={assignments[item.key] ?? ""}
                                 onChange={(e) =>
                                   setAssignments((prev) => ({ ...prev, [item.key]: e.target.value }))
@@ -244,9 +247,9 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
 
       {/* C. Permissions Pre-Flight Checklist */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Pre-Flight Permissions Checklist</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">{tAccess("preChecklist")}</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Before you begin, confirm these people have the right WinTeam access. Check each item off as you verify it.
+          {tAccess("preChecklistSubtitle")}
           {checkedCount > 0 && (
             <span className="ml-2 text-green-700 font-medium">{checkedCount} / 9 verified</span>
           )}
@@ -454,7 +457,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
           onClick={() => window.print()}
           className="btn-primary"
         >
-          🖨 Print Access Plan
+          🖨 {tAccess("printButton")}
         </button>
         <p className="text-xs text-gray-400 mt-2">
           Print this page and distribute to your team before starting Phase 1.

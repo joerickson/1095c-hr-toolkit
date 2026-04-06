@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import {
@@ -55,6 +56,8 @@ const HOURS_COLORS = {
 type Tab = "dashboard" | "hours" | "board";
 
 export default function PayrollClient({ initialDashboard, variableEmployees, userId }: Props) {
+  const t = useTranslations("payroll");
+  const tc = useTranslations("common");
   const supabase = createClient();
   const { showToast } = useToast();
 
@@ -271,7 +274,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pay Period Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
             {ppLabel} · Period {ppNumber} of 24
           </p>
@@ -284,8 +287,8 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
           {(
             [
               { id: "dashboard", label: "Overview & Checklist" },
-              { id: "hours", label: "Hours Entry" },
-              { id: "board", label: "Status Board" },
+              { id: "hours", label: t("hoursEntry") },
+              { id: "board", label: t("measurementBoard") },
             ] as { id: Tab; label: string }[]
           ).map((tab) => (
             <button
@@ -346,7 +349,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-semibold text-gray-700">
-                Pay Period Checklist
+                {t("checklist.title")}
               </h2>
               <span className="text-sm text-gray-500">
                 {checklistComplete}/{checklistTotal} complete
@@ -354,7 +357,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
             </div>
 
             {checklistLoading ? (
-              <p className="text-sm text-gray-400">Loading checklist…</p>
+              <p className="text-sm text-gray-400">{tc("loading")}</p>
             ) : (
               <div className="card divide-y divide-gray-100">
                 {PAY_PERIOD_CHECKLIST.map((item) => {
@@ -395,7 +398,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
                 onClick={() => setCsvMode(!csvMode)}
                 className="btn-secondary text-sm"
               >
-                {csvMode ? "Manual Entry" : "CSV Import"}
+                {csvMode ? "Manual Entry" : t("importCSV")}
               </button>
             </div>
           </div>
@@ -496,7 +499,7 @@ export default function PayrollClient({ initialDashboard, variableEmployees, use
                       disabled={savingHours}
                       className="btn-primary"
                     >
-                      {savingHours ? "Saving…" : "Save Hours"}
+                      {savingHours ? tc("loading") : tc("save")}
                     </button>
                   </div>
                 </>
@@ -589,7 +592,7 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
                           disabled={csvImporting}
                           className="btn-primary"
                         >
-                          {csvImporting ? "Importing…" : "Confirm Import"}
+                          {csvImporting ? tc("loading") : tc("import")}
                         </button>
                       </div>
                     </>
@@ -606,7 +609,7 @@ Johnson,Maria,2026-03-01,70.0,0,0`}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-gray-700" id="eligibility-board">
-              Measurement Period Status Board
+              {t("measurementBoard")}
             </h2>
             <div className="flex items-center gap-3 text-xs">
               <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500 inline-block" /> &lt;25 hrs/wk</span>

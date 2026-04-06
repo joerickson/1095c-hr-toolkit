@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import {
   uploadScreenshot,
   getScreenshots,
@@ -15,6 +16,8 @@ interface Props {
 }
 
 export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
+  const t = useTranslations("screenshots");
+  const tCommon = useTranslations("common");
   const [screenshots, setScreenshots] = useState<ChecklistScreenshot[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -80,11 +83,11 @@ export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
           />
         </svg>
-        Reference Screenshots
+        {t("title")}
       </p>
 
       {loading ? (
-        <p className="text-xs text-gray-400">Loading...</p>
+        <p className="text-xs text-gray-400">{tCommon("loading")}</p>
       ) : (
         <>
           {screenshots.length > 0 ? (
@@ -124,7 +127,7 @@ export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
                     <button
                       onClick={() => handleDelete(s.id)}
                       className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white rounded-full text-xs hidden group-hover:flex items-center justify-center leading-none"
-                      title="Delete screenshot"
+                      title={t("deleteConfirm")}
                     >
                       ×
                     </button>
@@ -134,8 +137,7 @@ export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
             </div>
           ) : (
             <p className="text-xs text-gray-400 mb-3">
-              No screenshots yet. Add one to create a permanent visual guide for
-              this step.
+              {t("noScreenshots")}
             </p>
           )}
 
@@ -143,7 +145,7 @@ export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
           <div className="flex items-center gap-2">
             <input
               type="text"
-              placeholder="Optional caption..."
+              placeholder={t("captionLabel")}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               className="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-navy-500 bg-white"
@@ -153,7 +155,7 @@ export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
                 uploading ? "opacity-50 pointer-events-none" : ""
               }`}
             >
-              {uploading ? "Uploading..." : "+ Add Screenshot"}
+              {uploading ? t("uploading") : t("addScreenshot")}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -184,7 +186,7 @@ export default function ScreenshotPanel({ itemKey, taxYear, isAdmin }: Props) {
             <button
               onClick={() => setLightbox(null)}
               className="absolute top-2 right-2 z-10 w-7 h-7 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
-              aria-label="Close"
+              aria-label={tCommon("close")}
             >
               <svg
                 className="w-4 h-4"

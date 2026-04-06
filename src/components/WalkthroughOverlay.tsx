@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { FilingChecklistItem, WalkthroughStep } from "@/lib/filing-checklist-items";
 
 interface Props {
@@ -18,6 +19,9 @@ export default function WalkthroughOverlay({
   isComplete,
   isPending,
 }: Props) {
+  const t = useTranslations("walkthroughs");
+  const tCommon = useTranslations("common");
+  const tFiling = useTranslations("filing");
   const walkthrough = item.walkthrough!;
   const totalSteps = walkthrough.steps.length;
   const [currentStep, setCurrentStep] = useState(0);
@@ -74,17 +78,17 @@ export default function WalkthroughOverlay({
               {item.label}
             </h2>
             <p className="text-sm text-gray-400 mt-0.5">
-              About {walkthrough.estimated_minutes} minute{walkthrough.estimated_minutes !== 1 ? "s" : ""}
+              {tCommon("aboutMinutes", { minutes: walkthrough.estimated_minutes })}
             </p>
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
             <span className="text-xs text-gray-400 font-medium">
-              Step {currentStep + 1} of {totalSteps}
+              {tCommon("stepOf", { current: currentStep + 1, total: totalSteps })}
             </span>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close walkthrough"
+              aria-label={t("close")}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -105,7 +109,7 @@ export default function WalkthroughOverlay({
                   <div className="flex items-start gap-2">
                     <span className="text-base flex-shrink-0">🔒</span>
                     <div>
-                      <p className="text-sm font-semibold text-red-800">This step requires WinTeam Administrator access</p>
+                      <p className="text-sm font-semibold text-red-800">{t("accessNeeded")}</p>
                       <p className="text-xs text-red-700 mt-1 leading-relaxed">
                         Make sure your WinTeam Admin is available before starting. They will need to be at the computer or logged in remotely.
                         {access.delegation_notes && <span> {access.delegation_notes}</span>}
@@ -121,7 +125,7 @@ export default function WalkthroughOverlay({
                   <div className="flex items-start gap-2">
                     <span className="text-base flex-shrink-0">👤</span>
                     <div>
-                      <p className="text-sm font-semibold text-purple-800">This step requires HR Manager access in WinTeam</p>
+                      <p className="text-sm font-semibold text-purple-800">{t("accessNeeded")}</p>
                       {access.delegation_notes && (
                         <p className="text-xs text-purple-700 mt-1 leading-relaxed">{access.delegation_notes}</p>
                       )}
@@ -136,7 +140,7 @@ export default function WalkthroughOverlay({
                   <div className="flex items-start gap-2">
                     <span className="text-base flex-shrink-0">👤</span>
                     <div>
-                      <p className="text-sm font-semibold text-blue-800">Any HR staff member can do this step</p>
+                      <p className="text-sm font-semibold text-blue-800">{tFiling("anyHRStaff")}</p>
                       {access.delegation_notes && (
                         <p className="text-xs text-blue-700 mt-1 leading-relaxed">{access.delegation_notes}</p>
                       )}
@@ -155,7 +159,7 @@ export default function WalkthroughOverlay({
 
           {/* Why it matters */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Why it matters</p>
+            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">{t("whyItMatters")}</p>
             <p className="text-sm text-amber-900 leading-relaxed">{walkthrough.why_it_matters}</p>
           </div>
 
@@ -204,7 +208,7 @@ export default function WalkthroughOverlay({
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Previous step
+              {t("previousStep")}
             </button>
 
             {/* Progress dots */}
@@ -228,7 +232,7 @@ export default function WalkthroughOverlay({
               disabled={currentStep === totalSteps - 1}
               className="text-sm text-navy-600 hover:text-navy-800 disabled:text-gray-300 disabled:cursor-not-allowed flex items-center gap-1 transition-colors"
             >
-              Next step
+              {t("nextStep")}
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -246,7 +250,7 @@ export default function WalkthroughOverlay({
                   <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  If something looks wrong
+                  {t("ifSomethingLooksWrong")}
                 </span>
                 <svg
                   className={`w-4 h-4 text-gray-400 transition-transform ${troubleshootOpen ? "rotate-180" : ""}`}
@@ -279,7 +283,7 @@ export default function WalkthroughOverlay({
             onClick={onClose}
             className="btn-secondary flex-1"
           >
-            Close
+            {t("close")}
           </button>
           <button
             id="wt-mark-complete"
@@ -292,7 +296,7 @@ export default function WalkthroughOverlay({
             disabled={isComplete || isPending}
             className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isComplete ? "Already Complete ✓" : isPending ? "Saving..." : "Mark Complete and Close"}
+            {isComplete ? tCommon("complete") + " ✓" : isPending ? tCommon("loading") : tCommon("markCompleteAndClose")}
           </button>
         </div>
       </div>

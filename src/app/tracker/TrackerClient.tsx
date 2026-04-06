@@ -6,6 +6,7 @@ import { useToast } from "@/components/Toast";
 import EmployeeModal from "@/components/tracker/EmployeeModal";
 import DependentModal from "@/components/tracker/DependentModal";
 import type { EmployeeStatus, AppSettings } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 interface Props {
   initialEmployees: EmployeeStatus[];
@@ -33,6 +34,8 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const { showToast } = useToast();
   const supabase = createClient();
+  const t = useTranslations("tracker");
+  const tCommon = useTranslations("common");
 
   async function refreshEmployees() {
     const { data } = await supabase
@@ -95,24 +98,24 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Employee Tracker</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Track 1095-C readiness for all employees · Tax Year {settings?.tax_year ?? 2025}
+            {t("subtitle")} · {tCommon("taxYear")} {settings?.tax_year ?? 2025}
           </p>
         </div>
         <button onClick={() => setShowAddModal(true)} className="btn-primary">
-          + Add Employee
+          + {t("addEmployee")}
         </button>
       </div>
 
       {/* Stats bar */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         {[
-          { label: "Total Employees", value: stats.total, color: "bg-blue-50 border-blue-200 text-blue-800" },
-          { label: "Ready to File", value: stats.ready, color: "bg-green-50 border-green-200 text-green-800" },
-          { label: "Has Issues", value: stats.issues, color: stats.issues > 0 ? "bg-red-50 border-red-200 text-red-800" : "bg-gray-50 border-gray-200 text-gray-600" },
-          { label: "Part III Required", value: stats.part3, color: "bg-amber-50 border-amber-200 text-amber-800" },
-          { label: "Missing SSN", value: stats.missingSsn, color: stats.missingSsn > 0 ? "bg-red-50 border-red-200 text-red-800" : "bg-gray-50 border-gray-200 text-gray-600" },
+          { label: t("stats.total"), value: stats.total, color: "bg-blue-50 border-blue-200 text-blue-800" },
+          { label: t("stats.ready"), value: stats.ready, color: "bg-green-50 border-green-200 text-green-800" },
+          { label: t("stats.issues"), value: stats.issues, color: stats.issues > 0 ? "bg-red-50 border-red-200 text-red-800" : "bg-gray-50 border-gray-200 text-gray-600" },
+          { label: t("stats.part3Required"), value: stats.part3, color: "bg-amber-50 border-amber-200 text-amber-800" },
+          { label: t("stats.missingSSN"), value: stats.missingSsn, color: stats.missingSsn > 0 ? "bg-red-50 border-red-200 text-red-800" : "bg-gray-50 border-gray-200 text-gray-600" },
         ].map((s) => (
           <div key={s.label} className={`border rounded-lg p-3 text-center ${s.color}`}>
             <div className="text-2xl font-bold">{s.value}</div>
@@ -126,7 +129,7 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
         <div className="flex flex-wrap gap-3">
           <input
             type="text"
-            placeholder="Search by name..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm flex-1 min-w-[200px]"
@@ -168,23 +171,23 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
                   className="px-4 py-3 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("full_name")}
                 >
-                  Name <SortIcon field="full_name" />
+                  {t("columns.name")} <SortIcon field="full_name" />
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">Plan</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.plan")}</th>
                 <th
                   className="px-4 py-3 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("line14_code")}
                 >
-                  L14 <SortIcon field="line14_code" />
+                  {t("columns.line14")} <SortIcon field="line14_code" />
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">L16</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">Part III</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">SSN</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">DOB</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">Dependents</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">Stability</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">Status</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-700">Actions</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.line16")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.part3")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.ssn")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.dob")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.dependents")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{tCommon("deadline")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.status")}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-700">{t("columns.actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -218,9 +221,9 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
                     </td>
                     <td className="px-4 py-3">
                       {emp.part3_required ? (
-                        <span className="badge-required">Required</span>
+                        <span className="badge-required">{t("status.required")}</span>
                       ) : (
-                        <span className="text-gray-400 text-xs">N/A</span>
+                        <span className="text-gray-400 text-xs">{t("status.notRequired")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -259,9 +262,9 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
                     </td>
                     <td className="px-4 py-3">
                       {emp.is_ready ? (
-                        <span className="badge-success">Ready</span>
+                        <span className="badge-success">{t("status.ready")}</span>
                       ) : (
-                        <span className="badge-critical">Issues</span>
+                        <span className="badge-critical">{t("status.issues")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -270,14 +273,14 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
                           onClick={() => setEditEmployee(emp)}
                           className="text-navy-600 hover:text-navy-800 text-xs font-medium"
                         >
-                          Edit
+                          {tCommon("edit")}
                         </button>
                         {emp.part3_required && (
                           <button
                             onClick={() => setDependentEmployee(emp)}
                             className="text-amber-600 hover:text-amber-800 text-xs font-medium"
                           >
-                            Dependents
+                            {t("columns.dependents")}
                           </button>
                         )}
                         {isAdmin && (
@@ -285,7 +288,7 @@ export default function TrackerClient({ initialEmployees, isAdmin, userId, setti
                             onClick={() => handleDelete(emp.id, emp.full_name)}
                             className="text-red-500 hover:text-red-700 text-xs font-medium"
                           >
-                            Delete
+                            {tCommon("delete")}
                           </button>
                         )}
                       </div>

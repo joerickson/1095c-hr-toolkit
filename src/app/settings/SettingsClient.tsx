@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import { useTranslations } from "next-intl";
 import type { AppSettings } from "@/lib/types";
 
 interface Props {
@@ -23,6 +24,8 @@ const DEFAULT: Partial<AppSettings> = {
 };
 
 export default function SettingsClient({ settings, userId }: Props) {
+  const t = useTranslations("settings");
+  const tCommon = useTranslations("common");
   const { showToast } = useToast();
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
@@ -73,36 +76,36 @@ export default function SettingsClient({ settings, userId }: Props) {
     if (error) {
       showToast("Failed to save settings: " + error.message, "error");
     } else {
-      showToast("Settings saved successfully.", "success");
+      showToast(t("saved"), "success");
     }
   }
 
   const safeHarborLabels = {
-    rate_of_pay: "Rate of Pay (2H) — Recommended for hourly workforce",
-    w2: "W-2 Safe Harbor (2F)",
-    fpl: "Federal Poverty Line (2G)",
+    rate_of_pay: t("safeHarborOptions.rate_of_pay"),
+    w2: t("safeHarborOptions.w2"),
+    fpl: t("safeHarborOptions.fpl"),
   };
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Admin Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Company-wide ACA configuration. Changes affect wizard calculations and all forms.
+          {t("subtitle")}
         </p>
         <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800">
-          <strong>Admin only.</strong> These settings are shared across all users and affect how Line 14, 15, and 16 codes are calculated.
+          <strong>{t("adminOnly")}</strong>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Company Info */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-4">Company Information</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">{t("sections.company")}</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tax Year</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.taxYear")}</label>
                 <input
                   type="number"
                   value={form.tax_year}
@@ -112,7 +115,7 @@ export default function SettingsClient({ settings, userId }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Plan Start Month</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.planStartMonth")}</label>
                 <select
                   value={form.plan_start_month}
                   onChange={(e) => set("plan_start_month", e.target.value)}
@@ -128,7 +131,7 @@ export default function SettingsClient({ settings, userId }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.companyName")}</label>
               <input
                 value={form.company_name}
                 onChange={(e) => set("company_name", e.target.value)}
@@ -138,7 +141,7 @@ export default function SettingsClient({ settings, userId }: Props) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Employer EIN</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.companyEIN")}</label>
                 <input
                   value={form.company_ein}
                   onChange={(e) => set("company_ein", e.target.value)}
@@ -147,7 +150,7 @@ export default function SettingsClient({ settings, userId }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">1095-C Contact Phone</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.contactPhone")}</label>
                 <input
                   value={form.contact_phone}
                   onChange={(e) => set("contact_phone", e.target.value)}
@@ -166,7 +169,7 @@ export default function SettingsClient({ settings, userId }: Props) {
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Plan 1 MEC Employee-Only Monthly Premium
+              {t("fields.mecPremium")}
             </label>
             <div className="flex items-center border border-gray-300 rounded-md overflow-hidden w-48">
               <span className="px-3 py-2 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">$</span>
@@ -229,11 +232,11 @@ export default function SettingsClient({ settings, userId }: Props) {
 
         {/* Affordability thresholds */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-4">Affordability Thresholds ({form.tax_year})</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">{t("sections.aca")} ({form.tax_year})</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Affordability Threshold %
+                {t("fields.affordabilityThreshold")}
               </label>
               <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                 <input
@@ -249,7 +252,7 @@ export default function SettingsClient({ settings, userId }: Props) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                FPL Monthly Threshold
+                {t("fields.fplThreshold")}
               </label>
               <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                 <span className="px-3 py-2 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">$</span>
@@ -268,7 +271,7 @@ export default function SettingsClient({ settings, userId }: Props) {
 
         <div className="flex justify-end gap-3">
           <button type="submit" disabled={saving} className="btn-primary px-6">
-            {saving ? "Saving…" : "Save Settings"}
+            {saving ? tCommon("loading") : tCommon("save")}
           </button>
         </div>
       </form>
