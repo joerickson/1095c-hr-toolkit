@@ -24,20 +24,27 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       .eq("id", user.id)
       .single();
 
-    // If preferred_language column doesn't exist yet (migration not run),
-    // fall back to selecting only the critical fields so isAdmin still works.
-    if (profileError && !profile) {
-      const { data: basicProfile } = await supabase
+    if (profile?.role) {
+      // Primary query succeeded with valid role data
+      isAdmin = profile.role === "admin";
+      userFullName = profile.full_name ?? null;
+      if (profile.preferred_language === 'es') preferredLanguage = 'es';
+    } else {
+      // Primary query returned no role — try without preferred_language.
+      // This handles: column not yet added, RLS error, or any other failure.
+      if (profileError) {
+        console.error('[AppLayout] profile query error:', profileError.code, profileError.message, 'uid:', user.id);
+      }
+      const { data: basicProfile, error: basicError } = await supabase
         .from("profiles")
         .select("role, full_name")
         .eq("id", user.id)
         .single();
+      if (basicError) {
+        console.error('[AppLayout] fallback query error:', basicError.code, basicError.message, 'uid:', user.id);
+      }
       isAdmin = basicProfile?.role === "admin";
       userFullName = basicProfile?.full_name ?? null;
-    } else {
-      isAdmin = profile?.role === "admin";
-      userFullName = profile?.full_name ?? null;
-      if (profile?.preferred_language === 'es') preferredLanguage = 'es';
     }
 
     // Load settings for nav deadline display
