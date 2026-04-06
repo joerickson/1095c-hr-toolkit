@@ -4,6 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
+import { changeLanguage } from "@/providers/IntlProvider";
+import { saveLanguagePreference } from "@/app/actions/language";
+import type { Language } from "@/providers/IntlProvider";
 
 // Deadline badge helpers
 function getDeadlineDays(taxYear: number, extensionFiled: boolean): number {
@@ -96,17 +100,13 @@ function NavTab({ href, active, children }: NavTabProps) {
   );
 }
 
-const YEAR_ROUND_NAV_ITEMS = [
-  { href: "/payroll", label: "Pay Period" },
-  { href: "/payroll/offers", label: "Offer Letters" },
-];
-
 interface NavigationProps {
   userEmail?: string | null;
   userFullName?: string | null;
   isAdmin?: boolean;
   taxYear?: number;
   extensionFiled?: boolean;
+  initialLanguage?: Language;
 }
 
 export default function Navigation({
@@ -115,21 +115,29 @@ export default function Navigation({
   isAdmin,
   taxYear = new Date().getFullYear(),
   extensionFiled = false,
+  initialLanguage = 'en',
 }: NavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('navigation');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [deadlineDays, setDeadlineDays] = useState<number | null>(null);
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(initialLanguage);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filingNavItems = [
-    { href: "/filing", label: `${taxYear} Filing`, showDeadline: true },
-    { href: "/filing/access", label: "Access Plan" },
-    { href: "/checklist", label: "Audit Checklist" },
-    { href: "/wizard", label: "Code Wizard" },
-    { href: "/tracker", label: "Employee Tracker" },
-    { href: "/guide", label: "WinTeam Guide" },
+    { href: "/filing", label: t('filing', { year: taxYear }), showDeadline: true },
+    { href: "/filing/access", label: t('accessPlan') },
+    { href: "/checklist", label: t('auditChecklist') },
+    { href: "/wizard", label: t('codeWizard') },
+    { href: "/tracker", label: t('employeeTracker') },
+    { href: "/guide", label: t('winteamGuide') },
+  ];
+
+  const yearRoundNavItems = [
+    { href: "/payroll", label: t('payPeriod') },
+    { href: "/payroll/offers", label: t('offerLetters') },
   ];
 
   useEffect(() => {
@@ -146,10 +154,26 @@ export default function Navigation({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Sync language state when IntlProvider fires languageChange events
+  useEffect(() => {
+    const handler = (e: CustomEvent<Language>) => {
+      setCurrentLanguage(e.detail);
+    };
+    window.addEventListener('languageChange', handler as EventListener);
+    return () => window.removeEventListener('languageChange', handler as EventListener);
+  }, []);
+
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
+  }
+
+  function handleLanguageToggle(lang: Language) {
+    setCurrentLanguage(lang);
+    changeLanguage(lang);
+    // Fire-and-forget — don't await so UI updates instantly
+    saveLanguagePreference(lang);
   }
 
   function isActive(href: string): boolean {
@@ -183,16 +207,50 @@ export default function Navigation({
             </div>
             <div>
               <div className="font-semibold text-sm leading-tight text-white">
-                1095-C HR Toolkit
+                {t('appName')}
               </div>
               <div className="text-xs leading-tight" style={{ color: "#9db9d9" }}>
-                RBM Services Inc.
+                {t('companyName')}
               </div>
             </div>
           </Link>
 
-          {/* Right: settings gear + user menu (desktop) + hamburger (mobile) */}
+          {/* Right: language toggle + settings gear + user menu (desktop) + hamburger (mobile) */}
           <div className="flex items-center gap-3">
+            {/* Language toggle — desktop ≥ 1024px */}
+            <div className="hidden lg:flex items-center gap-1">
+              <button
+                onClick={() => handleLanguageToggle('en')}
+                className="transition-colors"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  borderRadius: 4,
+                  padding: "3px 8px",
+                  background: currentLanguage === 'en' ? '#1a3a5c' : 'transparent',
+                  color: currentLanguage === 'en' ? 'white' : '#9db9d9',
+                  border: currentLanguage === 'en' ? '1px solid #1a3a5c' : '1px solid #4a6a8a',
+                }}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => handleLanguageToggle('es')}
+                className="transition-colors"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  borderRadius: 4,
+                  padding: "3px 8px",
+                  background: currentLanguage === 'es' ? '#1a3a5c' : 'transparent',
+                  color: currentLanguage === 'es' ? 'white' : '#9db9d9',
+                  border: currentLanguage === 'es' ? '1px solid #1a3a5c' : '1px solid #4a6a8a',
+                }}
+              >
+                ES
+              </button>
+            </div>
+
             {/* Admin button — admin only, desktop ≥ 1024px */}
             {isAdmin && (
               <Link
@@ -208,7 +266,7 @@ export default function Navigation({
                   lineHeight: 1.4,
                 }}
               >
-                Admin
+                {t('admin')}
               </Link>
             )}
 
@@ -218,8 +276,8 @@ export default function Navigation({
                 href="/settings"
                 className="hidden lg:flex items-center justify-center transition-opacity hover:opacity-80"
                 style={{ color: "#9db9d9", fontSize: 20, lineHeight: 1 }}
-                title="Settings"
-                aria-label="Settings"
+                title={t('settings')}
+                aria-label={t('settings')}
               >
                 ⚙
               </Link>
@@ -274,14 +332,14 @@ export default function Navigation({
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                     onClick={() => setDropdownOpen(false)}
                   >
-                    My Profile
+                    {t('myProfile')}
                   </Link>
                   <div className="my-1" style={{ borderTop: "1px solid #f3f4f6" }} />
                   <button
                     onClick={handleSignOut}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    Sign Out
+                    {t('signOut')}
                   </button>
                 </div>
               )}
@@ -341,7 +399,7 @@ export default function Navigation({
           </span>
 
           {/* Year-round tools group */}
-          {YEAR_ROUND_NAV_ITEMS.map((item) => (
+          {yearRoundNavItems.map((item) => (
             <NavTab key={item.href} href={item.href} active={isActive(item.href)}>
               {item.label}
             </NavTab>
@@ -356,9 +414,44 @@ export default function Navigation({
           style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
         >
           <div className="px-4 py-3 space-y-0.5">
+            {/* Language toggle — mobile */}
+            <div className="flex items-center gap-2 pb-3" style={{ borderBottom: "1px solid #f3f4f6" }}>
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 mr-1">Lang:</span>
+              <button
+                onClick={() => handleLanguageToggle('en')}
+                className="transition-colors"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  borderRadius: 4,
+                  padding: "3px 8px",
+                  background: currentLanguage === 'en' ? '#1a3a5c' : 'transparent',
+                  color: currentLanguage === 'en' ? 'white' : '#6b7280',
+                  border: currentLanguage === 'en' ? '1px solid #1a3a5c' : '1px solid #d1d5db',
+                }}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => handleLanguageToggle('es')}
+                className="transition-colors"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  borderRadius: 4,
+                  padding: "3px 8px",
+                  background: currentLanguage === 'es' ? '#1a3a5c' : 'transparent',
+                  color: currentLanguage === 'es' ? 'white' : '#6b7280',
+                  border: currentLanguage === 'es' ? '1px solid #1a3a5c' : '1px solid #d1d5db',
+                }}
+              >
+                ES
+              </button>
+            </div>
+
             {/* Filing tools section */}
             <div className="pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">
-              Filing Tools
+              {t('filingGroup')}
             </div>
             {filingNavItems.map((item) => (
               <Link
@@ -384,9 +477,9 @@ export default function Navigation({
               className="pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"
               style={{ borderTop: "1px solid #f3f4f6", marginTop: 8 }}
             >
-              Year-Round
+              {t('yearRoundGroup')}
             </div>
-            {YEAR_ROUND_NAV_ITEMS.map((item) => (
+            {yearRoundNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -417,7 +510,7 @@ export default function Navigation({
                   onClick={() => setMobileOpen(false)}
                 >
                   <span>🛡</span>
-                  <span>Admin</span>
+                  <span>{t('admin')}</span>
                 </Link>
                 <Link
                   href="/settings"
@@ -430,7 +523,7 @@ export default function Navigation({
                   onClick={() => setMobileOpen(false)}
                 >
                   <span>⚙</span>
-                  <span>Settings</span>
+                  <span>{t('settings')}</span>
                 </Link>
               </>
             )}
@@ -442,13 +535,13 @@ export default function Navigation({
                 className="flex items-center px-3 py-2.5 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 onClick={() => setMobileOpen(false)}
               >
-                My Profile
+                {t('myProfile')}
               </Link>
               <button
                 onClick={handleSignOut}
                 className="flex w-full items-center px-3 py-2.5 rounded-md text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Sign Out
+                {t('signOut')}
               </button>
             </div>
           </div>

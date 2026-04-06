@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import {
@@ -48,6 +49,8 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
   const { showToast } = useToast();
   const supabase = createClient();
   const checklist = getFilingChecklist(taxYear);
+  const t = useTranslations("access");
+  const tCommon = useTranslations("common");
 
   // Assignments state
   const [assignments, setAssignments] = useState<Record<string, string>>(() => {
@@ -111,22 +114,22 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
               ← Filing Assistant
             </a>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Access Plan</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Review who needs what WinTeam access before starting the {taxYear} filing process.
+            {t("subtitle", { taxYear })}
           </p>
         </div>
         <button
           onClick={() => window.print()}
           className="btn-secondary text-sm print:hidden"
         >
-          🖨 Print Access Plan
+          🖨 {t("printButton")}
         </button>
       </div>
 
       {/* Print header */}
       <div className="hidden print:block mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Access Plan — {taxYear} 1095-C Filing</h1>
+        <h1 className="text-xl font-bold text-gray-900">{t("title")} — {taxYear} 1095-C Filing</h1>
         <p className="text-sm text-gray-500">RBM Services Inc.</p>
       </div>
 
@@ -148,7 +151,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
                   <span className={`text-sm font-bold ${meta.textClass}`}>{meta.label}</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900 mb-1">{count}</p>
-                <p className="text-xs text-gray-500 mb-3">tasks</p>
+                <p className="text-xs text-gray-500 mb-3">{t("tasks")}</p>
                 <p className="text-xs text-gray-600 leading-relaxed">{meta.description}</p>
                 <div className={`mt-3 pt-3 border-t ${meta.borderClass}`}>
                   <p className="text-xs text-gray-500 italic leading-relaxed">
@@ -163,7 +166,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
 
       {/* B. Access by Phase Tables */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Access Requirements by Phase</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">{t("accessByPhase")}</h2>
         <div className="space-y-6">
           {([1, 2, 3, 4] as const).map((phase) => {
             const phaseItems = checklist.filter((i) => i.phase === phase);
@@ -176,11 +179,11 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 bg-white">
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-2/5">Task</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Who Can Do It</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">WinTeam Modules</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-24">Delegate?</th>
-                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-36 print:hidden">Assign To</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-2/5">{t("columns.task")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("columns.whoCanDoIt")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("columns.winteamModules")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-24">{t("columns.delegate")}</th>
+                        <th className="text-left px-4 py-2.5 text-xs font-semibold text-gray-500 uppercase tracking-wide w-36 print:hidden">{t("columns.assignTo")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -213,15 +216,15 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
                             </td>
                             <td className="px-4 py-3">
                               {access.can_delegate ? (
-                                <span className="text-xs text-green-700 font-medium">✓ Yes</span>
+                                <span className="text-xs text-green-700 font-medium">✓ {tCommon("yes")}</span>
                               ) : (
-                                <span className="text-xs text-red-600 font-medium">✗ No</span>
+                                <span className="text-xs text-red-600 font-medium">✗ {tCommon("no")}</span>
                               )}
                             </td>
                             <td className="px-4 py-3 print:hidden">
                               <input
                                 type="text"
-                                placeholder="Name..."
+                                placeholder={tCommon("namePlaceholder")}
                                 value={assignments[item.key] ?? ""}
                                 onChange={(e) =>
                                   setAssignments((prev) => ({ ...prev, [item.key]: e.target.value }))
@@ -244,9 +247,9 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
 
       {/* C. Permissions Pre-Flight Checklist */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Pre-Flight Permissions Checklist</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">{t("preChecklist")}</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Before you begin, confirm these people have the right WinTeam access. Check each item off as you verify it.
+          {t("preChecklistSubtitle")}
           {checkedCount > 0 && (
             <span className="ml-2 text-green-700 font-medium">{checkedCount} / 9 verified</span>
           )}
@@ -256,7 +259,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
           {/* WinTeam Admin */}
           <div>
             <h3 className="text-sm font-semibold text-red-700 mb-3 flex items-center gap-1.5">
-              🔒 WinTeam Administrator
+              🔒 {t("roles.winteam_admin")}
             </h3>
             <div className="space-y-3 pl-2">
               <ChecklistRow
@@ -295,7 +298,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
           {/* HR Manager */}
           <div className="border-t border-gray-100 pt-5">
             <h3 className="text-sm font-semibold text-purple-700 mb-3 flex items-center gap-1.5">
-              👤 HR Manager / Power User
+              👤 {t("roles.hr_manager")}
             </h3>
             <div className="space-y-3 pl-2">
               <ChecklistRow
@@ -332,7 +335,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
           {/* HR Staff */}
           <div className="border-t border-gray-100 pt-5">
             <h3 className="text-sm font-semibold text-blue-700 mb-3 flex items-center gap-1.5">
-              👤 Standard HR Staff
+              👤 {t("roles.standard_hr")}
             </h3>
             <div className="space-y-3 pl-2">
               <ChecklistRow
@@ -454,7 +457,7 @@ export default function AccessClient({ taxYear, initialProgress }: Props) {
           onClick={() => window.print()}
           className="btn-primary"
         >
-          🖨 Print Access Plan
+          🖨 {t("printButton")}
         </button>
         <p className="text-xs text-gray-400 mt-2">
           Print this page and distribute to your team before starting Phase 1.

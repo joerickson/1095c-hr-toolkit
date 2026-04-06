@@ -1,0 +1,747 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "required": "Requerido",
+    "optional": "Opcional",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "all": "Todos",
+    "none": "Ninguno",
+    "yes": "Sí",
+    "no": "No",
+    "or": "o",
+    "and": "y",
+    "print": "Imprimir",
+    "export": "Exportar",
+    "import": "Importar",
+    "upload": "Subir",
+    "download": "Descargar",
+    "view": "Ver",
+    "add": "Agregar",
+    "remove": "Eliminar",
+    "update": "Actualizar",
+    "submit": "Enviar",
+    "send": "Enviar",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "role": "Rol",
+    "status": "Estado",
+    "date": "Fecha",
+    "actions": "Acciones",
+    "notes": "Notas",
+    "complete": "Completo",
+    "incomplete": "Incompleto",
+    "ready": "Listo",
+    "issues": "Problemas",
+    "noData": "No hay datos disponibles",
+    "noResults": "No se encontraron resultados",
+    "markComplete": "Marcar como completo",
+    "markCompleteAndClose": "Marcar completo y cerrar",
+    "walkMeThrough": "Guíame paso a paso →",
+    "showDetail": "Mostrar detalle",
+    "hideDetail": "Ocultar detalle",
+    "logAnIssue": "Registrar un problema",
+    "stepOf": "Paso {current} de {total}",
+    "aboutMinutes": "Aproximadamente {minutes} minutos",
+    "delegatable": "Delegable",
+    "assignTo": "Asignar a",
+    "namePlaceholder": "Nombre...",
+    "whatDidYouFind": "¿Qué encontraste?",
+    "findingPlaceholder": "Anota lo que encontraste o cambiaste...",
+    "daysRemaining": "{days}d restantes",
+    "overdue": "VENCIDO",
+    "deadline": "Fecha límite",
+    "taxYear": "Año fiscal",
+    "selectYear": "Seleccionar año"
+  },
+
+  "language": {
+    "english": "Inglés",
+    "spanish": "Español",
+    "toggle": "Idioma"
+  },
+
+  "navigation": {
+    "appName": "Herramienta RH para 1095-C",
+    "companyName": "RBM Services Inc.",
+    "filing": "Presentación {year}",
+    "accessPlan": "Plan de acceso",
+    "auditChecklist": "Lista de auditoría",
+    "codeWizard": "Asistente de códigos",
+    "employeeTracker": "Rastreador de empleados",
+    "winteamGuide": "Guía de WinTeam",
+    "payPeriod": "Período de pago",
+    "offerLetters": "Cartas de oferta",
+    "settings": "Configuración",
+    "admin": "Administración",
+    "signOut": "Cerrar sesión",
+    "myProfile": "Mi perfil",
+    "filingGroup": "Herramientas de presentación",
+    "yearRoundGroup": "Durante el año"
+  },
+
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "emailPlaceholder": "usted@rbmservices.com",
+    "passwordPlaceholder": "Su contraseña",
+    "signingIn": "Iniciando sesión...",
+    "signInButton": "Iniciar sesión",
+    "forgotPassword": "¿Olvidó su contraseña?",
+    "accessDenied": "Acceso denegado",
+    "accessDeniedMessage": "Necesita acceso de administrador para ver esta página.",
+    "backToDashboard": "← Volver al panel",
+    "welcomeBack": "Bienvenido de nuevo",
+    "welcomeSubtitle": "Inicie sesión en su cuenta de la Herramienta RH para 1095-C",
+    "invalidCredentials": "Correo o contraseña incorrectos. Por favor, inténtelo de nuevo.",
+    "notAuthenticated": "No autenticado"
+  },
+
+  "filing": {
+    "title": "Asistente de presentación {taxYear}",
+    "subtitle": "Flujo de trabajo guiado para completar su presentación de 1095-C del año {taxYear}",
+    "deadlineBanner": "Fecha límite de presentación {taxYear} — {days} días restantes",
+    "deadlinePassed": "La fecha límite de presentación ha pasado",
+    "suggestedSchedule": "Calendario sugerido",
+    "phase1Complete": "Completar antes del {date}",
+    "phase2Complete": "Completar antes del {date}",
+    "phase3Complete": "Completar antes del {date}",
+    "phase4Complete": "Completar antes del {date}",
+    "bufferDays": "Margen de {days} días antes de la fecha límite",
+    "blockingIssuesAlert": "{count} problemas bloqueantes deben resolverse antes de continuar.",
+    "viewIssues": "Ver problemas →",
+    "openIssues": "Problemas abiertos",
+    "blocking": "Bloqueante",
+    "warnings": "Advertencias",
+    "informational": "Informativo",
+    "screenshotsCaptured": "{count} capturas de pantalla guardadas",
+    "continuePhase": "Continuar →",
+    "phaseComplete": "Completa",
+    "phaseLocked": "Bloqueada",
+    "phaseInProgress": "En progreso",
+    "phaseBlocked": "Bloqueada",
+    "estimatedTime": "Tiempo estimado: {time}",
+    "phase1Time": "2 a 4 horas",
+    "phase2Time": "2 a 6 horas",
+    "phase3Time": "1 a 3 días",
+    "phase4Time": "3 a 5 horas",
+    "phase1Name": "Auditar la configuración de WinTeam del año {priorYear}",
+    "phase2Name": "Corregir problemas y actualizar a {taxYear}",
+    "phase3Name": "Actualización de datos de {taxYear}",
+    "phase4Name": "Generar, verificar y presentar",
+    "advanceToPhase": "Avanzar a la fase {next} →",
+    "gateItemsRemaining": "{count} elementos obligatorios deben completarse antes de avanzar",
+    "phaseAdvanced": "¡Fase {current} completa! Avanzando a la fase {next}",
+    "itemsComplete": "{complete} de {total} elementos completos",
+    "gateItem": "Elemento obligatorio",
+    "gateLocked": "Complete todos los elementos obligatorios anteriores para continuar",
+    "accessNeeded": "Acceso requerido",
+    "thisStepRequires": "Este paso requiere acceso de {role} en WinTeam",
+    "anyHRStaff": "Cualquier miembro del personal de RH puede realizar este paso"
+  },
+
+  "phases": {
+    "phase1": {
+      "title": "Auditar la configuración de WinTeam del año {priorYear}",
+      "description": "Verificar que la configuración de WinTeam del año anterior fue correcta antes de construir sobre ella para {taxYear}.",
+      "sections": {
+        "companySetup": "SYS: Configuración de la empresa",
+        "eligibilitySetup": "INS: Configuración de elegibilidad",
+        "plan1": "INS: Configuración de beneficios — Plan 1 CEM (Autoasegurado)",
+        "plan2": "INS: Configuración de beneficios — Plan 2 Cobertura completa autoasegurada",
+        "plan3": "INS: Configuración de beneficios — Plan 3 Select Health",
+        "packages": "INS: Paquetes de beneficios",
+        "testReport": "Validación — Ejecutar informe de prueba del año {priorYear}"
+      }
+    },
+    "phase2": {
+      "title": "Corregir problemas y actualizar a {taxYear}",
+      "description": "Resolver los problemas encontrados en la Fase 1 y actualizar la configuración de WinTeam para el nuevo año fiscal.",
+      "sections": {
+        "fixIssues": "Corregir problemas del año {priorYear}",
+        "rollForward": "Actualizar a {taxYear}"
+      }
+    },
+    "phase3": {
+      "title": "Actualización de datos de {taxYear}",
+      "description": "Ingresar todos los datos de empleados, elecciones de beneficios e información de dependientes de {taxYear} en WinTeam.",
+      "sections": {
+        "rosterReview": "Revisión del listado de empleados",
+        "benefitElections": "Elecciones de beneficios",
+        "dependentData": "Datos de dependientes — Planes autoasegurados",
+        "midYearChanges": "Cambios durante el año",
+        "trackerReview": "Revisión del rastreador de empleados"
+      }
+    },
+    "phase4": {
+      "title": "Generar, verificar y presentar",
+      "description": "Generar los formularios 1095-C de {taxYear} en WinTeam, verificar que los códigos son correctos y enviarlos electrónicamente.",
+      "sections": {
+        "testReport": "Informe de prueba",
+        "fixAndRetest": "Corregir y volver a probar",
+        "generateFile": "Generar archivo electrónico",
+        "submit": "Presentar"
+      }
+    }
+  },
+
+  "checklist": {
+    "title": "Lista de auditoría",
+    "subtitle": "Lista de verificación previa a la presentación para el año {taxYear}",
+    "progress": "{pct}% completado ({done} de {total})",
+    "sections": {
+      "companySetup": "SYS: Configuración de la empresa",
+      "eligibilitySetup": "INS: Configuración de elegibilidad",
+      "plan1": "Plan 1 — CEM (Autoasegurado)",
+      "plan2": "Plan 2 — Cobertura completa autoasegurada",
+      "plan3": "Plan 3 — Select Health Grupo Pequeño",
+      "employeeMasterFile": "Archivo maestro de empleados",
+      "benefitsByEmployee": "INS: Beneficios por empleado — Planes autoasegurados",
+      "preFiling": "Verificaciones finales previas a la presentación"
+    }
+  },
+
+  "wizard": {
+    "title": "Asistente de búsqueda de códigos",
+    "subtitle": "Determine los códigos correctos de las Líneas 14, 15 y 16 para cualquier situación de empleado",
+    "step1Title": "Paso 1 de 5 — Estado de tiempo completo",
+    "step1Question": "¿Fue este empleado un trabajador de tiempo completo durante este mes?",
+    "step1OptionYes": "Sí — tiempo completo (promedio de 30+ horas/semana o 130+ horas/mes)",
+    "step1OptionNo": "No — empleado de tiempo parcial o con horas variables",
+    "step2Title": "Paso 2 de 5 — Oferta de cobertura",
+    "step2Question": "¿Se le ofreció cobertura médica a este empleado este mes?",
+    "step2OptionYes": "Sí — se ofreció cobertura durante todo el mes",
+    "step2OptionWaiting": "No — el empleado estaba en período de espera o fue contratado a mitad del mes",
+    "step2OptionNo": "No — no se realizó ninguna oferta este mes",
+    "step3Title": "Paso 3 de 5 — Qué plan se ofreció",
+    "step3Question": "¿Qué plan se le ofreció a este empleado?",
+    "step3OptionP1": "Plan 1 — Solo CEM (autoasegurado, NO cumple con el Valor Mínimo)",
+    "step3OptionP2": "Plan 2 — Cobertura completa autoasegurada (cumple con el Valor Mínimo)",
+    "step3OptionP3": "Plan 3 — Select Health Grupo Pequeño (cumple con el Valor Mínimo)",
+    "step4Title": "Paso 4 de 5 — A quién se ofreció",
+    "step4Question": "¿A quién se le ofreció la cobertura?",
+    "step4OptionEmployee": "Solo al empleado",
+    "step4OptionEmployeeDep": "Empleado + dependientes (sin oferta al cónyuge)",
+    "step4OptionEmployeeSp": "Empleado + cónyuge (sin oferta a dependientes)",
+    "step4OptionAll": "Empleado + cónyuge + dependientes",
+    "step5Title": "Paso 5 de 5 — Inscripción",
+    "step5Question": "¿Se inscribió el empleado en la cobertura que se le ofreció?",
+    "step5OptionYes": "Sí — se inscribió en la cobertura ofrecida",
+    "step5OptionNo": "No — renunció / rechazó la cobertura",
+    "resultTitle": "Códigos recomendados para este empleado",
+    "line14Label": "Línea 14",
+    "line15Label": "Línea 15",
+    "line16Label": "Línea 16",
+    "part3Label": "Parte III",
+    "part3Required": "Requerida — ingrese todos los individuos cubiertos en INS: Beneficios por empleado",
+    "part3NotRequired": "No requerida — Select Health emite el Formulario 1095-B",
+    "affordabilityTitle": "Prueba de asequibilidad",
+    "affordabilityPass": "Cumple con la prueba de asequibilidad",
+    "affordabilityFail": "No cumple con la prueba de asequibilidad — revise el costo de cobertura",
+    "lookupAnother": "Buscar otro empleado",
+    "backButton": "← Atrás",
+    "nextButton": "Siguiente →",
+    "showCodes": "Mostrar códigos →"
+  },
+
+  "tracker": {
+    "title": "Rastreador de empleados",
+    "subtitle": "Seguimiento del estado de cumplimiento del Formulario 1095-C para todos los empleados",
+    "addEmployee": "Agregar empleado",
+    "searchPlaceholder": "Buscar por nombre...",
+    "filterByPlan": "Todos los planes",
+    "filterByStatus": "Todos los estados",
+    "hasIssues": "Con problemas",
+    "columns": {
+      "name": "Nombre del empleado",
+      "plan": "Plan",
+      "line14": "Código Línea 14",
+      "line16": "Código Línea 16",
+      "part3": "¿Parte III requerida?",
+      "ssn": "NSS",
+      "dob": "Fecha de nacimiento",
+      "dependents": "Dependientes",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "ready": "Listo",
+      "issues": "Con problemas",
+      "onFile": "En archivo",
+      "missing": "Faltante",
+      "complete": "Completo",
+      "partial": "Parcial",
+      "none": "Ninguno ingresado",
+      "notRequired": "N/A",
+      "required": "Requerida"
+    },
+    "stats": {
+      "total": "Total rastreados",
+      "ready": "Listos para presentar",
+      "issues": "Con problemas",
+      "part3Required": "Parte III requerida",
+      "missingSSN": "NSS faltante"
+    },
+    "modals": {
+      "addTitle": "Agregar empleado",
+      "editTitle": "Editar empleado",
+      "dependentsTitle": "Dependientes — {name}",
+      "addDependent": "Agregar dependiente",
+      "deleteConfirm": "¿Eliminar este empleado? Sus datos serán eliminados permanentemente.",
+      "deleteDepConfirm": "¿Eliminar este registro de dependiente?"
+    },
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "middleInitial": "Inicial del segundo nombre",
+      "ssn": "¿NSS en archivo?",
+      "ssnLastFour": "Últimos 4 dígitos del NSS",
+      "dob": "Fecha de nacimiento",
+      "dobOnFile": "¿Fecha de nacimiento en archivo?",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "state": "Estado",
+      "zip": "Código postal",
+      "employmentStatus": "Estado de empleo",
+      "employeeType": "Tipo de empleado",
+      "hourlyRate": "Tarifa por hora",
+      "hireDate": "Fecha de contratación",
+      "terminationDate": "Fecha de terminación",
+      "planEnrolled": "Plan inscrito",
+      "stabilityStartDate": "Fecha de inicio del período de estabilidad",
+      "notes": "Notas",
+      "relationship": "Relación",
+      "coverageMonths": "Meses de cobertura"
+    },
+    "employmentStatus": {
+      "active": "Activo",
+      "terminated": "Terminado",
+      "leave_of_absence": "Licencia"
+    },
+    "employeeType": {
+      "full_time": "Tiempo completo",
+      "part_time": "Tiempo parcial",
+      "variable": "Horas variables",
+      "seasonal": "Temporal"
+    },
+    "relationships": {
+      "spouse": "Cónyuge",
+      "dependent_minor": "Dependiente menor (menos de 18 años)",
+      "dependent_adult": "Dependiente adulto (18 años o más)"
+    },
+    "plans": {
+      "P1": "Plan 1 — CEM",
+      "P2": "Plan 2 — Cobertura completa autoasegurada",
+      "P3": "Plan 3 — Select Health",
+      "declined": "Rechazó toda cobertura"
+    }
+  },
+
+  "guide": {
+    "title": "Guía de configuración de WinTeam",
+    "subtitle": "Referencia de configuración paso a paso para los tres planes",
+    "printButton": "Imprimir guía",
+    "importantNote": "Como RBM Services ofrece los tres planes a todos los empleados elegibles, cada paquete de beneficios en WinTeam debe incluir los tres planes, no solo en el que el empleado se inscribió. WinTeam deriva el código de la Línea 14 del paquete, por lo que si solo el Plan 1 (CEM) está en el paquete, WinTeam generará 1F en lugar de 1E. Este es el error de configuración más común.",
+    "steps": {
+      "step1Title": "Paso 1 — SYS: Configuración de la empresa",
+      "step1Sub": "Se hace una vez. Se aplica a los tres planes.",
+      "step2Title": "Paso 2 — INS: Configuración de elegibilidad",
+      "step2Sub": "Se hace una vez por regla de elegibilidad. Controla quién recibe un Formulario 1095-C.",
+      "step3Title": "Paso 3 — INS: Configuración de beneficios",
+      "step3Sub": "Configure cada plan por separado. Aquí es donde los tres planes difieren.",
+      "step4Title": "Paso 4 — INS: Beneficios por empleado",
+      "step4Sub": "Se hace por empleado. Aquí es donde la cobertura se vuelve personal."
+    },
+    "dataSourceTitle": "Referencia rápida de fuentes de datos",
+    "dataSourceSubtitle": "De dónde viene cada campo del Formulario 1095-C en WinTeam"
+  },
+
+  "payroll": {
+    "title": "Panel del período de pago",
+    "subtitle": "Seguimiento de elegibilidad y registro de horas",
+    "currentPeriod": "Período de pago actual",
+    "hoursEntry": "Ingreso de horas",
+    "importCSV": "Importar CSV",
+    "measurementBoard": "Estado del período de medición",
+    "newHires": "Nuevas contrataciones",
+    "thresholdAlerts": "Alertas de umbral",
+    "approachingThreshold": "Acercándose al umbral de 30 horas",
+    "crossedThreshold": "Superó el umbral de 30 horas — se requiere oferta",
+    "inAdminPeriod": "En período administrativo",
+    "offerNotSent": "Carta de oferta no enviada",
+    "offerExpired": "Carta de oferta vencida",
+    "columns": {
+      "employee": "Empleado",
+      "periodType": "Tipo de período",
+      "periodDates": "Fechas del período",
+      "hoursToDate": "Horas hasta la fecha",
+      "avgHrsWeek": "Prom. horas/semana",
+      "daysRemaining": "Días restantes",
+      "status": "Estado"
+    },
+    "periodTypes": {
+      "standard": "Estándar",
+      "initial": "Inicial"
+    },
+    "checklist": {
+      "title": "Lista del período de pago",
+      "subtitle": "Complete estas tareas cada período de pago (1ro y 15 de cada mes)"
+    }
+  },
+
+  "offers": {
+    "title": "Cartas de oferta",
+    "subtitle": "Administrar ofertas de beneficios para empleados recién elegibles",
+    "generateOffer": "Generar oferta",
+    "recordResponse": "Registrar respuesta",
+    "offerQueue": "Empleados en espera de oferta",
+    "offerHistory": "Historial de ofertas",
+    "status": {
+      "pending": "Pendiente",
+      "sent": "Enviada",
+      "accepted": "Aceptada",
+      "declined": "Rechazada",
+      "expired": "Vencida"
+    },
+    "response": {
+      "accepted": "Aceptó",
+      "declined": "Rechazó",
+      "noResponse": "Sin respuesta"
+    },
+    "fields": {
+      "offerDate": "Fecha de oferta",
+      "offerDeadline": "Fecha límite de respuesta",
+      "coverageStart": "Fecha de inicio de cobertura",
+      "plansOffered": "Planes ofrecidos",
+      "planSelected": "Plan seleccionado",
+      "waiverOnFile": "Renuncia en archivo"
+    }
+  },
+
+  "issues": {
+    "title": "Problemas de presentación",
+    "subtitle": "Problemas encontrados durante el proceso de presentación",
+    "logIssue": "Registrar nuevo problema",
+    "markResolved": "Marcar como resuelto",
+    "resolutionNotes": "Notas de resolución",
+    "categories": {
+      "benefit_setup": "Configuración de beneficios",
+      "eligibility_setup": "Configuración de elegibilidad",
+      "company_setup": "Configuración de la empresa",
+      "employee_data": "Datos del empleado",
+      "dependent_data": "Datos de dependientes",
+      "benefit_assignment": "Asignación de beneficios",
+      "hours_data": "Datos de horas",
+      "measurement_period": "Período de medición",
+      "other": "Otro"
+    },
+    "severity": {
+      "blocking": "Bloqueante",
+      "warning": "Advertencia",
+      "informational": "Informativo"
+    },
+    "status": {
+      "open": "Abierto",
+      "in_progress": "En progreso",
+      "resolved": "Resuelto",
+      "wont_fix": "No se corregirá"
+    },
+    "fields": {
+      "title": "Título del problema",
+      "category": "Categoría",
+      "severity": "Gravedad",
+      "description": "Descripción",
+      "winteamPath": "Ruta de corrección en WinTeam",
+      "fixInstructions": "Instrucciones de corrección",
+      "affectedCount": "Empleados afectados"
+    }
+  },
+
+  "access": {
+    "title": "Plan de acceso",
+    "subtitle": "Revise quién necesita qué acceso en WinTeam antes de iniciar el proceso de presentación de {taxYear}",
+    "printButton": "Imprimir plan de acceso",
+    "roles": {
+      "standard_hr": "Usuario estándar de RH",
+      "hr_manager": "Gerente de RH / Usuario avanzado",
+      "winteam_admin": "Administrador de WinTeam",
+      "team_software_support": "Soporte de TEAM Software"
+    },
+    "roleDescriptions": {
+      "standard_hr": "Personal básico de RH con acceso para ver y editar registros de empleados, ingresar horas y administrar inscripciones de beneficios en INS: Beneficios por empleado. No puede acceder a SYS: Configuración de la empresa ni a INS: Configuración de beneficios.",
+      "hr_manager": "Personal de RH con acceso elevado para ejecutar informes 1095-C, ejecutar el Asistente de pruebas de elegibilidad, ver y editar paquetes de beneficios y acceder a la mayoría de las pantallas de INS. No puede acceder a SYS.",
+      "winteam_admin": "Acceso completo al sistema, incluyendo SYS: Configuración de la empresa, INS: Configuración de beneficios y todas las pantallas de configuración. Típicamente la persona que administra su sistema WinTeam. Puede que solo haya una o dos personas con este rol.",
+      "team_software_support": "Tareas que requieren la participación directa de TEAM Software, ya sea porque requieren acceso al sistema interno o porque el riesgo de error es suficientemente alto para recomendar soporte profesional."
+    },
+    "grantAccess": "Otorgar acceso en WinTeam a través de",
+    "tasks": "tareas",
+    "accessByPhase": "Requisitos de acceso por fase",
+    "columns": {
+      "task": "Tarea",
+      "whoCanDoIt": "Quién puede hacerlo",
+      "winteamModules": "Módulos de WinTeam",
+      "delegate": "¿Delegable?",
+      "assignTo": "Asignar a"
+    },
+    "preChecklist": "Antes de comenzar — Confirmar acceso",
+    "preChecklistSubtitle": "Complete esta lista antes de iniciar la Fase 1",
+    "checkItems": {
+      "adminIdentified": "Administrador de WinTeam identificado: _______________",
+      "adminAccess": "El administrador de WinTeam tiene acceso a: SYS: Configuración de la empresa, INS: Configuración de beneficios, INS: Configuración de elegibilidad, INS: Asistente de pruebas de elegibilidad, INS: Informe 1095-C de empleados (Archivo electrónico)",
+      "managerIdentified": "Gerente de RH identificado: _______________",
+      "managerAccess": "El gerente de RH tiene acceso a: INS: Informe 1095-C de empleados (Vista previa/Imprimir), INS: Beneficios por empleado (Leer/Escribir), Archivo maestro de empleados (Leer/Escribir)",
+      "staffIdentified": "Personal de RH identificado para ingreso de datos: _______________",
+      "staffAccess": "El personal de RH tiene acceso a: INS: Beneficios por empleado (Leer/Escribir), Archivo maestro de empleados (Leer/Escribir)",
+      "tccLocated": "TCC (Código de control del transmisor) localizado — Almacenado en: _______________",
+      "fireCredentials": "Credenciales del sistema FIRE localizadas — En poder de: _______________",
+      "teamSoftware": "Credenciales del portal de presentación electrónica de TEAM Software (si utiliza su servicio) — En poder de: _______________"
+    }
+  },
+
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Configuración general de cumplimiento de la ACA para toda la empresa",
+    "adminOnly": "Se requiere acceso de administrador para modificar la configuración",
+    "sections": {
+      "company": "Información de la empresa",
+      "aca": "Configuración de la ACA",
+      "safeHarbor": "Método de puerto seguro",
+      "filing": "Configuración de presentación"
+    },
+    "fields": {
+      "taxYear": "Año fiscal",
+      "companyName": "Nombre de la empresa",
+      "companyEIN": "EIN del empleador",
+      "contactPhone": "Teléfono de contacto para el Formulario 1095-C",
+      "planStartMonth": "Mes de inicio del plan",
+      "mecPremium": "Prima mensual solo para empleado — Plan 1 CEM",
+      "mecPremiumHelper": "Esta cantidad aparece en la Línea 15 del Formulario 1095-C de cada empleado, independientemente del plan en que se haya inscrito.",
+      "safeHarborMethod": "Método de puerto seguro",
+      "affordabilityThreshold": "Umbral de asequibilidad",
+      "fplThreshold": "Umbral mensual del FPL",
+      "extensionFiled": "Prórroga presentada para este año fiscal (la fecha límite se mueve al 30 de abril)"
+    },
+    "safeHarborOptions": {
+      "rate_of_pay": "Tarifa de pago (2H) — Recomendado para trabajadores por hora",
+      "w2": "Salarios W-2 (2F)",
+      "fpl": "Nivel federal de pobreza (2G)"
+    },
+    "saved": "Configuración guardada correctamente",
+    "tabs": {
+      "general": "General",
+      "users": "Gestión de usuarios"
+    }
+  },
+
+  "admin": {
+    "title": "Panel de administración",
+    "subtitle": "Gestionar usuarios, ver actividad y configurar acceso",
+    "tabs": {
+      "users": "Usuarios",
+      "invite": "Invitar",
+      "activity": "Registro de actividad"
+    },
+    "stats": {
+      "totalUsers": "Total de usuarios",
+      "admins": "Administradores",
+      "hrUsers": "Usuarios de RH",
+      "pending": "Invitados / Pendientes"
+    },
+    "users": {
+      "columns": {
+        "user": "Usuario",
+        "role": "Rol",
+        "joined": "Fecha de ingreso",
+        "lastSignIn": "Último inicio de sesión",
+        "status": "Estado"
+      },
+      "status": {
+        "active": "Activo",
+        "invited": "Invitado"
+      },
+      "neverSignedIn": "Nunca inició sesión",
+      "changeRole": "Cambiar rol",
+      "resetPassword": "Restablecer contraseña",
+      "removeUser": "Eliminar",
+      "changeRoleConfirm": "¿Cambiar a {name} al rol de {role}?",
+      "changeRoleDescription": "Los administradores pueden gestionar usuarios y configuraciones. Los usuarios de RH pueden usar todas las funciones de presentación.",
+      "removeConfirmTitle": "¿Eliminar a {name}?",
+      "removeConfirmDescription": "Perderán el acceso a la aplicación de inmediato. Su progreso en las listas de verificación y datos de presentación se conservarán para fines de auditoría. Esta acción no se puede deshacer.",
+      "removeButton": "Eliminar usuario",
+      "cannotModifySelf": "No puede modificar su propia cuenta",
+      "roleChanged": "{name} ahora es {role}",
+      "passwordResetSent": "Correo de restablecimiento de contraseña enviado a {email}",
+      "userRemoved": "{name} ha sido eliminado",
+      "roles": {
+        "admin": "Administrador",
+        "hr_user": "Usuario de RH"
+      }
+    },
+    "invite": {
+      "title": "Invitar a un miembro del equipo",
+      "subtitle": "Recibirán un correo electrónico para configurar su contraseña y acceder a la aplicación",
+      "fields": {
+        "fullName": "Nombre completo",
+        "email": "Correo electrónico",
+        "role": "Rol"
+      },
+      "roleOptions": {
+        "hr_user": "Usuario de RH — puede usar todas las funciones de presentación y ver todos los datos",
+        "admin": "Administrador — también puede gestionar usuarios, configuraciones y eliminar datos"
+      },
+      "sendButton": "Enviar invitación",
+      "sending": "Enviando...",
+      "successTitle": "Invitación enviada a {email}",
+      "successDescription": "Recibirán un correo electrónico con un enlace para configurar su contraseña y acceder a la aplicación.",
+      "inviteAnother": "Invitar a otra persona",
+      "emailAlreadyExists": "Este correo ya tiene una cuenta",
+      "inviteFailed": "No se pudo enviar la invitación. Por favor, inténtelo de nuevo."
+    },
+    "activity": {
+      "title": "Actividad reciente",
+      "subtitle": "Registro aproximado de acciones recientes de usuarios basado en los datos disponibles",
+      "columns": {
+        "user": "Usuario",
+        "action": "Acción",
+        "dateTime": "Fecha / Hora"
+      },
+      "events": {
+        "completedChecklist": "Completó elemento de lista de verificación: {key}",
+        "completedFiling": "Completó paso de presentación: {key}",
+        "ranWizard": "Usó el asistente de búsqueda de códigos — Línea 14: {line14}",
+        "loggedIssue": "Registró problema: {title}",
+        "resolvedIssue": "Resolvió problema: {title}"
+      },
+      "empty": "Sin actividad aún"
+    }
+  },
+
+  "profile": {
+    "title": "Mi perfil",
+    "subtitle": "Administrar la configuración de su cuenta",
+    "sections": {
+      "info": "Información del perfil",
+      "password": "Cambiar contraseña",
+      "account": "Información de la cuenta"
+    },
+    "fields": {
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "language": "Idioma preferido"
+    },
+    "emailNote": "Para cambiar su correo electrónico, comuníquese con su administrador.",
+    "roleNote": "Su rol es asignado por su administrador.",
+    "nameSaved": "Nombre actualizado",
+    "resetPasswordButton": "Enviar correo de restablecimiento de contraseña",
+    "resetPasswordNote": "Enviaremos un enlace de restablecimiento a {email}",
+    "resetPasswordSent": "Revise su correo electrónico para obtener un enlace de restablecimiento",
+    "memberSince": "Miembro desde",
+    "accountStatus": "Estado de la cuenta",
+    "accountActive": "Activo"
+  },
+
+  "screenshots": {
+    "title": "Capturas de pantalla — Cómo debe verse",
+    "subtitle": "Suba capturas de pantalla mientras completa este paso. Se convierten en guías visuales permanentes para su equipo.",
+    "uploadArea": "Arrastre una captura de pantalla aquí, o haga clic para buscar",
+    "uploadFormats": "JPEG, PNG, WebP o GIF · Máximo 5MB",
+    "captionLabel": "Descripción (opcional)",
+    "captionPlaceholder": "Describa lo que muestra esta captura — por ejemplo, 'Casilla Autoasegurado correctamente marcada'",
+    "uploadButton": "Subir captura de pantalla",
+    "uploading": "Subiendo...",
+    "uploadSuccess": "Captura de pantalla subida",
+    "uploadError": "Error al subir: {error}",
+    "deleteConfirm": "¿Eliminar esta captura de pantalla? Esta acción no se puede deshacer.",
+    "maxReached": "Límite de 10 capturas de pantalla alcanzado. Elimine una para agregar más.",
+    "uploadedBy": "Subida por {name} · {time}",
+    "addScreenshot": "Agregar captura de pantalla",
+    "noScreenshots": "Sin capturas de pantalla aún",
+    "noScreenshotsDescription": "Sea el primero en capturar este paso — suba una captura de pantalla mientras lo realiza y su equipo tendrá una guía visual de aquí en adelante.",
+    "savedCaption": "Guardado",
+    "lightboxClose": "Cerrar imagen"
+  },
+
+  "walkthroughs": {
+    "accessNeeded": "Acceso requerido",
+    "whyItMatters": "Por qué es importante",
+    "ifSomethingLooksWrong": "Si algo no se ve bien",
+    "close": "Cerrar",
+    "previousStep": "← Paso anterior",
+    "nextStep": "Paso siguiente →"
+  },
+
+  "winteamPaths": {
+    "sysCompanySetup": "SYS > Configuración de empresa > Configuración de la ACA",
+    "sysEIN": "SYS > Configuración de empresa > Campo EIN",
+    "sysPhone": "SYS > Configuración de empresa > Teléfono de contacto 1095-C de beneficios de seguro",
+    "eligACA": "INS > Configuración de elegibilidad > Casilla Elegibilidad conforme a la ACA",
+    "eligPlanStart": "INS > Configuración de elegibilidad > Mes de inicio del plan",
+    "benefitSetupP1ACA": "INS > Configuración de beneficios > [Plan 1] > Pestaña Precios > Casilla ACA",
+    "benefitSetupP1SelfIns": "INS > Configuración de beneficios > [Plan 1] > Pestaña Precios > Casilla Autoasegurado",
+    "benefitSetupP1MinVal": "INS > Configuración de beneficios > [Plan 1] > Pestaña Precios > Casilla Valor Mínimo",
+    "benefitSetupP1Premium": "INS > Configuración de beneficios > [Plan 1] > Pestaña Precios > Campo de prima del empleado",
+    "benefitSetupP1Options": "INS > Configuración de beneficios > [Plan 1] > Pestaña Opciones del plan",
+    "benefitSetupP2ACA": "INS > Configuración de beneficios > [Plan 2] > Pestaña Precios > Casilla ACA",
+    "benefitSetupP2SelfIns": "INS > Configuración de beneficios > [Plan 2] > Pestaña Precios > Casilla Autoasegurado",
+    "benefitSetupP2MinVal": "INS > Configuración de beneficios > [Plan 2] > Pestaña Precios > Casilla Valor Mínimo",
+    "benefitSetupP2Options": "INS > Configuración de beneficios > [Plan 2] > Pestaña Opciones del plan",
+    "benefitSetupP3ACA": "INS > Configuración de beneficios > [Plan 3] > Pestaña Precios > Casilla ACA",
+    "benefitSetupP3SelfIns": "INS > Configuración de beneficios > [Plan 3] > Pestaña Precios > Casilla Autoasegurado",
+    "benefitSetupP3MinVal": "INS > Configuración de beneficios > [Plan 3] > Pestaña Precios > Casilla Valor Mínimo",
+    "benefitSetupP3Options": "INS > Configuración de beneficios > [Plan 3] > Pestaña Opciones del plan",
+    "benefitsByEmployee": "INS > Beneficios por empleado > Pestaña Paquete",
+    "benefitsByEmployeePackage": "INS > Beneficios por empleado > Pestaña Paquete > revisar contenido del paquete",
+    "report2024": "INS > Informe 1095-C de empleados > Año fiscal {priorYear} > Tipo de salida: Vista previa",
+    "report2025": "INS > Informe 1095-C de empleados > Año fiscal {taxYear} > Tipo de salida: Formularios 1095-C (vista previa)",
+    "eligWizard": "INS > Asistente de pruebas de elegibilidad > ejecutar para {taxYear}",
+    "efileGenerate": "INS > Informe 1095-C de empleados > Tipo de salida: Archivo electrónico 1095-C",
+    "employeeMasterFile": "Archivo maestro de empleados",
+    "coveredIndividuals": "INS > Beneficios por empleado > Pestaña Individuos cubiertos"
+  },
+
+  "errors": {
+    "generic": "Algo salió mal. Por favor, inténtelo de nuevo.",
+    "notAuthenticated": "Debe iniciar sesión para hacer esto.",
+    "notAdmin": "Se requiere acceso de administrador.",
+    "notFound": "No encontrado.",
+    "uploadFailed": "Error al subir.",
+    "saveFailed": "Error al guardar. Por favor, inténtelo de nuevo.",
+    "deleteFailed": "Error al eliminar. Por favor, inténtelo de nuevo.",
+    "missingServiceKey": "SUPABASE_SERVICE_ROLE_KEY no está configurado. La gestión de usuarios no funcionará hasta que esto esté configurado.",
+    "setupRequired": "Configuración requerida"
+  },
+
+  "toasts": {
+    "saved": "Guardado correctamente",
+    "deleted": "Eliminado correctamente",
+    "updated": "Actualizado correctamente",
+    "itemCompleted": "Paso marcado como completo",
+    "phaseAdvanced": "¡Fase {current} completa! Avanzando a la fase {next}",
+    "issueLogged": "Problema registrado",
+    "issueResolved": "Problema resuelto",
+    "screenshotUploaded": "Captura de pantalla subida",
+    "screenshotDeleted": "Captura de pantalla eliminada",
+    "inviteSent": "Invitación enviada a {email}",
+    "roleChanged": "Rol actualizado",
+    "passwordResetSent": "Correo de restablecimiento de contraseña enviado",
+    "userRemoved": "Usuario eliminado",
+    "languageChanged": "Idioma cambiado a {language}",
+    "nameUpdated": "Nombre actualizado",
+    "settingsSaved": "Configuración guardada"
+  }
+}

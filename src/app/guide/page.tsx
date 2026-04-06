@@ -1,6 +1,7 @@
 import AppLayout from "@/components/AppLayout";
 import PrintButton from "./PrintButton";
 import { createClient } from "@/lib/supabase/server";
+import { getTranslations } from "next-intl/server";
 
 export default async function GuidePage() {
   const supabase = await createClient();
@@ -18,13 +19,15 @@ export default async function GuidePage() {
   );
 }
 
-function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: string }) {
+async function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: string }) {
+  const t = await getTranslations("guide");
+
   return (
     <div className="max-w-4xl">
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">WinTeam 1095-C Setup Guide</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
             {companyName} · Tax Year {taxYear}
           </p>
@@ -36,18 +39,14 @@ function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: 
       <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg mb-6">
         <div className="font-bold text-red-800 mb-1">Critical Setup Requirement</div>
         <p className="text-red-700 text-sm">
-          Because RBM Services Inc. offers all three plans to every eligible employee, every
-          employee benefit <strong>PACKAGE</strong> in WinTeam must include all three plans — not just
-          the one the employee enrolled in. WinTeam derives the Line 14 code from the package,
-          so if only Plan 1 (MEC) is in the package, WinTeam will generate <strong>1F instead of 1E</strong>.
-          This is the most common setup error for this employer.
+          {t("importantNote")}
         </p>
       </div>
 
       {/* Section 1: SYS Company Setup */}
       <Section
-        title="1. SYS: Company Setup"
-        subtitle="One-time, global settings"
+        title={t("steps.step1Title")}
+        subtitle={t("steps.step1Sub")}
         color="bg-blue-50 border-blue-200"
         headerColor="bg-blue-700"
       >
@@ -61,8 +60,8 @@ function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: 
 
       {/* Section 2: INS Eligibility Setup */}
       <Section
-        title="2. INS: Eligibility Setup"
-        subtitle="Configure for each ACA eligibility rule"
+        title={t("steps.step2Title")}
+        subtitle={t("steps.step2Sub")}
         color="bg-green-50 border-green-200"
         headerColor="bg-green-700"
       >
@@ -77,8 +76,8 @@ function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: 
 
       {/* Section 3: Benefit Plan Setup */}
       <Section
-        title="3. INS: Benefit Plan Setup"
-        subtitle="Settings for all three health plans — verify each plan individually"
+        title={t("steps.step3Title")}
+        subtitle={t("steps.step3Sub")}
         color="bg-purple-50 border-purple-200"
         headerColor="bg-purple-700"
       >
@@ -152,8 +151,8 @@ function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: 
 
       {/* Section 4: Benefits by Employee */}
       <Section
-        title="4. INS: Benefits by Employee"
-        subtitle="Package assignment and covered individuals"
+        title={t("steps.step4Title")}
+        subtitle={t("steps.step4Sub")}
         color="bg-amber-50 border-amber-200"
         headerColor="bg-amber-600"
       >
@@ -187,8 +186,8 @@ function GuideContent({ taxYear, companyName }: { taxYear: number; companyName: 
 
       {/* Data Source Reference Table */}
       <Section
-        title="1095-C Data Source Reference"
-        subtitle="Where WinTeam pulls each field on the 1095-C form"
+        title={t("dataSourceTitle")}
+        subtitle={t("dataSourceSubtitle")}
         color="bg-gray-50 border-gray-200"
         headerColor="bg-gray-600"
       >

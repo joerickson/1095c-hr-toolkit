@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { getFilingChecklist, PHASE_METADATA } from "@/lib/filing-checklist-items";
@@ -69,13 +70,6 @@ const STATUS_BADGE: Record<string, string> = {
   blocked: "bg-red-100 text-red-800",
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  locked: "Locked",
-  in_progress: "In Progress",
-  complete: "Complete",
-  blocked: "Blocked",
-};
-
 const PHASE_NAMES_TEMPLATE = (taxYear: number) => [
   `Audit ${taxYear - 1} WinTeam Setup`,
   `Fix Issues and Roll Forward to ${taxYear}`,
@@ -94,6 +88,9 @@ export default function FilingClient({
   defaultTaxYear,
   extensionFiled,
 }: Props) {
+  const t = useTranslations("filing");
+  const tCommon = useTranslations("common");
+
   const [taxYear, setTaxYear] = useState(defaultTaxYear);
   const [phases, setPhases] = useState<FilingPhaseRow[]>(initialPhases ?? []);
   const [progress, setProgress] = useState<FilingProgressRow[]>(initialProgress ?? []);
@@ -109,6 +106,13 @@ export default function FilingClient({
     day: "numeric",
     year: "numeric",
   });
+
+  const STATUS_LABEL: Record<string, string> = {
+    locked: t("phaseLocked"),
+    in_progress: t("phaseInProgress"),
+    complete: t("phaseComplete"),
+    blocked: t("phaseBlocked"),
+  };
 
   const seedPhases = useCallback(async (year: number) => {
     const phaseNames = PHASE_NAMES_TEMPLATE(year);
@@ -233,14 +237,14 @@ export default function FilingClient({
       {/* Header with year selector */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Filing Assistant</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Four-phase workflow for 1094-C / 1095-C preparation and filing
+            {t("subtitle", { taxYear })}
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <label htmlFor="tax-year-select" className="text-gray-600 font-medium whitespace-nowrap">
-            Tax Year:
+            {tCommon("taxYear")}:
           </label>
           <select
             id="tax-year-select"
@@ -264,13 +268,13 @@ export default function FilingClient({
           </svg>
           <span className="font-semibold">
             {daysRemaining < 0
-              ? `DEADLINE PASSED — ${deadlineLabel}`
+              ? t("deadlinePassed")
               : `${deadlineLabel} deadline`}
           </span>
         </div>
         {daysRemaining >= 0 && (
           <span className={`font-bold text-sm px-3 py-1 rounded-full ${deadlineBadgeClass(daysRemaining)}`}>
-            {daysRemaining === 0 ? "Due today!" : `${daysRemaining} days remaining`}
+            {daysRemaining === 0 ? "Due today!" : tCommon("daysRemaining", { days: daysRemaining })}
           </span>
         )}
       </div>
@@ -284,11 +288,11 @@ export default function FilingClient({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <span className="text-red-800 font-semibold">
-                {blockingIssues} blocking {blockingIssues === 1 ? "issue" : "issues"} must be resolved before you can advance.
+                {t("blockingIssuesAlert", { count: blockingIssues })}
               </span>
             </div>
             <Link href="/filing/issues" className="text-red-700 hover:text-red-900 font-medium text-sm underline">
-              View Issues →
+              {t("viewIssues")}
             </Link>
           </div>
         </div>
@@ -354,13 +358,13 @@ export default function FilingClient({
                 </h3>
 
                 <p className="text-xs text-gray-500 mb-3">
-                  Est. {PHASE_METADATA[phaseNum].estimatedTime}
+                  {t("estimatedTime", { time: PHASE_METADATA[phaseNum].estimatedTime })}
                 </p>
 
                 {/* Progress */}
                 <div className="mb-3">
                   <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>{stats.done} of {stats.total} items</span>
+                    <span>{tCommon("itemsComplete", { complete: stats.done, total: stats.total })}</span>
                     <span>{pct}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5">
@@ -375,7 +379,7 @@ export default function FilingClient({
 
                 {isActive && stats.gateRemaining > 0 && (
                   <p className="text-xs text-amber-700 mb-3">
-                    🔒 {stats.gateRemaining} gate {stats.gateRemaining === 1 ? "item" : "items"} remaining
+                    🔒 {tCommon("gateItemsRemaining", { count: stats.gateRemaining })}
                   </p>
                 )}
 
@@ -385,7 +389,7 @@ export default function FilingClient({
                     href={`/filing/phase/${phaseNum}`}
                     className="block w-full text-center btn-primary text-sm py-1.5"
                   >
-                    Continue →
+                    {t("continuePhase")}
                   </Link>
                 )}
                 {isComplete && (
@@ -398,7 +402,7 @@ export default function FilingClient({
                 )}
                 {isLocked && (
                   <div className="w-full text-center text-xs text-gray-400 py-1.5">
-                    Complete Phase {phaseNum - 1} to unlock
+                    {t("gateLocked")}
                   </div>
                 )}
               </div>
@@ -410,7 +414,7 @@ export default function FilingClient({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Suggested Schedule */}
         <div className="card">
-          <h2 className="font-semibold text-gray-900 mb-3">Suggested Schedule</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">{t("suggestedSchedule")}</h2>
           <p className="text-xs text-gray-500 mb-3">
             Based on today&apos;s date and the {deadlineLabel} deadline.
           </p>
@@ -434,7 +438,7 @@ export default function FilingClient({
         {/* Open Issues Summary */}
         <div className="card">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-gray-900">Open Issues</h2>
+            <h2 className="font-semibold text-gray-900">{t("openIssues")}</h2>
             <Link href="/filing/issues" className="text-navy-600 hover:text-navy-800 text-sm font-medium">
               View all →
             </Link>
@@ -449,7 +453,7 @@ export default function FilingClient({
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-red-500 rounded-full" />
-                    Blocking
+                    {t("blocking")}
                   </span>
                   <span className="font-semibold text-red-700">{blockingIssues}</span>
                 </div>
@@ -458,7 +462,7 @@ export default function FilingClient({
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-amber-500 rounded-full" />
-                    Warning
+                    {t("warnings")}
                   </span>
                   <span className="font-semibold text-amber-700">{warningIssues}</span>
                 </div>
@@ -467,7 +471,7 @@ export default function FilingClient({
                 <div className="flex items-center justify-between text-sm">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-blue-500 rounded-full" />
-                    Informational
+                    {t("informational")}
                   </span>
                   <span className="font-semibold text-blue-700">{infoIssues}</span>
                 </div>
@@ -476,7 +480,7 @@ export default function FilingClient({
           )}
           <div className="mt-4 pt-3 border-t border-gray-100">
             <Link href="/filing/issues" className="btn-secondary text-sm w-full text-center block">
-              Log New Issue
+              {tCommon("logAnIssue")}
             </Link>
           </div>
         </div>

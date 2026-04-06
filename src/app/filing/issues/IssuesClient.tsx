@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 
@@ -34,24 +35,11 @@ const SEVERITY_BADGE: Record<string, string> = {
   informational: "badge-info",
 };
 
-const SEVERITY_LABEL: Record<string, string> = {
-  blocking: "Blocking",
-  warning: "Warning",
-  informational: "Info",
-};
-
 const STATUS_BADGE: Record<string, string> = {
   open: "bg-red-100 text-red-800",
   in_progress: "bg-amber-100 text-amber-800",
   resolved: "bg-green-100 text-green-800",
   wont_fix: "bg-gray-100 text-gray-600",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  open: "Open",
-  in_progress: "In Progress",
-  resolved: "Resolved",
-  wont_fix: "Won't Fix",
 };
 
 function formatCategory(cat: string): string {
@@ -81,21 +69,36 @@ const DEFAULT_ISSUE: IssueForm = {
   affectedCount: "",
 };
 
-const CATEGORIES = [
-  { value: "benefit_setup", label: "Benefit Setup" },
-  { value: "eligibility_setup", label: "Eligibility Setup" },
-  { value: "company_setup", label: "Company Setup" },
-  { value: "employee_data", label: "Employee Data" },
-  { value: "dependent_data", label: "Dependent Data" },
-  { value: "benefit_assignment", label: "Benefit Assignment" },
-  { value: "hours_data", label: "Hours Data" },
-  { value: "measurement_period", label: "Measurement Period" },
-  { value: "other", label: "Other" },
-];
-
 export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: Props) {
   const { showToast } = useToast();
   const supabase = createClient();
+  const t = useTranslations("issues");
+  const tCommon = useTranslations("common");
+
+  const SEVERITY_LABEL: Record<string, string> = {
+    blocking: t("severity.blocking"),
+    warning: t("severity.warning"),
+    informational: t("severity.informational"),
+  };
+
+  const STATUS_LABEL: Record<string, string> = {
+    open: t("status.open"),
+    in_progress: t("status.in_progress"),
+    resolved: t("status.resolved"),
+    wont_fix: t("status.wont_fix"),
+  };
+
+  const CATEGORIES = [
+    { value: "benefit_setup", label: t("categories.benefit_setup") },
+    { value: "eligibility_setup", label: t("categories.eligibility_setup") },
+    { value: "company_setup", label: t("categories.company_setup") },
+    { value: "employee_data", label: t("categories.employee_data") },
+    { value: "dependent_data", label: t("categories.dependent_data") },
+    { value: "benefit_assignment", label: t("categories.benefit_assignment") },
+    { value: "hours_data", label: t("categories.hours_data") },
+    { value: "measurement_period", label: t("categories.measurement_period") },
+    { value: "other", label: t("categories.other") },
+  ];
 
   const [issues, setIssues] = useState<FilingIssue[]>(initialIssues);
   const [filter, setFilter] = useState<"all" | "blocking" | "open" | "resolved">("all");
@@ -185,13 +188,13 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
               ← Filing Assistant
             </a>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Filing Issues</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Track and resolve issues found during the filing workflow
+            {t("subtitle")}
           </p>
         </div>
         <button onClick={() => setDrawerOpen(true)} className="btn-primary">
-          + Log New Issue
+          + {t("logIssue")}
         </button>
       </div>
 
@@ -207,7 +210,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
         </div>
         <div className="card text-center py-4">
           <div className={`text-2xl font-bold ${blockingCount > 0 ? "text-red-800" : "text-gray-400"}`}>{blockingCount}</div>
-          <div className="text-xs text-gray-500 mt-1">Blocking</div>
+          <div className="text-xs text-gray-500 mt-1">{t("severity.blocking")}</div>
         </div>
       </div>
 
@@ -224,7 +227,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              {f === "all" ? "All" : f === "blocking" ? "Blocking only" : f === "open" ? "Open" : "Resolved"}
+              {f === "all" ? tCommon("all") : f === "blocking" ? t("severity.blocking") : f === "open" ? t("status.open") : t("status.resolved")}
             </button>
           ))}
           <span className="ml-auto text-xs text-gray-400">{filtered.length} shown</span>
@@ -239,13 +242,13 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Severity</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t("fields.severity")}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t("fields.title")}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t("fields.category")}</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phase</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fix Path</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("status")}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t("fields.winteamPath")}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{tCommon("actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -285,7 +288,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                             <div className="flex gap-1.5 items-center">
                               <input
                                 type="text"
-                                placeholder="Resolution notes..."
+                                placeholder={t("resolutionNotes") + "..."}
                                 value={resolveNotes}
                                 onChange={(e) => setResolveNotes(e.target.value)}
                                 className="text-xs border border-gray-300 rounded px-2 py-1 w-40 focus:outline-none focus:ring-1 focus:ring-navy-500"
@@ -295,13 +298,13 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                                 disabled={savingResolve}
                                 className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded disabled:opacity-50"
                               >
-                                Save
+                                {tCommon("save")}
                               </button>
                               <button
                                 onClick={() => { setResolvingId(null); setResolveNotes(""); }}
                                 className="text-xs text-gray-500 hover:text-gray-700"
                               >
-                                Cancel
+                                {tCommon("cancel")}
                               </button>
                             </div>
                           ) : (
@@ -309,7 +312,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                               onClick={() => setResolvingId(issue.id)}
                               className="text-xs text-green-700 hover:text-green-900 font-medium"
                             >
-                              Mark Resolved
+                              {t("markResolved")}
                             </button>
                           )}
                         </div>
@@ -317,7 +320,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                         <span className="text-xs text-gray-400">
                           {issue.resolved_at
                             ? new Date(issue.resolved_at).toLocaleDateString()
-                            : "Resolved"}
+                            : t("status.resolved")}
                         </span>
                       )}
                     </td>
@@ -336,7 +339,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
           <div className="relative bg-white rounded-t-xl sm:rounded-xl shadow-xl w-full max-w-lg mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-gray-900 text-lg">Log Filing Issue</h2>
+                <h2 className="font-semibold text-gray-900 text-lg">{t("logIssue")}</h2>
                 <button onClick={() => setDrawerOpen(false)} className="text-gray-400 hover:text-gray-600">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -347,7 +350,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title <span className="text-red-500">*</span>
+                    {t("fields.title")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -360,7 +363,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.category")}</label>
                     <select
                       value={form.category}
                       onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
@@ -372,21 +375,21 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.severity")}</label>
                     <select
                       value={form.severity}
                       onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500"
                     >
-                      <option value="blocking">Blocking</option>
-                      <option value="warning">Warning</option>
-                      <option value="informational">Informational</option>
+                      <option value="blocking">{t("severity.blocking")}</option>
+                      <option value="warning">{t("severity.warning")}</option>
+                      <option value="informational">{t("severity.informational")}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.description")}</label>
                   <textarea
                     rows={3}
                     value={form.description}
@@ -397,7 +400,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">WinTeam Fix Path (optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.winteamPath")} ({tCommon("optional")})</label>
                   <input
                     type="text"
                     value={form.winteamFixPath}
@@ -408,7 +411,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fix Instructions (optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.fixInstructions")} ({tCommon("optional")})</label>
                   <textarea
                     rows={2}
                     value={form.fixInstructions}
@@ -419,7 +422,7 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Affected Employee Count (optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("fields.affectedCount")} ({tCommon("optional")})</label>
                   <input
                     type="number"
                     min="0"
@@ -432,10 +435,10 @@ export default function IssuesClient({ userId, initialIssues, defaultTaxYear }: 
 
                 <div className="flex gap-3 pt-2">
                   <button onClick={submitIssue} disabled={savingForm} className="btn-primary flex-1 disabled:opacity-50">
-                    {savingForm ? "Saving..." : "Log Issue"}
+                    {savingForm ? tCommon("loading") : t("logIssue")}
                   </button>
                   <button onClick={() => setDrawerOpen(false)} className="btn-secondary flex-1">
-                    Cancel
+                    {tCommon("cancel")}
                   </button>
                 </div>
               </div>
