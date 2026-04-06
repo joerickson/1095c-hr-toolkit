@@ -9,6 +9,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { data: { user } } = await supabase.auth.getUser();
 
   let isAdmin = false;
+  let userFullName: string | null = null;
   let alertRows: EligibilityDashboardRow[] = [];
   let navTaxYear = new Date().getFullYear();
   let navExtensionFiled = false;
@@ -16,10 +17,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, full_name")
       .eq("id", user.id)
       .single();
     isAdmin = profile?.role === "admin";
+    userFullName = profile?.full_name ?? null;
 
     // Load settings for nav deadline display
     const { data: navSettings } = await supabase
@@ -47,7 +49,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <ToastProvider>
       <div className="min-h-screen flex flex-col">
-        <Navigation userEmail={user?.email} isAdmin={isAdmin} taxYear={navTaxYear} extensionFiled={navExtensionFiled} />
+        <Navigation userEmail={user?.email} userFullName={userFullName} isAdmin={isAdmin} taxYear={navTaxYear} extensionFiled={navExtensionFiled} />
         {alertRows.length > 0 && <EligibilityAlerts rows={alertRows} />}
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {children}

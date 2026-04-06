@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Deadline badge helpers
 function getDeadlineDays(taxYear: number, extensionFiled: boolean): number {
@@ -21,6 +21,24 @@ function deadlineBadgeClass(days: number): string {
   return "bg-blue-600 text-white";
 }
 
+function getInitials(fullName: string | null | undefined, email: string | null | undefined): string {
+  if (fullName) {
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return fullName[0].toUpperCase();
+  }
+  if (email) return email[0].toUpperCase();
+  return "?";
+}
+
+function getDisplayName(fullName: string | null | undefined, email: string | null | undefined): string {
+  if (fullName) return fullName;
+  if (email) return email;
+  return "";
+}
+
 const YEAR_ROUND_NAV_ITEMS = [
   { href: "/payroll", label: "Pay Period" },
   { href: "/payroll/offers", label: "Offer Letters" },
@@ -28,16 +46,25 @@ const YEAR_ROUND_NAV_ITEMS = [
 
 interface NavigationProps {
   userEmail?: string | null;
+  userFullName?: string | null;
   isAdmin?: boolean;
   taxYear?: number;
   extensionFiled?: boolean;
 }
 
-export default function Navigation({ userEmail, isAdmin, taxYear = new Date().getFullYear(), extensionFiled = false }: NavigationProps) {
+export default function Navigation({
+  userEmail,
+  userFullName,
+  isAdmin,
+  taxYear = new Date().getFullYear(),
+  extensionFiled = false,
+}: NavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [deadlineDays, setDeadlineDays] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filingNavItems = [
     { href: "/filing", label: `${taxYear} Filing`, showDeadline: true },
@@ -50,9 +77,18 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
 
   useEffect(() => {
     const days = getDeadlineDays(taxYear, extensionFiled);
-    // Only show badge if deadline hasn't passed
     if (days >= 0) setDeadlineDays(days);
   }, [taxYear, extensionFiled]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -62,11 +98,13 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
 
   function isActive(href: string): boolean {
     if (href === "/payroll") {
-      // Active for /payroll and /payroll/employees/... but NOT /payroll/offers
       return pathname === "/payroll" || pathname.startsWith("/payroll/employees");
     }
     if (href === "/filing") {
-      return pathname === "/filing" || (pathname.startsWith("/filing/") && !pathname.startsWith("/filing/access"));
+      return (
+        pathname === "/filing" ||
+        (pathname.startsWith("/filing/") && !pathname.startsWith("/filing/access"))
+      );
     }
     return pathname.startsWith(href);
   }
@@ -82,6 +120,9 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
     `block px-3 py-2 rounded-md text-sm font-medium ${
       isActive(href) ? "bg-navy-800 text-white" : "text-navy-100 hover:bg-navy-600"
     }`;
+
+  const initials = getInitials(userFullName, userEmail);
+  const displayName = getDisplayName(userFullName, userEmail);
 
   return (
     <nav className="bg-navy-700 text-white shadow-md print:hidden">
@@ -105,13 +146,21 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
             {filingNavItems.map((item) => (
-              <Link key={item.href} href={item.href} className={`${linkClass(item.href)} flex items-center gap-1.5`}>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${linkClass(item.href)} flex items-center gap-1.5`}
+              >
                 {item.label}
-                {'showDeadline' in item && item.showDeadline && deadlineDays !== null && (
-                  <span className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${deadlineBadgeClass(deadlineDays)}`}>
-                    {deadlineDays}d
-                  </span>
-                )}
+                {"showDeadline" in item &&
+                  item.showDeadline &&
+                  deadlineDays !== null && (
+                    <span
+                      className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${deadlineBadgeClass(deadlineDays)}`}
+                    >
+                      {deadlineDays}d
+                    </span>
+                  )}
               </Link>
             ))}
             <span className="text-navy-500 mx-1 select-none">|</span>
@@ -127,19 +176,55 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
             )}
           </div>
 
-          {/* User menu */}
-          <div className="hidden md:flex items-center gap-3">
-            {userEmail && (
-              <span className="text-navy-200 text-xs truncate max-w-[150px]">
-                {userEmail}
-              </span>
-            )}
-            <button
-              onClick={handleSignOut}
-              className="text-navy-100 hover:text-white text-sm font-medium px-3 py-1.5 rounded border border-navy-500 hover:border-navy-300 transition-colors"
-            >
-              Sign out
-            </button>
+          {/* User dropdown */}
+          <div className="hidden md:flex items-center">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen((o) => !o)}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-navy-600 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#1a3a5c] border-2 border-navy-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {initials}
+                </div>
+                {displayName && (
+                  <span className="text-navy-100 text-sm max-w-[140px] truncate">
+                    {displayName}
+                  </span>
+                )}
+                <svg
+                  className="w-3.5 h-3.5 text-navy-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 top-full mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1">
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    My Profile
+                  </Link>
+                  <div className="border-t border-gray-100 my-1" />
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -149,9 +234,19 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -173,11 +268,15 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
                 onClick={() => setMobileOpen(false)}
               >
                 <span>{item.label}</span>
-                {'showDeadline' in item && item.showDeadline && deadlineDays !== null && (
-                  <span className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${deadlineBadgeClass(deadlineDays)}`}>
-                    {deadlineDays}d
-                  </span>
-                )}
+                {"showDeadline" in item &&
+                  item.showDeadline &&
+                  deadlineDays !== null && (
+                    <span
+                      className={`text-xs px-1.5 py-0.5 rounded font-semibold leading-none ${deadlineBadgeClass(deadlineDays)}`}
+                    >
+                      {deadlineDays}d
+                    </span>
+                  )}
               </Link>
             ))}
             <div className="px-3 pt-2 pb-1 text-navy-400 text-xs font-semibold uppercase tracking-wider border-t border-navy-600 mt-1">
@@ -203,14 +302,18 @@ export default function Navigation({ userEmail, isAdmin, taxYear = new Date().ge
               </Link>
             )}
             <div className="pt-2 border-t border-navy-600">
-              {userEmail && (
-                <div className="px-3 py-2 text-navy-300 text-xs">{userEmail}</div>
-              )}
+              <Link
+                href="/profile"
+                className={mobileLinkClass("/profile")}
+                onClick={() => setMobileOpen(false)}
+              >
+                My Profile
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="block w-full text-left px-3 py-2 text-sm text-navy-100 hover:bg-navy-600 rounded-md"
               >
-                Sign out
+                Sign Out
               </button>
             </div>
           </div>
