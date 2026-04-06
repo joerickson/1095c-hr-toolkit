@@ -191,7 +191,7 @@ export async function getActivityLog(): Promise<{
       if (data) {
         for (const row of data) {
           entries.push({
-            user_name: (row.profiles as { full_name: string | null } | null)?.full_name ?? null,
+            user_name: (row.profiles as unknown as { full_name: string | null } | null)?.full_name ?? null,
             action: `Completed checklist item: ${(row as { checklist_item_key?: string }).checklist_item_key ?? ""}`,
             timestamp: (row as { completed_at: string }).completed_at,
           });
@@ -212,7 +212,7 @@ export async function getActivityLog(): Promise<{
       if (data) {
         for (const row of data) {
           entries.push({
-            user_name: (row.profiles as { full_name: string | null } | null)?.full_name ?? null,
+            user_name: (row.profiles as unknown as { full_name: string | null } | null)?.full_name ?? null,
             action: `Completed filing step: ${(row as { item_key?: string }).item_key ?? ""}`,
             timestamp: (row as { completed_at: string }).completed_at,
           });
@@ -232,7 +232,7 @@ export async function getActivityLog(): Promise<{
         for (const row of data) {
           const line14 = (row as { result_line14?: string | null }).result_line14;
           entries.push({
-            user_name: (row.profiles as { full_name: string | null } | null)?.full_name ?? null,
+            user_name: (row.profiles as unknown as { full_name: string | null } | null)?.full_name ?? null,
             action: `Ran code lookup wizard — Line 14: ${line14 ?? "?"}`,
             timestamp: row.created_at,
           });
@@ -251,7 +251,7 @@ export async function getActivityLog(): Promise<{
       if (data) {
         for (const row of data) {
           entries.push({
-            user_name: (row.profiles as { full_name: string | null } | null)?.full_name ?? null,
+            user_name: (row.profiles as unknown as { full_name: string | null } | null)?.full_name ?? null,
             action: `Logged issue: ${(row as { title?: string }).title ?? ""}`,
             timestamp: row.created_at,
           });
@@ -273,7 +273,7 @@ export async function getActivityLog(): Promise<{
           const resolvedAt = (row as { resolved_at?: string | null }).resolved_at;
           if (resolvedAt) {
             entries.push({
-              user_name: (row.profiles as { full_name: string | null } | null)?.full_name ?? null,
+              user_name: (row.profiles as unknown as { full_name: string | null } | null)?.full_name ?? null,
               action: `Resolved issue: ${(row as { title?: string }).title ?? ""}`,
               timestamp: resolvedAt,
             });
