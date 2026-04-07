@@ -133,6 +133,7 @@ export default function Navigation({
     { href: "/wizard", label: t('codeWizard') },
     { href: "/tracker", label: t('employeeTracker') },
     { href: "/guide", label: t('winteamGuide') },
+    { href: "/hr-tasks", label: t('hrTasks') },
   ];
 
   const yearRoundNavItems = [
