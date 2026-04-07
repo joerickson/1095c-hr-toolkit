@@ -2,30 +2,29 @@ import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// In-memory rate limit store: userId -> array of timestamps
-const rateLimitStore = new Map<string, number[]>()
-const RATE_LIMIT_MAX = 20
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
 function checkRateLimit(userId: string): boolean {
   const now = Date.now()
-  const windowStart = now - RATE_LIMIT_WINDOW_MS
-  const timestamps = (rateLimitStore.get(userId) ?? []).filter(t => t > windowStart)
+  const limit = rateLimitMap.get(userId)
 
-  if (timestamps.length >= RATE_LIMIT_MAX) {
-    rateLimitStore.set(userId, timestamps)
-    return false
+  if (!limit || now > limit.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + 60 * 60 * 1000 })
+    return true
   }
 
-  timestamps.push(now)
-  rateLimitStore.set(userId, timestamps)
+  if (limit.count >= 20) return false
+
+  limit.count++
   return true
 }
 
 export async function POST(request: NextRequest) {
-  // Verify user is authenticated
+  // Verify authentication
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
   if (!user) {
     return NextResponse.json(
       { error: 'Not authenticated' },
@@ -36,37 +35,70 @@ export async function POST(request: NextRequest) {
   // Check rate limit
   if (!checkRateLimit(user.id)) {
     return NextResponse.json(
-      { error: 'You have sent too many messages. Please wait a few minutes before asking Mia another question.' },
+      { error: 'Too many messages. Please wait a few minutes.' },
       { status: 429 }
     )
   }
 
+  // Check API key
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error('ANTHROPIC_API_KEY is not set')
+    return NextResponse.json(
+      { error: 'Mia is not configured. Contact your administrator.' },
+      { status: 500 }
+    )
+  }
+
+  let body: any
+  try {
+    body = await request.json()
+  } catch (e) {
+    return NextResponse.json(
+      { error: 'Invalid request body' },
+      { status: 400 }
+    )
+  }
+
   const {
-    messages,
-    currentPage,
-    currentItem,
+    messages = [],
+    currentPage = '/',
     currentPhase,
-    taxYear,
-    language,
+    currentItem,
+    taxYear = new Date().getFullYear(),
+    language = 'en',
     imageBase64,
-    imageMimeType,
-  } = await request.json()
+    imageMimeType = 'image/jpeg',
+  } = body
 
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   })
 
-  const systemPrompt = buildSystemPrompt({
-    currentPage,
-    currentItem,
-    currentPhase,
-    taxYear,
-    language,
-  })
+  // Build the messages array for Claude
+  // Handle image on the last user message
+  const claudeMessages = messages.map((msg: any, index: number) => {
+    const isLastUserMessage =
+      index === messages.length - 1 && msg.role === 'user'
 
-  // Build message array for Claude; attach image to last user message if present
-  const claudeMessages = messages.map((msg: { role: string; content: string }, index: number) => {
-    if (index === messages.length - 1 && imageBase64 && msg.role === 'user') {
+    if (isLastUserMessage && imageBase64) {
+      // Strip data URL prefix if present
+      // imageBase64 might be "data:image/jpeg;base64,/9j/..."
+      // or just the raw base64 string
+      const rawBase64 = imageBase64.includes(',')
+        ? imageBase64.split(',')[1]
+        : imageBase64
+
+      // Validate mime type
+      const validMimeTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ]
+      const safeMimeType = validMimeTypes.includes(imageMimeType)
+        ? imageMimeType
+        : 'image/jpeg'
+
       return {
         role: 'user' as const,
         content: [
@@ -74,21 +106,38 @@ export async function POST(request: NextRequest) {
             type: 'image' as const,
             source: {
               type: 'base64' as const,
-              media_type: (imageMimeType || 'image/jpeg') as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
-              data: imageBase64,
+              media_type: safeMimeType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+              data: rawBase64,
             },
           },
           {
             type: 'text' as const,
-            text: msg.content,
+            text: msg.content || 'Please analyze this screenshot and help me.',
           },
         ],
       }
     }
+
     return {
       role: msg.role as 'user' | 'assistant',
-      content: msg.content,
+      content: msg.content as string,
     }
+  })
+
+  // If no messages, create a default one
+  if (claudeMessages.length === 0) {
+    claudeMessages.push({
+      role: 'user' as const,
+      content: 'Hello',
+    })
+  }
+
+  const systemPrompt = buildSystemPrompt({
+    currentPage,
+    currentItem,
+    currentPhase,
+    taxYear,
+    language,
   })
 
   try {
@@ -100,15 +149,35 @@ export async function POST(request: NextRequest) {
     })
 
     const responseText = response.content
-      .filter((block) => block.type === 'text')
-      .map((block) => (block as { type: 'text'; text: string }).text)
+      .filter((block: any) => block.type === 'text')
+      .map((block: any) => (block as { type: 'text'; text: string }).text)
       .join('')
 
     return NextResponse.json({ response: responseText })
-  } catch (error) {
-    console.error('Anthropic API error:', error)
+  } catch (error: any) {
+    console.error('Anthropic API error:', {
+      message: error.message,
+      status: error.status,
+      type: error.constructor.name,
+    })
+
+    // Return specific error messages for common issues
+    if (error.status === 401) {
+      return NextResponse.json(
+        { error: 'Mia is not properly configured. Contact your administrator.' },
+        { status: 500 }
+      )
+    }
+
+    if (error.status === 429) {
+      return NextResponse.json(
+        { error: 'Mia is temporarily busy. Please try again in a moment.' },
+        { status: 429 }
+      )
+    }
+
     return NextResponse.json(
-      { error: 'Failed to get response from Mia' },
+      { error: `Mia encountered an error: ${error.message}` },
       { status: 500 }
     )
   }
@@ -194,14 +263,13 @@ ${currentPage.includes('/tracker') ? `The user is reviewing employee compliance 
 ${currentPage.includes('/wizard') ? `The user is looking up 1095-C codes. Help them understand Line 14, 15, and 16 codes.` : ''}
 ${currentPage.includes('/payroll') ? `The user is managing pay period hours and eligibility. Help them with measurement periods and hour thresholds.` : ''}
 
-SCREENSHOT ANALYSIS:
-If the user uploads a screenshot of WinTeam, analyze it carefully:
-- Identify which WinTeam screen is shown
-- Point out exactly where checkboxes, fields, or buttons are
-- Note if settings look correct or incorrect based on RBM's setup
-- Give step-by-step instructions referencing what you can see
-- Use spatial descriptions: "top left", "third row", "blue button"
-- If you can see a problem, be direct about what needs to change
+SCREENSHOT ANALYSIS INSTRUCTIONS:
+When you see a WinTeam screenshot:
+1. Identify exactly which screen is shown
+2. Describe where specific fields or checkboxes are located
+3. Note if any settings look correct or incorrect
+4. Give numbered steps using visual landmarks visible in the screenshot
+5. Be specific: "In your screenshot, I can see the Insurance Benefits 1095-C section in the bottom right corner"
 
 PERSONALITY:
 - Warm, patient, and encouraging — HR staff are stressed

@@ -252,9 +252,9 @@ export default function AskMia({ taxYear, language, userName }: AskMiaProps) {
     const reader = new FileReader()
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string
-      const base64 = dataUrl.split(',')[1]
+      // Send the full data URL — the API route strips the prefix
       setAttachedImage({
-        base64,
+        base64: dataUrl,
         mimeType: file.type,
         preview: dataUrl,
         name: file.name,
