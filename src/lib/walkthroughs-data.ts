@@ -7,22 +7,21 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
   // ============================================================
 
   audit_sys_aca_enabled: {
-    overview: 'The first thing we need to check is whether WinTeam knows you are an ACA-reporting employer. There is a single checkbox in the Company Setup screen that turns on all ACA features. If it was off, WinTeam would have been ignoring your ACA obligations entirely.',
-    why_it_matters: 'If this checkbox is not checked, WinTeam will not generate any 1095-C forms at all, regardless of any other settings.',
+    overview: 'The ACA settings in WinTeam are found in the Insurance Benefits module, not in SYS: Company Setup. You need to go to Insurance Benefits > Defaults and look at the ACA Settings section in the bottom right of the screen.',
+    why_it_matters: 'If the Affordable Care Act Configuration checkbox is not checked, WinTeam will not generate any 1095-C forms at all, regardless of any other settings.',
     steps: [
-      { step: 1, instruction: 'Open WinTeam and log in as an administrator.' },
-      { step: 2, instruction: 'Click SYS in the top navigation menu.', detail: 'SYS stands for System — it contains company-wide settings.' },
-      { step: 3, instruction: 'Click Company Setup from the dropdown menu that appears.' },
-      { step: 4, instruction: 'Look for a section called Insurance Benefits or ACA.', detail: 'The exact label depends on your WinTeam version.' },
-      { step: 5, instruction: 'Find the checkbox labeled Affordable Care Act Configuration or Enable ACA Reporting.' },
-      { step: 6, instruction: 'Confirm the checkbox is checked (has a checkmark in it). If it is not checked, click it to check it now.' },
-      { step: 7, instruction: 'Click Save at the bottom of the screen.' },
-      { step: 8, instruction: 'Come back here and mark this item complete.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu." },
+      { step: 2, instruction: "Click 'Defaults' from the submenu that appears." },
+      { step: 3, instruction: "Make sure you are on the 'Defaults' tab at the top of the screen (not Resources, Package Validation, or Online Enrollment)." },
+      { step: 4, instruction: "Look at the bottom right section of the screen. You will see a box labeled 'ACA Settings'." },
+      { step: 5, instruction: "Find the checkbox labeled 'Affordable Care Act Configuration'. Confirm it is checked." },
+      { step: 6, instruction: "Also check the 'Plan Year Start Month' field — it should be set to 01 for January. If it is blank, enter 01.", warning: 'Plan Year Start Month being blank is a common issue that affects all monthly ACA calculations.' },
+      { step: 7, instruction: 'Click Save and mark this item complete.' },
     ],
     if_something_looks_wrong: [
-      'If you cannot find a Company Setup option under SYS, you may not have administrator access. Ask your WinTeam administrator to complete this step.',
-      'If you see the option but cannot check the box, your WinTeam license may not include the ACA module. Contact TEAM Software support.',
-      'If the checkbox was already checked, that is great — just confirm and move on.',
+      "If you do not see the ACA Settings section, make sure you clicked the 'Defaults' tab at the top — not one of the other tabs.",
+      'If the Affordable Care Act Configuration checkbox is unchecked, check it and click Save before proceeding.',
+      'Plan Year Start Month being blank is a common issue — enter 01 for January and save.',
     ],
     estimated_minutes: 5,
   },
@@ -49,7 +48,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'The IRS requires a valid contact phone number on your ACA filing. This is the number the IRS will use if they need to contact you about your 1094-C or 1095-C submission. It should be a direct number for someone in HR or payroll who can answer questions about your filing.',
     why_it_matters: 'If the phone number is wrong or disconnected, the IRS cannot reach you if there is a problem with your filing, which can delay resolution and lead to penalties.',
     steps: [
-      { step: 1, instruction: 'Stay in SYS > Company Setup > ACA Configuration (the same screen from the previous step).' },
+      { step: 1, instruction: 'Stay in SYS > Company Setup (the same screen from the previous step). Look for the Insurance Benefits 1095-C section in the bottom right of the screen.' },
       { step: 2, instruction: 'Find the field labeled Contact Phone or ACA Contact Phone.' },
       { step: 3, instruction: 'Confirm the number is a current, working phone number for your HR department.' },
       { step: 4, instruction: 'If the number is outdated or incorrect, type the correct number in the field.' },
@@ -67,8 +66,8 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'WinTeam has a setting on each eligibility rule called ACA Compliant Eligibility. This checkbox tells WinTeam to use ACA rules when determining whether an employee qualifies for benefits — specifically, tracking hours and applying the 30-hour-per-week full-time threshold. Without this checkbox checked on every eligibility rule your company uses, WinTeam will not correctly identify who needs to be offered coverage.',
     why_it_matters: 'If ACA Compliant Eligibility is not checked on your eligibility rules, WinTeam will not calculate who qualifies for benefits under ACA law, and your 1095-C forms will be incorrect.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS in the top navigation menu.', detail: 'INS stands for Insurance Benefits.' },
-      { step: 2, instruction: 'Click Eligibility Setup from the dropdown.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu." },
+      { step: 2, instruction: "Click 'Eligibility Setup' from the submenu that appears." },
       { step: 3, instruction: 'You will see a list of eligibility rules. Your company may have one or several. Open the first one.' },
       { step: 4, instruction: 'Look for a checkbox labeled ACA Compliant Eligibility.' },
       { step: 5, instruction: 'Confirm the checkbox is checked. If it is not, check it now.' },
@@ -85,18 +84,20 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
   },
 
   audit_ins_plan_start_month: {
-    overview: 'The Plan Start Month tells WinTeam what month your benefit plan year begins. For most employers, the plan year runs January through December, so this should be set to 01 (January). This setting affects how WinTeam calculates ACA codes for each of the 12 months on the 1095-C form. If it is set to the wrong month, all of your monthly calculations will be off.',
-    why_it_matters: 'If the Plan Start Month is set to the wrong month, WinTeam will apply the wrong coverage codes to every month of the year for every employee.',
+    overview: 'The Plan Year Start Month is found in Insurance Benefits > Defaults > ACA Settings section, not in Eligibility Setup. This setting tells WinTeam what month your benefit plan year begins. For RBM Services, the plan year runs January through December, so this must be set to 01.',
+    why_it_matters: 'If the Plan Year Start Month is set to the wrong month or left blank, WinTeam will apply the wrong coverage codes to every month of the year for every employee.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Eligibility Setup (the same screen from the previous step).' },
-      { step: 2, instruction: 'Look for a field labeled Plan Start Month or Plan Year Start Month.' },
-      { step: 3, instruction: 'Confirm the value is 01 (meaning January).' },
-      { step: 4, instruction: 'If it shows a different number, correct it to 01 and click Save.', warning: 'Changing the Plan Start Month after data has been entered can affect calculations. If you are unsure whether to change it, note the current value in the Finding field below and check with your WinTeam consultant first.' },
-      { step: 5, instruction: 'Mark this item complete.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu." },
+      { step: 2, instruction: "Click 'Defaults' from the submenu that appears." },
+      { step: 3, instruction: "Make sure you are on the 'Defaults' tab at the top of the screen (not Resources, Package Validation, or Online Enrollment)." },
+      { step: 4, instruction: "Look at the bottom right section of the screen. You will see a box labeled 'ACA Settings'." },
+      { step: 5, instruction: "Find the field labeled 'Plan Year Start Month'. Confirm the value is 01 (meaning January)." },
+      { step: 6, instruction: 'If it shows a different number or is blank, enter 01 and click Save.', warning: 'Changing the Plan Year Start Month after data has been entered can affect calculations. If you are unsure, note the current value in the Finding field below and check with your WinTeam consultant first.' },
+      { step: 7, instruction: 'Mark this item complete.' },
     ],
     if_something_looks_wrong: [
       'If the field shows a number other than 01, your plan year may not be January–December. Confirm with your benefits broker what month your plan year starts before changing this.',
-      'If the field does not exist in your version of WinTeam, note that in the Finding field and continue.',
+      "If you do not see the ACA Settings section, make sure you are on the 'Defaults' tab — not one of the other tabs.",
     ],
     estimated_minutes: 5,
   },
@@ -105,8 +106,8 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Each benefit plan in WinTeam has an ACA checkbox on its Pricing Tab. This checkbox designates the plan as one that should be reported on the 1095-C form. Plan 1 is your Minimum Essential Coverage plan (MEC), and it must have this box checked so WinTeam knows to include it when generating ACA forms.',
     why_it_matters: 'If the ACA checkbox is not checked for Plan 1, WinTeam will not include this plan in any 1095-C calculations or forms.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS in the top navigation menu.' },
-      { step: 2, instruction: 'Click Benefit Setup from the dropdown.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu." },
+      { step: 2, instruction: "Click 'Benefit Setup' from the submenu that appears." },
       { step: 3, instruction: 'Find your Plan 1 MEC plan in the list and click on it to open it.', detail: 'Your MEC plan may be listed by a name your company chose, not the word MEC. Look for the plan you offer as your lowest-cost option.' },
       { step: 4, instruction: 'Click the Pricing tab at the top of the benefit setup screen.' },
       { step: 5, instruction: 'Look for a checkbox labeled ACA.' },
@@ -125,8 +126,8 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Your Plan 1 (MEC plan) is self-insured, meaning your company pays claims directly rather than paying premiums to an insurance company. Because of this, the IRS requires you to list every covered person on the 1095-C form in a section called Part III. WinTeam will only generate Part III if this checkbox is checked. Without it, your MEC plan enrollees will be missing required coverage information on their forms.',
     why_it_matters: 'If Self Insured is not checked for Plan 1, WinTeam will not generate Part III for MEC enrollees, which is a filing error the IRS can penalize.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS in the top navigation menu.', detail: 'INS stands for Insurance Benefits.' },
-      { step: 2, instruction: 'Click Benefit Setup from the dropdown.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu." },
+      { step: 2, instruction: "Click 'Benefit Setup' from the submenu that appears." },
       { step: 3, instruction: 'Find your Plan 1 MEC plan in the list and click on it to open it.', detail: 'Your MEC plan may be listed by a name your company chose, not the word MEC. Look for the plan you offer as your lowest-cost option.' },
       { step: 4, instruction: 'Click the Pricing tab at the top of the benefit setup screen.' },
       { step: 5, instruction: 'Look for a checkbox labeled Self Insured.' },
@@ -146,7 +147,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'This step sounds confusing but is very important. Your Plan 1 is called a Minimum Essential Coverage plan (MEC), but MEC and Minimum Value are two completely different things. Minimum Value means the plan pays at least 60% of covered healthcare costs. Your MEC plan was designed as a low-cost plan that meets the basic coverage requirement but intentionally does not meet the Minimum Value threshold. The Minimum Value checkbox in WinTeam must be UNCHECKED for Plan 1 so that WinTeam generates the correct IRS code on Line 14 of the 1095-C.',
     why_it_matters: 'If Minimum Value is incorrectly checked on Plan 1, WinTeam will generate the wrong code on Line 14 for MEC enrollees, which could cause confusion in future years or if your plan offering changes.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 1 open on the Pricing tab.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 1 open on the Pricing tab.' },
       { step: 2, instruction: 'Look for a checkbox labeled Minimum Value.' },
       { step: 3, instruction: 'Confirm this box is NOT checked (empty, no checkmark).', warning: 'This is one of the few steps where the correct answer is that the box should be EMPTY. Do not check it.' },
       { step: 4, instruction: 'If the box is checked, uncheck it by clicking it.' },
@@ -164,7 +165,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Line 15 on the 1095-C form shows the lowest-cost employee-only premium for the minimum value plan you offer. For your company, this is the Plan 1 MEC monthly premium that an employee pays. This number must be entered correctly in WinTeam on Plan 1\'s Pricing Tab so that it populates Line 15 accurately on every employee\'s form.',
     why_it_matters: 'If Line 15 shows the wrong amount or is blank, the IRS cannot verify that your plan was affordable for employees, which can trigger penalties.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 1 open on the Pricing tab.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 1 open on the Pricing tab.' },
       { step: 2, instruction: 'Find the field for the employee-only monthly premium.', detail: 'It may be labeled Employee Premium, Employee-Only Cost, or similar.' },
       { step: 3, instruction: 'Write down the dollar amount shown.' },
       { step: 4, instruction: 'Compare it to your actual Plan 1 premium for the year you are auditing. This amount should be on your summary plan documents or your benefits broker\'s records.' },
@@ -182,7 +183,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan Options are the different coverage tiers your plan offers — for example, Employee-only, Employee plus Spouse, Employee plus Dependents, and Employee plus Family. WinTeam uses the Plan Options to determine whether all three coverage tiers (Employee, Spouse, Dependents) were available under your plan. This affects the IRS code on Line 14. For code 1E (the correct code), all three tiers must be present.',
     why_it_matters: 'If any of the three coverage tiers are missing from Plan 1\'s Plan Options, WinTeam may generate a different Line 14 code instead of 1E, which misrepresents the coverage you offered.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 1 open.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 1 open.' },
       { step: 2, instruction: 'Click the Plan Options tab at the top of the screen.' },
       { step: 3, instruction: 'Look at the list of coverage tiers.', screenshot_hint: 'You should see at least three rows: one for Employee-only coverage, one for Employee + Spouse, and one for Employee + Dependents (or Employee + Family).' },
       { step: 4, instruction: 'Confirm all three tiers are present: Employee-only, Employee + Spouse, and Employee + Dependents.' },
@@ -200,7 +201,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan 2 is your self-insured major medical plan. Like Plan 1, it must have the ACA checkbox checked on its Pricing Tab so WinTeam knows to include it in ACA reporting. Both Plan 1 and Plan 2 are self-insured, so both must be flagged as ACA plans.',
     why_it_matters: 'If the ACA checkbox is not checked for Plan 2, WinTeam will not include Plan 2 enrollment in 1095-C calculations.',
     steps: [
-      { step: 1, instruction: 'In INS > Benefit Setup, find your Plan 2 (Self-Insured major medical plan) in the list and click on it.' },
+      { step: 1, instruction: "In Insurance Benefits > Benefit Setup, find your Plan 2 (Self-Insured major medical plan) in the list and click on it." },
       { step: 2, instruction: 'Click the Pricing tab.' },
       { step: 3, instruction: 'Find the ACA checkbox and confirm it is checked.' },
       { step: 4, instruction: 'If it is not checked, check it and click Save.' },
@@ -217,7 +218,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan 2 is a self-insured major medical plan, meaning your company directly pays for claims rather than using an outside insurance carrier. Just like Plan 1, WinTeam must know Plan 2 is self-insured so it generates Part III (the Covered Individuals section) on the 1095-C for Plan 2 enrollees. Part III must list every person covered under the plan, including dependents.',
     why_it_matters: 'If Self Insured is not checked for Plan 2, WinTeam will not generate Part III for Plan 2 enrollees, which is required for self-insured plans and will cause IRS errors.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 2 open on the Pricing tab.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 2 open on the Pricing tab.' },
       { step: 2, instruction: 'Find the checkbox labeled Self Insured.' },
       { step: 3, instruction: 'Confirm the box is checked. If it is not, check it now.' },
       { step: 4, instruction: 'Click Save.' },
@@ -234,7 +235,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan 2 is your full major medical plan, which pays at least 60% of covered healthcare costs. This means Plan 2 meets the IRS definition of Minimum Value. The Minimum Value checkbox on Plan 2 must be checked so WinTeam generates the correct Line 14 code for employees enrolled in Plan 2. This is the opposite of Plan 1, where Minimum Value must be unchecked.',
     why_it_matters: 'If Minimum Value is not checked for Plan 2, WinTeam will generate an incorrect Line 14 code for Plan 2 enrollees, misrepresenting the level of coverage you provided.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 2 open on the Pricing tab.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 2 open on the Pricing tab.' },
       { step: 2, instruction: 'Find the checkbox labeled Minimum Value.' },
       { step: 3, instruction: 'Confirm this box IS checked (has a checkmark).', warning: 'Unlike Plan 1, where Minimum Value must be UNCHECKED, Plan 2 requires Minimum Value to be CHECKED.' },
       { step: 4, instruction: 'If the box is not checked, click it to check it.' },
@@ -251,7 +252,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Just like Plan 1, Plan 2 needs all three coverage tiers in its Plan Options — Employee-only, Employee plus Spouse, and Employee plus Dependents. WinTeam uses this to determine the correct Line 14 code. If all three tiers are present across all three plans in the benefit package, WinTeam can generate code 1E, which shows the employee was offered minimum value coverage for themselves, their spouse, and their dependents.',
     why_it_matters: 'If any coverage tier is missing from Plan 2, WinTeam may generate the wrong Line 14 code for Plan 2 enrollees.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 2 open.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 2 open.' },
       { step: 2, instruction: 'Click the Plan Options tab.' },
       { step: 3, instruction: 'Confirm that Employee-only, Employee + Spouse, and Employee + Dependents (or Family) tiers all appear in the list.' },
       { step: 4, instruction: 'If any tier is missing, add it or contact your WinTeam consultant.' },
@@ -267,7 +268,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan 3 is your Select Health fully insured plan. Even though Plan 3 is a fully insured plan (meaning an outside insurance carrier pays claims), it still needs the ACA checkbox checked in WinTeam so that Plan 3 enrollment is included in ACA Line 14 and Line 16 calculations.',
     why_it_matters: 'If ACA is not checked for Plan 3, WinTeam will not track Plan 3 enrollment for 1095-C purposes, leading to incorrect codes for Plan 3 employees.',
     steps: [
-      { step: 1, instruction: 'In INS > Benefit Setup, find your Plan 3 (Select Health) in the list and click on it.' },
+      { step: 1, instruction: "In Insurance Benefits > Benefit Setup, find your Plan 3 (Select Health) in the list and click on it." },
       { step: 2, instruction: 'Click the Pricing tab.' },
       { step: 3, instruction: 'Find the ACA checkbox and confirm it is checked.' },
       { step: 4, instruction: 'If it is not checked, check it and click Save.' },
@@ -283,7 +284,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Unlike Plan 1 and Plan 2, Plan 3 (Select Health) is a fully insured plan — meaning an insurance carrier covers the claims, not your company. Because of this, the IRS does NOT require you to list covered dependents in Part III for Plan 3 enrollees. The Self Insured checkbox in WinTeam must be UNCHECKED for Plan 3. If it were checked by mistake, WinTeam would try to generate Part III for Plan 3 employees, which is both incorrect and unnecessary.',
     why_it_matters: 'If Self Insured is incorrectly checked on Plan 3, WinTeam will generate Part III for Plan 3 enrollees when it should not, creating errors in your filing.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 3 (Select Health) open on the Pricing tab.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 3 (Select Health) open on the Pricing tab.' },
       { step: 2, instruction: 'Find the checkbox labeled Self Insured.' },
       { step: 3, instruction: 'Confirm this box is NOT checked (empty, no checkmark).', warning: 'Plan 3 is fully insured. Self Insured must be empty for Plan 3.' },
       { step: 4, instruction: 'If the box is checked, uncheck it by clicking it.' },
@@ -299,7 +300,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan 3 (Select Health) is a comprehensive major medical plan that pays at least 60% of covered healthcare costs. This means it meets the IRS Minimum Value threshold. The Minimum Value checkbox in WinTeam must be checked for Plan 3 so that the correct Line 14 code is generated for Plan 3 enrollees.',
     why_it_matters: 'If Minimum Value is not checked for Plan 3, WinTeam will generate the wrong Line 14 code for Plan 3 enrollees, misrepresenting the coverage level you provided.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 3 open on the Pricing tab.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 3 open on the Pricing tab.' },
       { step: 2, instruction: 'Find the checkbox labeled Minimum Value.' },
       { step: 3, instruction: 'Confirm this box IS checked.', warning: 'Both Plan 2 and Plan 3 must have Minimum Value checked. Only Plan 1 (MEC) should have it unchecked.' },
       { step: 4, instruction: 'If the box is not checked, click it to check it.' },
@@ -315,7 +316,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Plan 3 also needs all three coverage tiers in its Plan Options — Employee-only, Employee plus Spouse, and Employee plus Dependents. Even though Part III will be blank for Plan 3 enrollees (because it is fully insured), the tiers still need to be present for WinTeam to generate the correct Line 14 code showing coverage was offered to the employee, their spouse, and their dependents.',
     why_it_matters: 'If coverage tiers are missing from Plan 3, WinTeam may generate the wrong Line 14 code for Plan 3 enrollees.',
     steps: [
-      { step: 1, instruction: 'Stay in INS > Benefit Setup with Plan 3 open.' },
+      { step: 1, instruction: 'Stay in Insurance Benefits > Benefit Setup with Plan 3 open.' },
       { step: 2, instruction: 'Click the Plan Options tab.' },
       { step: 3, instruction: 'Confirm that Employee-only, Employee + Spouse, and Employee + Dependents (or Family) tiers all appear in the list.' },
       { step: 4, instruction: 'If any tier is missing, add it or contact your WinTeam consultant.' },
@@ -331,7 +332,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'This is the most important step in Phase 1 and the most common setup error for employers with multiple plans. In WinTeam, each employee is assigned a benefit package. The package is what tells WinTeam what coverage was OFFERED to that employee. Because your company offers all three plans to every eligible employee, every package must contain all three plans — even if the employee only enrolled in one. If a package only contains Plan 1 (MEC), WinTeam thinks you only offered that employee the MEC plan and generates the wrong code on Line 14.',
     why_it_matters: 'If packages only contain the plan the employee enrolled in rather than all three offered plans, every employee on Plan 1 will get the wrong Line 14 code on their 1095-C, which is a filing error that could trigger IRS penalties.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS > Benefits by Employee.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu, then click 'Benefits by Employee'." },
       { step: 2, instruction: 'Pick any employee who is enrolled in Plan 1 (MEC) and open their record.' },
       { step: 3, instruction: 'Click the Package tab.' },
       { step: 4, instruction: 'Look at the benefit package assigned to this employee and click on the package name to open it.', detail: 'The package is a container that holds all the plans that were OFFERED to this employee, not just the one they chose.' },
@@ -352,7 +353,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Now that you have verified all the benefit setup, it is time to check what WinTeam actually produces. This step focuses on Line 14 of the 1095-C form. Line 14 is the most important line — it shows the IRS what type of coverage was offered to each employee. The correct code for all enrolled employees should be 1E, which means minimum value coverage was offered to the employee, their spouse, and their dependents.',
     why_it_matters: 'If Line 14 shows the wrong code — especially 1F instead of 1E — it means WinTeam thinks you only offered a MEC plan (not full minimum value coverage), which misrepresents what you actually offered employees.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS > Employee 1095-C Report.' },
+      { step: 1, instruction: 'In WinTeam, click Insurance Benefits > ACA/1095-C Tools > Employee 1095-C Report.' },
       { step: 2, instruction: 'In the Tax Year field, enter the prior year.', warning: 'Make sure you enter the prior year, not the current year. We are checking last year\'s setup first.' },
       { step: 3, instruction: 'In the Output Type field, select 1095-C Forms or Preview. Do NOT select Electronic File.' },
       { step: 4, instruction: 'Leave all employee filters set to All.' },
@@ -397,11 +398,11 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
       { step: 2, instruction: 'Write down the Line 15 amounts you see. They should all be identical.' },
       { step: 3, instruction: 'Compare the amount to the Plan 1 employee-only monthly premium you verified in the Plan 1 setup steps.' },
       { step: 4, instruction: 'If every form shows the same correct amount — mark this item complete.' },
-      { step: 5, instruction: 'If any forms show a different amount or a blank Line 15, note which employees are affected and log a Blocking issue.', warning: 'If Line 15 amounts vary, the most common cause is that different premium amounts were entered on different Plan 1 records. Return to INS > Benefit Setup > Plan 1 > Pricing Tab and verify the premium is set to one consistent amount.' },
+      { step: 5, instruction: 'If any forms show a different amount or a blank Line 15, note which employees are affected and log a Blocking issue.', warning: 'If Line 15 amounts vary, the most common cause is that different premium amounts were entered on different Plan 1 records. Return to Insurance Benefits > Benefit Setup > Plan 1 > Pricing Tab and verify the premium is set to one consistent amount.' },
     ],
     if_something_looks_wrong: [
       'If Line 15 is blank on some forms, the employee may not have a Plan 1 enrollment record in WinTeam.',
-      'If Line 15 shows the wrong dollar amount, return to INS > Benefit Setup > Plan 1 > Pricing Tab and correct the employee-only premium.',
+      'If Line 15 shows the wrong dollar amount, return to Insurance Benefits > Benefit Setup > Plan 1 > Pricing Tab and correct the employee-only premium.',
     ],
     estimated_minutes: 15,
   },
@@ -487,7 +488,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'If the Plan 1 premium is not updated for the new year, every 1095-C form will show the wrong Line 15 amount, which the IRS uses to verify affordability.',
     steps: [
       { step: 1, instruction: 'Find out the correct Plan 1 employee-only monthly premium for the new filing year.', detail: 'Check with your benefits broker or your summary plan documents for the new year.' },
-      { step: 2, instruction: 'In WinTeam, go to INS > Benefit Setup > Plan 1 > Pricing Tab.' },
+      { step: 2, instruction: 'In WinTeam, go to Insurance Benefits > Benefit Setup > Plan 1 > Pricing Tab.' },
       { step: 3, instruction: 'Update the employee-only premium field to the correct new year amount.' },
       { step: 4, instruction: 'Click Save in WinTeam.' },
       { step: 5, instruction: 'In this application, click Settings.' },
@@ -506,8 +507,8 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'WinTeam has a built-in tool called the Eligibility Testing Wizard that reviews every employee in your system and determines whether they qualify for benefits under your ACA rules. Think of it as WinTeam re-reading your eligibility rules and applying them to your current employee list for the new year. It looks at hours worked, employment dates, and your eligibility settings to determine who must be offered coverage. Running this wizard is a required step at the start of each plan year.',
     why_it_matters: 'If you do not run the Eligibility Testing Wizard, WinTeam will not have current eligibility data for the new year, and employees who should be offered coverage may be missed.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS in the top navigation menu.' },
-      { step: 2, instruction: 'Click Eligibility Testing Wizard from the dropdown.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu." },
+      { step: 2, instruction: "Click 'Eligibility Testing Wizard' from the submenu that appears." },
       { step: 3, instruction: 'In the Tax Year field, enter the current filing year.' },
       { step: 4, instruction: 'Leave all other filters set to their defaults to run the wizard for all employees.' },
       { step: 5, instruction: 'Click Run or Process to start the wizard.', detail: 'This may take several minutes if you have many employees. Let it complete fully before clicking anything else.' },
@@ -516,7 +517,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
       { step: 8, instruction: 'Mark this item complete once the wizard has run successfully.' },
     ],
     if_something_looks_wrong: [
-      'If the wizard shows many employees as ineligible that you expect to be eligible, check that the ACA Compliant Eligibility checkbox is still checked in INS > Eligibility Setup.',
+      'If the wizard shows many employees as ineligible that you expect to be eligible, check that the ACA Compliant Eligibility checkbox is still checked in Insurance Benefits > Eligibility Setup.',
       'If the wizard produces errors or fails to run, contact TEAM Software support.',
       'If you are unsure whether the results look right, print the wizard output and review it with your HR team before advancing.',
     ],
@@ -528,7 +529,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'If eligible employees do not have a benefit package assigned for the new year, WinTeam cannot generate Line 14 codes for them, which means their 1095-C forms will be incomplete or wrong.',
     steps: [
       { step: 1, instruction: 'Using the Eligibility Wizard results from the previous step, identify all employees who are eligible for benefits in the new year.' },
-      { step: 2, instruction: 'For each eligible employee, go to INS > Benefits by Employee and open their record.' },
+      { step: 2, instruction: 'For each eligible employee, go to Insurance Benefits > Benefits by Employee and open their record.' },
       { step: 3, instruction: 'Click the Package tab.' },
       { step: 4, instruction: 'Check whether a benefit package is assigned for the new year dates.', detail: 'The package should have an effective date at or before January 1 of the new year.' },
       { step: 5, instruction: 'If no package is assigned for the new year, assign the correct package that contains all three plans.' },
@@ -546,7 +547,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'For employees who work full-time year-round, their Stability Start Date should be set to January 1 of the new filing year. The Stability Period is the 12-month window during which an employee is treated as full-time based on their prior-year hours. If stability dates are wrong, WinTeam will not generate the correct offer-of-coverage codes for these employees.',
     why_it_matters: 'If Stability Start Dates are not updated, WinTeam may not correctly track which employees are in a stability period, leading to incorrect Line 16 codes on their 1095-C forms.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, go to INS > Benefits by Employee.' },
+      { step: 1, instruction: 'In WinTeam, go to Insurance Benefits > Benefits by Employee.' },
       { step: 2, instruction: 'Open a record for an employee who has been full-time for the entire prior year and is continuing into the new year.' },
       { step: 3, instruction: 'Click the Package tab and look for the Stability Start Date field.' },
       { step: 4, instruction: 'Confirm the Stability Start Date is set to January 1 of the new filing year.', detail: 'For year-round full-time employees, the stability period runs January 1 through December 31 of the filing year.' },
@@ -625,7 +626,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'If Plan 1 enrollment records are missing or have wrong dates, the monthly coverage codes on the 1095-C will be incorrect.',
     steps: [
       { step: 1, instruction: 'Pull your Plan 1 enrollment records from your HR or benefits system — a list of everyone who was enrolled in Plan 1 at any point during the filing year, with their start and end dates.' },
-      { step: 2, instruction: 'For each employee on that list, go to INS > Benefits by Employee in WinTeam and open their record.' },
+      { step: 2, instruction: 'For each employee on that list, go to Insurance Benefits > Benefits by Employee in WinTeam and open their record.' },
       { step: 3, instruction: 'Look at the Benefits tab and find their Plan 1 enrollment entry.' },
       { step: 4, instruction: 'Confirm the coverage start date and end date (or that it shows as active if still enrolled) match your records.' },
       { step: 5, instruction: 'If an employee is missing a Plan 1 enrollment entry, add it now with the correct dates.' },
@@ -644,7 +645,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'If the Covered Individuals tab is incomplete for Plan 2 enrollees, Part III of their 1095-C will be missing required information, which is a reportable error.',
     steps: [
       { step: 1, instruction: 'Pull your Plan 2 enrollment records — a list of everyone enrolled in Plan 2 during the filing year with their coverage dates and covered dependents.' },
-      { step: 2, instruction: 'For each Plan 2 enrollee, go to INS > Benefits by Employee in WinTeam and open their record.' },
+      { step: 2, instruction: 'For each Plan 2 enrollee, go to Insurance Benefits > Benefits by Employee in WinTeam and open their record.' },
       { step: 3, instruction: 'Verify their Plan 2 enrollment entry shows the correct start and end dates.' },
       { step: 4, instruction: 'Click the Covered Individuals tab (sometimes called Covered Dependents).' },
       { step: 5, instruction: 'Confirm the employee themselves is listed with correct coverage months.', screenshot_hint: 'You should see the employee in the first row, with checkmarks or month indicators showing which months they were covered.' },
@@ -665,7 +666,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'If Plan 3 enrollment records are missing or have wrong dates, WinTeam will not correctly code Line 16 for Plan 3 employees, which affects the safe harbor codes on their forms.',
     steps: [
       { step: 1, instruction: 'Pull your Plan 3 enrollment records from your HR or benefits system.' },
-      { step: 2, instruction: 'For each Plan 3 enrollee, go to INS > Benefits by Employee in WinTeam.' },
+      { step: 2, instruction: 'For each Plan 3 enrollee, go to Insurance Benefits > Benefits by Employee in WinTeam.' },
       { step: 3, instruction: 'Verify their Plan 3 enrollment shows correct start and end dates.' },
       { step: 4, instruction: 'If an enrollment is missing, add it now.' },
       { step: 5, instruction: 'If dates are wrong, correct them and click Save.' },
@@ -683,7 +684,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'If employees who declined coverage do not have benefit packages in WinTeam, WinTeam cannot generate any Line 14 code for them, resulting in blank or incorrect 1095-C forms.',
     steps: [
       { step: 1, instruction: 'Pull a list of all employees who were offered coverage during the filing year but declined.' },
-      { step: 2, instruction: 'For each employee, go to INS > Benefits by Employee in WinTeam.' },
+      { step: 2, instruction: 'For each employee, go to Insurance Benefits > Benefits by Employee in WinTeam.' },
       { step: 3, instruction: 'Click the Package tab.' },
       { step: 4, instruction: 'Check whether a benefit package is assigned that covers the period when coverage was offered.', detail: 'The package needs to be in place even if the employee declined. The package shows the offer — it does not mean they enrolled.' },
       { step: 5, instruction: 'If no package is assigned, assign the correct package (the one containing all three plans) with the correct effective dates.' },
@@ -704,7 +705,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
       { step: 1, instruction: 'In the Employee Tracker or the Filing Employees page in this app, look for Plan 1 and Plan 2 enrollees whose spouse was covered but whose spouse SSN is missing.' },
       { step: 2, instruction: 'Make a list of those employees.' },
       { step: 3, instruction: 'Contact each employee and request their spouse\'s SSN.', warning: 'You may need to have the spouse complete a W-9 or equivalent form to authorize providing their SSN. Store these forms securely.' },
-      { step: 4, instruction: 'Enter the spouse\'s SSN in WinTeam under INS > Benefits by Employee > Covered Individuals tab for each employee.' },
+      { step: 4, instruction: 'Enter the spouse\'s SSN in WinTeam under Insurance Benefits > Benefits by Employee > Covered Individuals tab for each employee.' },
       { step: 5, instruction: 'Re-check the tracker to confirm spouse SSN flags have cleared.' },
       { step: 6, instruction: 'Mark this item complete when all covered spouses have SSNs on file.' },
     ],
@@ -719,7 +720,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'For minor dependent children (under age 19) covered under Plan 1 or Plan 2, you need to enter their date of birth in WinTeam. The IRS accepts date of birth in lieu of SSN for minor dependents, but the DOB must be entered for the 1095-C Part III to be complete. The date of birth is what tells the IRS the dependent is a child, not an adult.',
     why_it_matters: 'Missing dates of birth for minor dependents on self-insured plans will cause Part III of the 1095-C to be incomplete, which can trigger IRS error notices.',
     steps: [
-      { step: 1, instruction: 'Go to INS > Benefits by Employee in WinTeam and open the record for each Plan 1 or Plan 2 enrollee who has covered dependent children.' },
+      { step: 1, instruction: 'Go to Insurance Benefits > Benefits by Employee in WinTeam and open the record for each Plan 1 or Plan 2 enrollee who has covered dependent children.' },
       { step: 2, instruction: 'Click the Covered Individuals tab.' },
       { step: 3, instruction: 'For each dependent child listed, look for the Date of Birth column.' },
       { step: 4, instruction: 'If a child\'s DOB is missing, enter it now.', detail: 'DOBs for minor children can typically be found in your HR onboarding records, the employee\'s benefits election form, or the carrier\'s enrollment records.' },
@@ -738,7 +739,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Adult dependents — meaning dependent children age 19 and older — who are covered under Plan 1 or Plan 2 must have their Social Security Number entered in WinTeam. Unlike minor children, adult dependents cannot use date of birth as a substitute for SSN. The IRS requires SSNs for all adult covered individuals on self-insured plans.',
     why_it_matters: 'Missing SSNs for adult dependents on self-insured plans will cause IRS errors on Part III of the 1095-C and may require a corrected filing.',
     steps: [
-      { step: 1, instruction: 'Go to INS > Benefits by Employee for each Plan 1 or Plan 2 enrollee who has covered adult dependents (age 19+).' },
+      { step: 1, instruction: 'Go to Insurance Benefits > Benefits by Employee for each Plan 1 or Plan 2 enrollee who has covered adult dependents (age 19+).' },
       { step: 2, instruction: 'Click the Covered Individuals tab.' },
       { step: 3, instruction: 'For each adult dependent, check whether their SSN is entered.' },
       { step: 4, instruction: 'If an adult dependent is missing their SSN, contact the employee and request the dependent\'s SSN.', warning: 'Handle dependent SSN collection carefully — have the dependent sign an authorization or W-9. Store all SSN documentation securely.' },
@@ -758,7 +759,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     why_it_matters: 'Incorrect coverage months will cause wrong codes on the 1095-C for those months, which misrepresents the actual coverage provided and can trigger IRS audits.',
     steps: [
       { step: 1, instruction: 'Pull a list of any benefit changes that happened during the filing year: new enrollments, terminations, life events (new baby, marriage, divorce, etc.).' },
-      { step: 2, instruction: 'For each change, go to INS > Benefits by Employee > Covered Individuals tab for the affected employee.' },
+      { step: 2, instruction: 'For each change, go to Insurance Benefits > Benefits by Employee > Covered Individuals tab for the affected employee.' },
       { step: 3, instruction: 'Review the covered months shown for the employee and their dependents.' },
       { step: 4, instruction: 'Compare the coverage months in WinTeam to the actual dates from the benefit change records.' },
       { step: 5, instruction: 'If any months are wrong — for example, a dependent shows as covered all 12 months when they were only covered for 6 — correct the months now.' },
@@ -798,7 +799,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
       { step: 2, instruction: 'For each terminated employee, note the termination date shown in WinTeam.' },
       { step: 3, instruction: 'Compare to your HR records (separation notices, final paycheck dates, or HRIS system) to confirm the termination date is accurate.' },
       { step: 4, instruction: 'If the termination date in WinTeam is wrong, open the employee record and correct it.' },
-      { step: 5, instruction: 'Also confirm the employee\'s benefit coverage end date in INS > Benefits by Employee aligns with their termination date.' },
+      { step: 5, instruction: 'Also confirm the employee\'s benefit coverage end date in Insurance Benefits > Benefits by Employee aligns with their termination date.' },
       { step: 6, instruction: 'Click Save for any changes.' },
       { step: 7, instruction: 'Mark this item complete when all termination dates look correct.' },
     ],
@@ -815,7 +816,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     steps: [
       { step: 1, instruction: 'Pull a list of all new hires from the filing year and their hire dates.' },
       { step: 2, instruction: 'Calculate when each new hire\'s 90-day waiting period ended (90 days after hire date).' },
-      { step: 3, instruction: 'For each new hire, go to INS > Benefits by Employee in WinTeam and open their record.' },
+      { step: 3, instruction: 'For each new hire, go to Insurance Benefits > Benefits by Employee in WinTeam and open their record.' },
       { step: 4, instruction: 'Check whether a benefit package is assigned with an effective date within 90 days of hire.' },
       { step: 5, instruction: 'Check whether their enrollment (or declination) is recorded starting from the correct date.' },
       { step: 6, instruction: 'If anything is missing or wrong, correct it and click Save.' },
@@ -855,8 +856,8 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'Phase 4 is where you generate the actual filing. But before generating the real electronic file that goes to the IRS, you must run a full preview report and verify it is completely correct. The preview report shows you exactly what the 1095-C forms will look like — every line, every code, every employee. This is your final quality check, and you cannot skip it.',
     why_it_matters: 'If you generate and submit the electronic file without reviewing the preview first, any errors in the forms will be submitted to the IRS and will require a corrected filing to fix.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, click INS in the top navigation menu.' },
-      { step: 2, instruction: 'Click Employee 1095-C Report from the dropdown.' },
+      { step: 1, instruction: "In WinTeam, look at the left sidebar and find 'Insurance Benefits'. Click it to expand the menu, then click 'ACA/1095-C Tools'." },
+      { step: 2, instruction: "Click 'Employee 1095-C Report' from the submenu." },
       { step: 3, instruction: 'In the Tax Year field, confirm the current filing year is entered.' },
       { step: 4, instruction: 'In the Output Type field, select 1095-C Forms (preview) or Preview Report.', warning: 'Do NOT select Electronic File at this step. You are only previewing — not filing.' },
       { step: 5, instruction: 'Set the employee range to All (include all employees).' },
@@ -937,7 +938,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     ],
     if_something_looks_wrong: [
       'If Line 14 is blank for declined employees, their benefit package may not be assigned in WinTeam. Go back to Phase 3 to verify declined employees have packages.',
-      'If Line 16 is blank, WinTeam may not have a safe harbor method configured. Check INS > Eligibility Setup for the safe harbor settings.',
+      'If Line 16 is blank, WinTeam may not have a safe harbor method configured. Check Insurance Benefits > Eligibility Setup for the safe harbor settings.',
     ],
     estimated_minutes: 15,
   },
@@ -949,7 +950,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
       { step: 1, instruction: 'Flip through 10–15 forms in the preview report, looking specifically at Line 15.' },
       { step: 2, instruction: 'Note any form where Line 15 shows a different amount from the others, or where Line 15 is blank.' },
       { step: 3, instruction: 'If all forms show the same correct amount, mark this item complete.' },
-      { step: 4, instruction: 'If any forms show a different amount, identify those employees and investigate.', warning: 'Go back to INS > Benefit Setup > Plan 1 > Pricing Tab and verify the employee-only premium is a single consistent amount. Also check if those employees have a different Plan 1 benefit record with a different premium.' },
+      { step: 4, instruction: 'If any forms show a different amount, identify those employees and investigate.', warning: 'Go back to Insurance Benefits > Benefit Setup > Plan 1 > Pricing Tab and verify the employee-only premium is a single consistent amount. Also check if those employees have a different Plan 1 benefit record with a different premium.' },
     ],
     if_something_looks_wrong: [
       'A blank Line 15 usually means the employee does not have a Plan 1 enrollment record in WinTeam.',
@@ -981,7 +982,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     steps: [
       { step: 1, instruction: 'Go through the notes you made during the spot-check steps and list every discrepancy you found.' },
       { step: 2, instruction: 'Fix each issue in WinTeam — this might involve correcting benefit setup, fixing enrollment records, adding missing dependent data, etc.' },
-      { step: 3, instruction: 'After fixing all issues, go back to INS > Employee 1095-C Report and re-run the preview for all employees.' },
+      { step: 3, instruction: 'After fixing all issues, go back to Insurance Benefits > ACA/1095-C Tools > Employee 1095-C Report and re-run the preview for all employees.' },
       { step: 4, instruction: 'Re-check the same spot-checks: Line 14 = 1E, Part III populated correctly, Line 15 consistent, form count correct.' },
       { step: 5, instruction: 'If new issues appear, fix them and re-run again.', warning: 'Keep running the cycle until you have a preview report with zero discrepancies. Do not advance until the preview is fully clean.' },
       { step: 6, instruction: 'Once the preview is clean, mark this item complete.' },
@@ -997,7 +998,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'This is the step where you generate the real electronic file that will go to the IRS. You have verified the preview is clean — now you change the Output Type to Electronic File and generate the actual submission file. This file is a specific format the IRS system can read. Save it to a secure location immediately.',
     why_it_matters: 'This is the file you submit to the IRS. Any error in this file that was not caught in the preview will require a corrected filing.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, go to INS > Employee 1095-C Report.' },
+      { step: 1, instruction: 'In WinTeam, go to Insurance Benefits > ACA/1095-C Tools > Employee 1095-C Report.' },
       { step: 2, instruction: 'Confirm the Tax Year is set to the current filing year.' },
       { step: 3, instruction: 'Change the Output Type to 1095-C Electronic File (NOT Preview).', warning: 'You are now generating the real filing file. Make sure all spot-checks from previous steps were completed with a clean preview before proceeding.' },
       { step: 4, instruction: 'Set the employee range to All.' },
@@ -1017,7 +1018,7 @@ export const WALKTHROUGHS: Record<string, Walkthrough> = {
     overview: 'The 1094-C is the cover sheet that goes with your 1095-C forms. It tells the IRS who you are, how many 1095-C forms you are submitting, and confirms your status as an Applicable Large Employer (ALE) subject to ACA reporting requirements. You must file the 1094-C together with the 1095-C electronic file — you cannot file one without the other.',
     why_it_matters: 'Without the 1094-C, your submission is incomplete. The IRS will not accept a 1095-C electronic file without an accompanying 1094-C transmittal.',
     steps: [
-      { step: 1, instruction: 'In WinTeam, go to INS > Employee 1095-C Report (same location as the 1095-C file generation).' },
+      { step: 1, instruction: 'In WinTeam, go to Insurance Benefits > ACA/1095-C Tools > Employee 1095-C Report (same location as the 1095-C file generation).' },
       { step: 2, instruction: 'Look for an option to generate the 1094-C transmittal. This may be a separate button or a different Output Type option.' },
       { step: 3, instruction: 'Generate the 1094-C for the same tax year.' },
       { step: 4, instruction: 'Review the 1094-C output and verify the total number of forms matches the count from your 1095-C preview (the form count check from a previous step).', screenshot_hint: 'The 1094-C should show your company EIN, company name, and the total number of 1095-C forms being submitted.' },
