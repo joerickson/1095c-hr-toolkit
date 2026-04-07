@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useCallback } from "react";
 import { updateHrTaskProgress } from "@/app/actions/hr-tasks";
+import type { RosterEmployee, RosterData } from "@/lib/google-sheets";
 
 const TOTAL_EMPLOYEES = 719;
 
@@ -9,11 +10,255 @@ interface Props {
   initialElectionCount: number;
 }
 
+// ── Plan badge helpers ───────────────────────────────────────────────────────
+
+function PlanBadge({ category, plan }: { category: RosterEmployee["planCategory"]; plan: string }) {
+  const styles: Record<string, { bg: string; color: string; border: string }> = {
+    mec: { bg: "#f0fdf4", color: "#14532d", border: "#16a34a" },
+    selfinsured: { bg: "#eff6ff", color: "#1e40af", border: "#93c5fd" },
+    selecthealth: { bg: "#faf5ff", color: "#6b21a8", border: "#c084fc" },
+    waived: { bg: "#f3f4f6", color: "#374151", border: "#d1d5db" },
+    unknown: { bg: "#fefce8", color: "#713f12", border: "#fde68a" },
+  };
+  const s = styles[category] ?? styles.unknown;
+  return (
+    <span
+      className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full"
+      style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}` }}
+    >
+      {plan || "Unknown"}
+    </span>
+  );
+}
+
+function WinTeamActionBadge({ category }: { category: RosterEmployee["planCategory"] }) {
+  if (category === "waived") {
+    return (
+      <span className="text-xs font-medium text-gray-500">Enter as Waived/Declined in WinTeam</span>
+    );
+  }
+  if (category === "selfinsured") {
+    return (
+      <span className="text-xs font-medium" style={{ color: "#1d4ed8" }}>
+        Enter election + dependent data (Part III required)
+      </span>
+    );
+  }
+  if (category === "selecthealth") {
+    return (
+      <span className="text-xs font-medium" style={{ color: "#6b21a8" }}>
+        Enter election in WinTeam — no Part III needed
+      </span>
+    );
+  }
+  return (
+    <span className="text-xs font-medium" style={{ color: "#14532d" }}>
+      Enter election in WinTeam
+    </span>
+  );
+}
+
+// ── Roster summary panel ─────────────────────────────────────────────────────
+
+function RosterSummaryPanel({ data, loading, error }: {
+  data: RosterData | null;
+  loading: boolean;
+  error: string | null;
+}) {
+  if (error?.includes("not configured") || error?.includes("GOOGLE_SHEETS_ID")) return null;
+
+  return (
+    <div
+      className="rounded-lg p-5"
+      style={{ background: "#f8fafc", border: "1px solid #cbd5e1" }}
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-base">📊</span>
+        <p className="text-sm font-bold text-gray-800">Carrier Roster Summary</p>
+      </div>
+
+      {loading && (
+        <p className="text-sm text-gray-400 italic">Loading roster from Google Sheets…</p>
+      )}
+
+      {!loading && error && (
+        <p className="text-sm" style={{ color: "#b91c1c" }}>
+          Could not load roster: {error}
+        </p>
+      )}
+
+      {!loading && data && (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+          {[
+            { label: "Total employees on roster", value: data.summary.total, note: "" },
+            {
+              label: "On MEC only",
+              value: data.summary.mecOnly,
+              note: "no Part III action — basic election entry only",
+            },
+            {
+              label: "On other plans",
+              value: data.summary.otherPlans,
+              note: "action needed",
+            },
+            {
+              label: "Select Health employees",
+              value: data.summary.selectHealth,
+              note: "no Part III needed",
+            },
+            {
+              label: "Self-insured employees",
+              value: data.summary.selfInsured,
+              note: "Part III required",
+            },
+          ].map(({ label, value, note }) => (
+            <div key={label} className="flex items-baseline gap-2">
+              <span className="font-bold text-gray-900 tabular-nums w-10 text-right flex-shrink-0">
+                {value}
+              </span>
+              <span className="text-gray-600">
+                {label}
+                {note && (
+                  <span className="text-gray-400 ml-1">({note})</span>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Employee lookup panel ────────────────────────────────────────────────────
+
+function RosterLookupPanel({ data, loading, error }: {
+  data: RosterData | null;
+  loading: boolean;
+  error: string | null;
+}) {
+  const [query, setQuery] = useState("");
+
+  if (error?.includes("not configured") || error?.includes("GOOGLE_SHEETS_ID")) return null;
+
+  const results: RosterEmployee[] = (() => {
+    if (!data || !query.trim()) return [];
+    const q = query.toLowerCase().trim();
+    return data.employees.filter(
+      (e) =>
+        e.name.toLowerCase().includes(q) ||
+        e.employeeNumber.toLowerCase().includes(q)
+    );
+  })();
+
+  return (
+    <div
+      className="rounded-lg p-5 mb-5"
+      style={{ background: "#f0f9ff", border: "2px solid #0ea5e9" }}
+    >
+      <p className="text-sm font-bold mb-1" style={{ color: "#0c4a6e" }}>
+        Find Employee Plan from Carrier Roster
+      </p>
+      <p className="text-xs text-gray-500 mb-3">
+        Look up an employee in the carrier enrollment roster before entering their election in WinTeam.
+      </p>
+
+      <input
+        type="text"
+        placeholder="Search by employee name or employee number…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        disabled={loading || !!error}
+        className="w-full rounded-md border text-sm px-3 py-2 mb-3"
+        style={{ borderColor: "#7dd3fc", outline: "none" }}
+      />
+
+      {loading && (
+        <p className="text-xs text-gray-400 italic">Loading roster…</p>
+      )}
+
+      {!loading && error && (
+        <p className="text-xs" style={{ color: "#b91c1c" }}>
+          Roster unavailable: {error}
+        </p>
+      )}
+
+      {!loading && !error && query.trim() && results.length === 0 && (
+        <p className="text-xs text-gray-500">No matching employees found on the roster.</p>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-2">
+          {results.slice(0, 10).map((emp, i) => (
+            <div
+              key={i}
+              className="rounded-md p-3"
+              style={{ background: "white", border: "1px solid #bae6fd" }}
+            >
+              <div className="flex items-start justify-between gap-3 mb-1">
+                <div>
+                  <span className="text-sm font-semibold text-gray-900">{emp.name}</span>
+                  {emp.employeeNumber && (
+                    <span className="ml-2 text-xs text-gray-400">#{emp.employeeNumber}</span>
+                  )}
+                </div>
+                <PlanBadge category={emp.planCategory} plan={emp.plan} />
+              </div>
+
+              {emp.dependents.length > 0 && (
+                <p className="text-xs text-gray-500 mb-1">
+                  Dependents: {emp.dependents.join(", ")}
+                </p>
+              )}
+
+              <WinTeamActionBadge category={emp.planCategory} />
+            </div>
+          ))}
+          {results.length > 10 && (
+            <p className="text-xs text-gray-400">
+              Showing first 10 of {results.length} matches — refine your search.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main component ───────────────────────────────────────────────────────────
+
 export default function HrTasksClient({ initialElectionCount }: Props) {
   const [electionCount, setElectionCount] = useState(initialElectionCount);
   const [inputValue, setInputValue] = useState(String(initialElectionCount));
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
+
+  // Google Sheets roster state
+  const [rosterData, setRosterData] = useState<RosterData | null>(null);
+  const [rosterLoading, setRosterLoading] = useState(true);
+  const [rosterError, setRosterError] = useState<string | null>(null);
+
+  const loadRoster = useCallback(async () => {
+    setRosterLoading(true);
+    setRosterError(null);
+    try {
+      const res = await fetch("/api/google-sheets");
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error ?? `HTTP ${res.status}`);
+      }
+      const data: RosterData = await res.json();
+      setRosterData(data);
+    } catch (err: unknown) {
+      setRosterError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setRosterLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadRoster();
+  }, [loadRoster]);
 
   const pct = Math.min(100, Math.round((electionCount / TOTAL_EMPLOYEES) * 100));
 
@@ -51,6 +296,9 @@ export default function HrTasksClient({ initialElectionCount }: Props) {
         </p>
       </div>
 
+      {/* Carrier Roster Summary */}
+      <RosterSummaryPanel data={rosterData} loading={rosterLoading} error={rosterError} />
+
       {/* SECTION 1 — Enter Benefit Elections */}
       <section>
         <div className="flex items-center gap-3 mb-1">
@@ -84,6 +332,9 @@ export default function HrTasksClient({ initialElectionCount }: Props) {
             📁 Insurance Benefits &gt; Benefits by Employee
           </span>
         </div>
+
+        {/* Employee Lookup from Carrier Roster */}
+        <RosterLookupPanel data={rosterData} loading={rosterLoading} error={rosterError} />
 
         {/* GREEN INFO BOX — You can start NOW */}
         <div
