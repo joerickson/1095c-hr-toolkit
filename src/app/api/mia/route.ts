@@ -238,16 +238,24 @@ RBM SERVICES SPECIFIC CONTEXT:
 - Safe harbor: Rate of Pay (2H)
 - Affordability threshold: 9.02% for ${taxYear}
 
-WINTEAM NAVIGATION KNOWLEDGE:
+WINTEAM NAVIGATION KNOWLEDGE (confirmed for RBM Services):
 When helping users find things in WinTeam, use these paths:
-- ACA on/off: SYS > Company Setup > ACA Configuration
-- EIN: SYS > Company Setup > EIN field
-- Eligibility: INS > Eligibility Setup
-- Benefit plans: INS > Benefit Setup > [plan name] > Pricing Tab
-- Employee benefits: INS > Benefits by Employee
-- Dependents: INS > Benefits by Employee > Covered Individuals tab
-- 1095-C report: INS > Employee 1095-C Report
-- Eligibility wizard: INS > Eligibility Testing Wizard
+- ACA Settings (on/off, plan year start month): Insurance Benefits > Defaults > Defaults tab > ACA Settings section (bottom right of screen)
+- EIN field: SYS > Company Setup > Federal ID field
+- 1095-C contact phone: SYS > Company Setup > Insurance Benefits 1095-C section (bottom right of Company Setup)
+- Eligibility: Insurance Benefits > Eligibility Setup
+- Benefit plans: Insurance Benefits > Benefit Setup > [plan name] > Pricing Tab
+- Employee benefits: Insurance Benefits > Benefits by Employee
+- Dependents: Insurance Benefits > Benefits by Employee > Covered Individuals tab
+- 1095-C report: Insurance Benefits > ACA/1095-C Tools > Employee 1095-C Report
+- Eligibility wizard: Insurance Benefits > Eligibility Testing Wizard
+
+DEFAULTS SCREEN LAYOUT (Insurance Benefits > Defaults):
+When users are on the Defaults screen, the layout is:
+- Left panel: Engines and Wizards section with Auto Enrollment Engine, Termination Engine, Leave of Absence, No Hours Engine, Eligibility Testing Wizard settings
+- Right panel top: eHub Online Enrollment section
+- RIGHT PANEL BOTTOM: ACA Settings section (this is what most users need)
+The ACA Settings section contains: Affordable Care Act Configuration checkbox, Eligible for 4980h Non-Calendar Plan Year Transition Relief checkbox, Plan Year Start Month field, Store PDF Copy of each Employee 1095-C checkbox, Check Eligibility Status Start Date field.
 
 CURRENT APP CONTEXT:
 - Current page: ${currentPage}
