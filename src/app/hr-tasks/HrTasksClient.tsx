@@ -1,9 +1,43 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useCallback } from "react";
 import { updateHrTaskProgress } from "@/app/actions/hr-tasks";
 
 const TOTAL_EMPLOYEES = 719;
+
+interface Employee {
+  employeeNumber: string;
+  firstName: string;
+  lastName: string;
+  planType: string;
+  plan: string;
+}
+
+interface ActionBadge {
+  label: string;
+  color: string;
+  bg: string;
+  border: string;
+}
+
+function getActionBadge(plan: string): ActionBadge {
+  const p = plan.toLowerCase().trim();
+  if (p.includes("select health")) {
+    return { label: "Select Health – No Part III", color: "#1d4ed8", bg: "#eff6ff", border: "#93c5fd" };
+  }
+  if (
+    p.includes("bronze ihc") ||
+    p.includes("bronze non") ||
+    p.includes("gold ihc") ||
+    p.includes("gold non")
+  ) {
+    return { label: "Self-Insured – Part III Required", color: "#991b1b", bg: "#fef2f2", border: "#fca5a5" };
+  }
+  if (p === "mec plan" || p.includes("mec") || p.includes("declined") || p.includes("waived")) {
+    return { label: "No Action Needed", color: "#14532d", bg: "#f0fdf4", border: "#86efac" };
+  }
+  return { label: "Update Required", color: "#92400e", bg: "#fffbeb", border: "#f59e0b" };
+}
 
 interface Props {
   initialElectionCount: number;
@@ -15,7 +49,52 @@ export default function HrTasksClient({ initialElectionCount }: Props) {
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
 
+  // Roster state
+  const [roster, setRoster] = useState<Employee[]>([]);
+  const [rosterLoading, setRosterLoading] = useState(true);
+  const [rosterError, setRosterError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const pct = Math.min(100, Math.round((electionCount / TOTAL_EMPLOYEES) * 100));
+
+  const fetchRoster = useCallback(async (refresh = false) => {
+    setRosterLoading(true);
+    setRosterError(null);
+    try {
+      const url = refresh ? "/api/roster?refresh=true" : "/api/roster";
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
+      setRoster(data.employees ?? []);
+    } catch (err: unknown) {
+      setRosterError(err instanceof Error ? err.message : "Failed to load roster");
+    } finally {
+      setRosterLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRoster();
+  }, [fetchRoster]);
+
+  const searchResults =
+    searchQuery.trim().length > 0
+      ? roster.filter((emp) => {
+          const q = searchQuery.toLowerCase().trim();
+          return (
+            emp.employeeNumber.toLowerCase().includes(q) ||
+            emp.firstName.toLowerCase().includes(q) ||
+            emp.lastName.toLowerCase().includes(q) ||
+            `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(q)
+          );
+        })
+      : [];
+
+  // Summary stats
+  const noActionCount = roster.filter((e) => getActionBadge(e.plan).label === "No Action Needed").length;
+  const selectHealthCount = roster.filter((e) => getActionBadge(e.plan).label === "Select Health – No Part III").length;
+  const selfInsuredCount = roster.filter((e) => getActionBadge(e.plan).label === "Self-Insured – Part III Required").length;
+  const updateRequiredCount = roster.filter((e) => getActionBadge(e.plan).label === "Update Required").length;
 
   function handleSave() {
     const n = parseInt(inputValue, 10);
@@ -83,6 +162,123 @@ export default function HrTasksClient({ initialElectionCount }: Props) {
           >
             📁 Insurance Benefits &gt; Benefits by Employee
           </span>
+        </div>
+
+        {/* ROSTER SUMMARY PANEL */}
+        <div
+          className="rounded-lg p-4 mb-4"
+          style={{ background: "#f8fafc", border: "1px solid #cbd5e1" }}
+        >
+          <p className="text-sm font-semibold text-gray-700 mb-3">Roster Summary</p>
+          {rosterLoading ? (
+            <p className="text-sm text-gray-500">Loading roster data…</p>
+          ) : rosterError ? (
+            <p className="text-sm" style={{ color: "#991b1b" }}>
+              Unable to load roster: {rosterError}
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-x-8 gap-y-1.5 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total on roster:</span>
+                <span className="font-semibold text-gray-900">{roster.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">No action needed (MEC/Declined):</span>
+                <span className="font-semibold" style={{ color: "#14532d" }}>{noActionCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Need updating:</span>
+                <span className="font-semibold" style={{ color: "#92400e" }}>{updateRequiredCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Select Health (no Part III):</span>
+                <span className="font-semibold" style={{ color: "#1d4ed8" }}>{selectHealthCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Self-insured (Part III required):</span>
+                <span className="font-semibold" style={{ color: "#991b1b" }}>{selfInsuredCount}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* EMPLOYEE ROSTER LOOKUP PANEL */}
+        <div
+          className="rounded-lg p-4 mb-5"
+          style={{ background: "#ffffff", border: "1px solid #cbd5e1" }}
+        >
+          <p className="text-sm font-semibold text-gray-800 mb-3">Find Employee Plan from Carrier Roster</p>
+
+          {/* Search input */}
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by employee number, first name, or last name"
+            className="w-full rounded-md border text-sm px-3 py-2 mb-3"
+            style={{ borderColor: "#d1d5db", outline: "none" }}
+            disabled={rosterLoading || !!rosterError}
+          />
+
+          {/* Search results */}
+          {searchQuery.trim().length > 0 && (
+            <div className="space-y-2">
+              {searchResults.length === 0 ? (
+                <p className="text-sm text-gray-500">No employees found matching &quot;{searchQuery}&quot;</p>
+              ) : (
+                searchResults.map((emp) => {
+                  const badge = getActionBadge(emp.plan);
+                  return (
+                    <div
+                      key={emp.employeeNumber}
+                      className="rounded-md p-3"
+                      style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}
+                    >
+                      <div className="flex items-start justify-between gap-3 flex-wrap">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {emp.firstName} {emp.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            Employee #{emp.employeeNumber}
+                            {emp.planType ? ` · ${emp.planType}` : ""}
+                          </p>
+                          <p className="text-xs text-gray-700 mt-1">
+                            Plan: <span className="font-medium">{emp.plan || "—"}</span>
+                          </p>
+                        </div>
+                        <span
+                          className="text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0"
+                          style={{ color: badge.color, background: badge.bg, border: `1px solid ${badge.border}` }}
+                        >
+                          {badge.label}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {/* Info box */}
+          <div
+            className="mt-4 rounded-md p-3 text-xs"
+            style={{ background: "#f1f5f9", border: "1px solid #cbd5e1", color: "#475569" }}
+          >
+            Data pulls from the carrier enrollment roster in Google Sheets. If an employee is missing
+            or their plan is wrong, update the Google Sheet first then refresh this page.
+          </div>
+
+          {/* Refresh button */}
+          <button
+            onClick={() => fetchRoster(true)}
+            disabled={rosterLoading}
+            className="mt-3 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
+            style={{ background: "#e2e8f0", color: "#334155" }}
+          >
+            {rosterLoading ? "Loading…" : "↺ Refresh Roster Data"}
+          </button>
         </div>
 
         {/* GREEN INFO BOX — You can start NOW */}
