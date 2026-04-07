@@ -1,6 +1,7 @@
 import Navigation from "./Navigation";
 import EligibilityAlerts from "./EligibilityAlerts";
 import { ToastProvider } from "./Toast";
+import AskMia from "./mia/AskMia";
 import { createClient } from "@/lib/supabase/server";
 import { IntlProvider } from "@/providers/IntlProvider";
 import type { EligibilityDashboardRow } from "@/lib/types";
@@ -80,6 +81,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             {children}
           </main>
         </div>
+        {user && (
+          <AskMia
+            taxYear={navTaxYear}
+            language={preferredLanguage}
+            userName={userFullName?.split(' ')[0] ?? undefined}
+          />
+        )}
       </ToastProvider>
     </IntlProvider>
   );
