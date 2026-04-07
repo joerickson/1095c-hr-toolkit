@@ -44,14 +44,14 @@ function LoginContent() {
     e.preventDefault();
     setForgotLoading(true);
 
+    // Always show success — do not reveal whether email exists
+    setForgotSent(true);
+    setForgotLoading(false);
+
     const supabase = createClient();
     await supabase.auth.resetPasswordForEmail(forgotEmail, {
       redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     });
-
-    // Always show success — do not reveal whether email exists
-    setForgotSent(true);
-    setForgotLoading(false);
   }
 
   function switchToForgot() {
