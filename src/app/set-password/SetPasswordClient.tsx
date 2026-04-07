@@ -18,6 +18,14 @@ export default function SetPasswordClient() {
   const supabase = createClient();
 
   useEffect(() => {
+    // Check for an already-established session (e.g. after server-side callback redirect)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setIsValidSession(true);
+        setIsLoading(false);
+      }
+    });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event) => {

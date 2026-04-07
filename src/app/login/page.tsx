@@ -46,7 +46,7 @@ function LoginContent() {
 
     const supabase = createClient();
     await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: "https://rbmhr.com/auth/callback?type=recovery",
+      redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     });
 
     // Always show success — do not reveal whether email exists
